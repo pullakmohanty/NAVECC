@@ -391,7 +391,38 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
           <span className="s2-gray s2-it" style={{ fontSize: 11, flexShrink: 0 }}>Always on</span>
         </div>
 
-        {/* Config panel */}
+        {/* Human instruction — prominent input block */}
+        <div style={{ borderTop: "0.5px solid #F0F4F5", padding: "14px 16px", backgroundColor: "#FFFFFF" }}>
+          <div style={{ marginBottom: 6, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span className="s2-muted s2-up" style={{ fontSize: 10, fontWeight: 600 }}>Your instruction to CPXO</span>
+            {instrSrc !== "Awaiting human input…" && (
+              <span className="s2-green" style={{ fontSize: 10, fontWeight: 500 }}>✓ Sent to agent</span>
+            )}
+          </div>
+          <textarea
+            value={instruction}
+            onChange={e => seq === "idle" && setInstruction(e.target.value)}
+            placeholder="Type your instruction for the CPXO agent… e.g. Silent delivery delay — Arvion UK"
+            readOnly={seq !== "idle"}
+            rows={3}
+            className="s2-body"
+            style={{
+              width: "100%", fontSize: 13, lineHeight: 1.6,
+              border: seq !== "idle" ? "1px solid #E2E8F0" : "1px solid #028090",
+              borderRadius: 7, padding: "9px 12px",
+              backgroundColor: seq !== "idle" ? "#F8FAFC" : "#FFFFFF",
+              resize: "none", boxSizing: "border-box",
+              cursor: seq !== "idle" ? "default" : "text",
+            }}
+          />
+          {seq === "idle" && (
+            <p className="s2-muted" style={{ fontSize: 11, margin: "5px 0 0 0" }}>
+              This instruction is sent to CPXO when you click <strong>Run sequence</strong>.
+            </p>
+          )}
+        </div>
+
+        {/* Config panel — read-only fields */}
         <div style={{ borderTop: "0.5px solid #F0F4F5", padding: "14px 16px", backgroundColor: "#F8FAFC" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
 
@@ -409,34 +440,15 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
                 style={{ fontSize: 12, border: "0.5px solid #F0F4F5", borderRadius: 6, padding: "5px 10px", backgroundColor: "#FFFFFF", width: 260 }} />
             </div>
 
-            {/* Instruction source (read-only display) */}
+            {/* Instruction source (read-only display — updates after sequence runs) */}
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <span className="s2-muted" style={{ fontSize: 12, width: 150, flexShrink: 0 }}>Instruction source</span>
               <span
-                className={instrSrc === "Awaiting human input…" ? "s2-gray s2-it" : "s2-body"}
+                className={instrSrc === "Awaiting human input…" ? "s2-gray s2-it" : "s2-teal"}
                 style={{ fontSize: 12, transition: "color 0.4s" }}
               >
                 {instrSrc}
               </span>
-            </div>
-
-            {/* Human instruction input */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span className="s2-muted" style={{ fontSize: 12, width: 150, flexShrink: 0 }}>Human instruction</span>
-              <input
-                type="text"
-                value={instruction}
-                onChange={e => seq === "idle" && setInstruction(e.target.value)}
-                placeholder="Enter instruction for CPXO…"
-                readOnly={seq !== "idle"}
-                className="s2-body"
-                style={{
-                  fontSize: 12, border: "0.5px solid #E2E8F0", borderRadius: 6,
-                  padding: "5px 10px", width: 300,
-                  backgroundColor: "#FFFFFF",
-                  cursor: seq !== "idle" ? "default" : "text",
-                }}
-              />
             </div>
           </div>
 
