@@ -275,7 +275,7 @@ function SubAgentCard({ agent, status, toggle }: {
 function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
   const [seq,        setSeq]        = useState<SeqState>("idle");
   const [cpxoPhase,  setCpxoPhase]  = useState<CPXOPhase>("Configuring");
-  const [instruction,setInstruction]= useState("Silent delivery delay — Arvion UK");
+  const [instruction,setInstruction]= useState("Monitor all active UK homecare deliveries for Ultomiris, Soliris, and Strensiq. Detect silent delivery delays before NHS staff absorb them. Flag exceptions at 4-hour SLA breach. Trigger MHRA pharmacovigilance flag at 6 hours for PNH patients.");
   const [instrSrc,   setInstrSrc]   = useState("Awaiting human input…");
   const [statuses,   setStatuses]   = useState<Record<AgentId, AgentStatus>>({
     delivery: "locked", clinical: "locked", compliance: "locked", engagement: "locked",
@@ -402,9 +402,9 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
           <textarea
             value={instruction}
             onChange={e => seq === "idle" && setInstruction(e.target.value)}
-            placeholder="Type your instruction for the CPXO agent… e.g. Silent delivery delay — Arvion UK"
+            placeholder="Type your instruction for the CPXO agent…"
             readOnly={seq !== "idle"}
-            rows={3}
+            rows={4}
             className="s2-body"
             style={{
               width: "100%", fontSize: 13, lineHeight: 1.6,
