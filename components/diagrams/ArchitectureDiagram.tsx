@@ -177,26 +177,32 @@ export default function ArchitectureDiagram() {
       <text x={CX} y={L0y - 6} textAnchor="middle" fontSize={9} fill="#000000" fontWeight={500} letterSpacing={1}>
         USE CASE SCOPE
       </text>
-      <Box x={xs3[0]} y={L0y} w={bw3} h={L0h}
+      <Box x={xs4[0]} y={L0y} w={bw4} h={L0h}
         fill="#E6F4F5" stroke="#028090"
         label="Silent delivery delay" sub="Phase 1 · LIVE"
         labelColor="#085040" subColor="#028090"
         tooltip="UC1 — Silent Delivery Delay Detection — Phase 1 LIVE — this is what we are building"
       />
-      <rect x={xs3[0] + bw3 - 40} y={L0y + 4} width={36} height={14} rx={3} fill="#028090" />
-      <text x={xs3[0] + bw3 - 22} y={L0y + 14} textAnchor="middle" fontSize={9} fontWeight={700} fill="#fff">LIVE</text>
+      <rect x={xs4[0] + bw4 - 38} y={L0y + 4} width={34} height={14} rx={3} fill="#028090" />
+      <text x={xs4[0] + bw4 - 21} y={L0y + 14} textAnchor="middle" fontSize={9} fontWeight={700} fill="#fff">LIVE</text>
 
-      <Box x={xs3[1]} y={L0y} w={bw3} h={L0h}
+      <Box x={xs4[1]} y={L0y} w={bw4} h={L0h}
         fill="#F8FAFC" stroke="#F0F4F5" strokeDash="5 3"
-        label="NHS Workaround" sub="Future demo · not built"
-        labelColor="#000000" subColor="#F0F4F5"
+        label="NHS Workaround" sub="Coming soon"
+        labelColor="#94A3B8" subColor="#CBD5E1"
         tooltip="UC2 — NHS Workaround Quantification — future demo, not yet built"
       />
-      <Box x={xs3[2]} y={L0y} w={600 - xs3[2]} h={L0h}
+      <Box x={xs4[2]} y={L0y} w={bw4} h={L0h}
         fill="#F8FAFC" stroke="#F0F4F5" strokeDash="5 3"
-        label="Proactive intervention" sub="Future demo · not built"
-        labelColor="#000000" subColor="#F0F4F5"
-        tooltip="UC3 — Proactive Intervention and Attribution Model — future demo, not yet built"
+        label="Proactive Intervention" sub="Coming soon"
+        labelColor="#94A3B8" subColor="#CBD5E1"
+        tooltip="UC3 — Proactive Intervention — future demo, not yet built"
+      />
+      <Box x={xs4[3]} y={L0y} w={600 - xs4[3]} h={L0h}
+        fill="#F8FAFC" stroke="#F0F4F5" strokeDash="5 3"
+        label="Attribution Model" sub="Coming soon"
+        labelColor="#94A3B8" subColor="#CBD5E1"
+        tooltip="UC4 — Attribution Model — future demo, not yet built"
       />
 
       <Arrow x={CX} y1={L0b} y2={L1y} />

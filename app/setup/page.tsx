@@ -50,8 +50,16 @@ const USE_CASES = [
   },
   {
     id: "proactive-intervention",
-    name: "Proactive Intervention and Attribution Model",
-    desc: "Predict delivery risk before failure occurs and attribute intervention outcomes back to specific supply chain decisions.",
+    name: "Proactive Intervention",
+    desc: "Predict delivery risk before failure occurs and trigger proactive actions before the NHS supply chain absorbs the disruption.",
+    agents: [],
+    badge: { label: "Coming soon", color: "#64748B", bg: "#F4F7FA" },
+    Icon: RefreshCw, iconColor: "#94A3B8", disabled: true,
+  },
+  {
+    id: "attribution-model",
+    name: "Attribution Model",
+    desc: "Attribute intervention outcomes back to specific supply chain decisions — measure what worked, what didn't, and why.",
     agents: [],
     badge: { label: "Coming soon", color: "#64748B", bg: "#F4F7FA" },
     Icon: RefreshCw, iconColor: "#94A3B8", disabled: true,

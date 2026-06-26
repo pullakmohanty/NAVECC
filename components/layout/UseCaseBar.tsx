@@ -87,7 +87,35 @@ export default function UseCaseBar() {
         }}
       >
         <span style={{ fontSize: 12, fontWeight: 400, color: "#000000" }}>
-          Proactive Intervention and Attribution Model
+          Proactive Intervention
+        </span>
+        <span
+          style={{
+            fontSize: 10,
+            fontWeight: 500,
+            color: "#000000",
+            backgroundColor: "#F4F7FA",
+            borderRadius: 4,
+            padding: "1px 6px",
+          }}
+        >
+          Coming soon
+        </span>
+      </div>
+
+      {/* UC4 — Coming soon */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          border: "1.5px dashed #F0F4F5",
+          borderRadius: 6,
+          padding: "3px 10px",
+        }}
+      >
+        <span style={{ fontSize: 12, fontWeight: 400, color: "#000000" }}>
+          Attribution Model
         </span>
         <span
           style={{
