@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   Brain, Truck, HeartPulse, Shield, Bell,
   Radar, Package, RefreshCw,
-  Check, Play,
+  Check, Play, Plus, Bot, X,
 } from "lucide-react";
 
 // ── CSS ───────────────────────────────────────────────────────────────────────
@@ -288,6 +288,22 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
   ]);
   const logRef = useRef<HTMLDivElement>(null);
 
+  // Custom agents
+  const [customAgents, setCustomAgents] = useState<{ name: string; role: string }[]>([]);
+  const [showAddForm,  setShowAddForm]  = useState(false);
+  const [newName,      setNewName]      = useState("");
+  const [newRole,      setNewRole]      = useState("");
+
+  function addCustomAgent() {
+    const n = newName.trim();
+    const r = newRole.trim();
+    if (!n) return;
+    setCustomAgents(p => [...p, { name: n, role: r || "Custom agent" }]);
+    setNewName("");
+    setNewRole("");
+    setShowAddForm(false);
+  }
+
   useEffect(() => {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [logs]);
@@ -496,6 +512,93 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
             />
           </div>
         ))}
+
+        {/* Custom agents */}
+        {customAgents.map((ca, i) => (
+          <div key={`custom-${i}`} style={{ gridColumn: "1 / -1", backgroundColor: "#FFFFFF" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px" }}>
+              <div style={{ width: 32, height: 32, borderRadius: 7, backgroundColor: "#F4F7FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Bot size={16} color="#64748B" />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>{ca.name}</div>
+                <div className="s2-muted" style={{ fontSize: 11.5 }}>{ca.role}</div>
+              </div>
+              <span className="s2-muted" style={{ fontSize: 10, padding: "2px 8px", borderRadius: 10, backgroundColor: "#F4F7FA" }}>Custom</span>
+              <Toggle on={false} />
+              <button
+                onClick={() => setCustomAgents(p => p.filter((_, j) => j !== i))}
+                style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 6px", display: "flex", alignItems: "center" }}
+              >
+                <X size={13} color="#94A3B8" />
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {/* Add custom agent row */}
+        <div style={{ gridColumn: "1 / -1", backgroundColor: "#FFFFFF" }}>
+          {!showAddForm ? (
+            <button
+              onClick={() => setShowAddForm(true)}
+              style={{
+                width: "100%", display: "flex", alignItems: "center", gap: 8,
+                padding: "13px 14px", background: "none", border: "none",
+                borderTop: customAgents.length > 0 ? "none" : "none",
+                cursor: "pointer",
+              }}
+            >
+              <div style={{ width: 32, height: 32, borderRadius: 7, border: "1.5px dashed #CBD5E1", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Plus size={15} color="#94A3B8" />
+              </div>
+              <span className="s2-muted" style={{ fontSize: 13 }}>Add custom agent</span>
+            </button>
+          ) : (
+            <div style={{ padding: "13px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
+              <div className="s2-muted s2-up" style={{ fontSize: 10, fontWeight: 600 }}>New custom agent</div>
+              <div style={{ display: "flex", gap: 8, alignItems: "flex-end" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
+                  <span className="s2-muted" style={{ fontSize: 11 }}>Agent name</span>
+                  <input
+                    autoFocus
+                    type="text"
+                    value={newName}
+                    onChange={e => setNewName(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") addCustomAgent(); if (e.key === "Escape") setShowAddForm(false); }}
+                    placeholder="e.g. Inventory Agent"
+                    className="s2-body"
+                    style={{ fontSize: 13, border: "1px solid #028090", borderRadius: 6, padding: "7px 10px", backgroundColor: "#FFFFFF", width: "100%" }}
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
+                  <span className="s2-muted" style={{ fontSize: 11 }}>Role</span>
+                  <input
+                    type="text"
+                    value={newRole}
+                    onChange={e => setNewRole(e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter") addCustomAgent(); if (e.key === "Escape") setShowAddForm(false); }}
+                    placeholder="e.g. Stock level monitoring"
+                    className="s2-body"
+                    style={{ fontSize: 13, border: "1px solid #E2E8F0", borderRadius: 6, padding: "7px 10px", backgroundColor: "#FFFFFF", width: "100%" }}
+                  />
+                </div>
+                <button
+                  onClick={addCustomAgent}
+                  className="s2-white"
+                  style={{ fontSize: 12, fontWeight: 500, backgroundColor: "#0D1B3E", border: "none", borderRadius: 6, padding: "8px 14px", cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}
+                >
+                  Add agent
+                </button>
+                <button
+                  onClick={() => { setShowAddForm(false); setNewName(""); setNewRole(""); }}
+                  style={{ background: "none", border: "none", cursor: "pointer", padding: "8px 4px", flexShrink: 0 }}
+                >
+                  <X size={15} color="#94A3B8" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* ── Live log ── */}
