@@ -59,7 +59,7 @@ export default function UseCaseBar() {
         }}
       >
         <span style={{ fontSize: 12, fontWeight: 400, color: "#000000" }}>
-          Regular prescription delivery
+          NHS Workaround Quantification
         </span>
         <span
           style={{
@@ -87,7 +87,7 @@ export default function UseCaseBar() {
         }}
       >
         <span style={{ fontSize: 12, fontWeight: 400, color: "#000000" }}>
-          Prescription refill management
+          Proactive Intervention and Attribution Model
         </span>
         <span
           style={{
