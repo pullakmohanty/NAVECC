@@ -755,7 +755,7 @@ export default function SetupPage() {
 
   const handleLaunch = () => {
     setLaunching(true);
-    setTimeout(() => router.push("/how-it-works"), 1200);
+    setTimeout(() => router.push("/incidents"), 1500);
   };
 
   return (
@@ -763,9 +763,9 @@ export default function SetupPage() {
       <style>{CSS}</style>
       <div style={{ minHeight: "100vh", backgroundColor: "#F4F7FA", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
         {launching ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 14, backgroundColor: "#F0FDF4", border: "1.5px solid #BBF7D0", borderRadius: 14, padding: "22px 36px", animation: "fadeIn 0.3s ease" }}>
-            <Check size={22} color="#028090" strokeWidth={2.5} />
-            <span style={{ fontSize: 16, fontWeight: 500 }}>Agent stack launched · CPXO agent is now active</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, backgroundColor: "#EAF3DE", border: "0.5px solid #C0DD97", borderRadius: 14, padding: "22px 36px", animation: "fadeIn 0.3s ease" }}>
+            <Check size={22} color="#2D9E6A" strokeWidth={2.5} />
+            <span style={{ fontSize: 16, fontWeight: 500, color: "#000000" }}>✓ Agent stack launched · CPXO agent active · 9 exceptions now being monitored</span>
           </div>
         ) : (
           <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 12, padding: 28, width: "100%", maxWidth: 820 }}>
