@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import type { Incident, AuditEntry } from "@/data/mockData";
+import { pendingApprovals } from "@/data/mockData";
 import DataSourceCard from "@/components/ui/DataSourceCard";
 import AuditRow from "@/components/ui/AuditRow";
 import { UrgencyDot } from "@/components/ui/UrgencyDot";
@@ -112,6 +113,7 @@ export default function IncidentDetailPage() {
 
   if (!incident) return null;
 
+  const hasPendingApproval = pendingApprovals.some(a => a.incidentId === id);
 
   return (
     <div style={{
@@ -325,8 +327,8 @@ export default function IncidentDetailPage() {
 
       </div>
 
-      {/* ══ RIGHT — Case review panel ══════════════════════════════════════════ */}
-      <div style={{
+      {/* ══ RIGHT — Case review panel (only for incidents with pending approval) */}
+      {hasPendingApproval && <div style={{
         width: 272, flexShrink: 0,
         backgroundColor: "#FFFFFF",
         border: "1px solid #F0F4F5",
@@ -475,7 +477,7 @@ export default function IncidentDetailPage() {
             </>
           )}
         </div>
-      </div>
+      </div>}
 
     </div>
   );
