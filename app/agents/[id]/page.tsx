@@ -22,7 +22,6 @@ export default function AgentDetailPage() {
   const id            = (params?.id as string) ?? "";
   const profile = agentProfiles[id];
 
-  const [active, setActive] = useState(true);
   const [config, setConfig] = useState<Record<string, string>>(
     Object.fromEntries((profile?.configuration ?? []).map(f => [f.label, f.value]))
   );
@@ -101,20 +100,6 @@ export default function AgentDetailPage() {
             </div>
           </div>
 
-          {/* Activate / Deactivate */}
-          <button
-            onClick={() => setActive(a => !a)}
-            style={{
-              fontSize: 13, fontWeight: 500,
-              backgroundColor: active ? "#F1F5F9" : "#005EB8",
-              color: active ? "#334155" : "#FFFFFF",
-              border: active ? "0.5px solid #E2E8F0" : "none",
-              borderRadius: 8, padding: "8px 16px",
-              cursor: "pointer", flexShrink: 0,
-            }}
-          >
-            {active ? "Deactivate agent" : "Activate agent"}
-          </button>
         </div>
       </div>
 
