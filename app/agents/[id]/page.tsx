@@ -41,7 +41,7 @@ export default function AgentDetailPage() {
 
   function handleSave() {
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    // config is stored in state — persists for the session
   }
 
   return (
@@ -212,12 +212,12 @@ export default function AgentDetailPage() {
               style={{
                 fontSize: 13, fontWeight: 500,
                 backgroundColor: "transparent",
-                color: saved ? "#2D9E6A" : "#028090",
-                border: `1px solid ${saved ? "#2D9E6A" : "#028090"}`, borderRadius: 7, padding: "8px 16px",
-                cursor: "pointer", transition: "background-color 0.2s",
+                color: "#028090",
+                border: "1px solid #028090", borderRadius: 7, padding: "8px 16px",
+                cursor: "pointer",
               }}
             >
-              {saved ? "Saved" : "Save configuration"}
+              Save configuration
             </button>
           </div>
 
