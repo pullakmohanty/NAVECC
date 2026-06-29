@@ -241,8 +241,8 @@ function SubAgentCard({ agent, status, toggle, onEdit }: {
           <agent.Icon size={16} color={agent.color} />
         </div>
 
-        {/* Name + role — clickable only when active */}
-        <div style={{ flex: 1, minWidth: 0, cursor: active ? "pointer" : "default" }} onClick={active ? onEdit : undefined}>
+        {/* Name + role — clickable */}
+        <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={onEdit}>
           <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>{agent.label}</div>
           <div className="s2-muted" style={{ fontSize: 11.5 }}>{agent.role}</div>
         </div>
@@ -264,13 +264,11 @@ function SubAgentCard({ agent, status, toggle, onEdit }: {
 
         {/* Edit */}
         <button
-          onClick={active ? onEdit : undefined}
+          onClick={onEdit}
           className="s2-teal"
           style={{
             fontSize: 12, backgroundColor: "transparent", border: "none",
-            cursor: active ? "pointer" : "default",
-            opacity: active ? 1 : 0,
-            padding: "4px 6px", flexShrink: 0,
+            cursor: "pointer", padding: "4px 6px", flexShrink: 0,
           }}
         >
           Edit
