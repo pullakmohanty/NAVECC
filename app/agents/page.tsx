@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Brain, Truck, HeartPulse, Shield, Bell } from "lucide-react";
 import type { Agent } from "@/data/mockData";
 import type { ElementType } from "react";
+import { AgentModal } from "@/components/ui/AgentModal";
 
 // ── CSS animations ────────────────────────────────────────────────────────────
 
@@ -137,10 +138,11 @@ const logColor: Record<LogEntry["type"], string> = {
 // ── Agent card ────────────────────────────────────────────────────────────────
 
 function AgentCard({
-  agent, flashing, toolCalls, callIdx,
+  agent, flashing, toolCalls, callIdx, onOpenModal,
 }: {
   agent: Agent; flashing: boolean;
   toolCalls: ToolCall[]; callIdx: number;
+  onOpenModal: () => void;
 }) {
   const isAlert  = agent.status === "ALERT";
   const dotColor = isAlert ? "#005EB8" : "#028090";
@@ -166,7 +168,7 @@ function AgentCard({
 
         {/* Row 1: icon + name/role + status */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={onOpenModal}>
             <Icon size={18} color={agent.color} style={{ flexShrink: 0 }} />
             <div>
               <span style={{ fontSize: 14, fontWeight: 600, color: "#005EB8", display: "block", lineHeight: 1.2 }}>{agent.name}</span>
@@ -223,6 +225,7 @@ function AgentCard({
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AgentsPage() {
+  const [openAgent,   setOpenAgent]   = useState<string | null>(null);
   const [liveAgents,  setLiveAgents]  = useState<Agent[]>([]);
   const [liveSignals, setLiveSignals] = useState<Array<{ id: string; name: string; type: string; lastPing: string; status: string }>>([]);
   const [signalAges,  setSignalAges]  = useState<Record<string, number>>(INITIAL_AGES);
@@ -364,7 +367,7 @@ export default function AgentsPage() {
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
               <Brain size={20} color="#005EB8" style={{ flexShrink: 0 }} />
-              <div>
+              <div style={{ cursor: "pointer" }} onClick={() => setOpenAgent("cpxo")}>
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: "#000000", margin: 0, lineHeight: 1.2 }}>{cpxo.name}</h2>
                 <span style={{ fontSize: 11, color: "#000000" }}>{cpxo.role} · never executes directly</span>
               </div>
@@ -397,6 +400,7 @@ export default function AgentsPage() {
                 flashing={agentFlash}
                 toolCalls={TOOL_CALLS[agent.id] ?? []}
                 callIdx={toolCallIdx[agent.id] ?? 0}
+                onOpenModal={() => setOpenAgent(agent.id)}
               />
             ))}
           </div>
@@ -493,6 +497,8 @@ export default function AgentsPage() {
         </div>
 
       </div>
+
+      <AgentModal agentId={openAgent} onClose={() => setOpenAgent(null)} />
     </>
   );
 }
