@@ -289,18 +289,26 @@ const SETUP_AGENT_ROUTES: Record<string, string> = {
 
 function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
   const router = useRouter();
-  const [seq,        setSeq]        = useState<SeqState>("idle");
-  const [cpxoPhase,  setCpxoPhase]  = useState<CPXOPhase>("Configuring");
+  const wasActivated = (() => { try { return localStorage.getItem("navecc_seq_done") === "1"; } catch { return false; } })();
+
+  const [seq,        setSeq]        = useState<SeqState>(wasActivated ? "done" : "idle");
+  const [cpxoPhase,  setCpxoPhase]  = useState<CPXOPhase>(wasActivated ? "Active — orchestrating" : "Configuring");
   const [instruction,setInstruction]= useState("Monitor all active UK homecare deliveries for Ultomiris, Soliris, and Strensiq. Detect silent delivery delays before NHS staff absorb them. Flag exceptions at 4-hour SLA breach. Trigger MHRA pharmacovigilance flag at 6 hours for PNH patients.");
-  const [instrSrc,   setInstrSrc]   = useState("Awaiting human input…");
-  const [statuses,   setStatuses]   = useState<Record<AgentId, AgentStatus>>({
-    delivery: "locked", clinical: "locked", compliance: "locked", engagement: "locked",
-  });
-  const [toggles, setToggles] = useState<Record<AgentId, boolean>>({
-    delivery: false, clinical: false, compliance: false, engagement: false,
-  });
+  const [instrSrc,   setInstrSrc]   = useState(wasActivated ? "activated" : "Awaiting human input…");
+  const [statuses,   setStatuses]   = useState<Record<AgentId, AgentStatus>>(
+    wasActivated
+      ? { delivery: "active", clinical: "active", compliance: "active", engagement: "active" }
+      : { delivery: "locked", clinical: "locked", compliance: "locked", engagement: "locked" }
+  );
+  const [toggles, setToggles] = useState<Record<AgentId, boolean>>(
+    wasActivated
+      ? { delivery: true, clinical: true, compliance: true, engagement: true }
+      : { delivery: false, clinical: false, compliance: false, engagement: false }
+  );
   const [logs, setLogs] = useState<LogEntry[]>([
-    { time: nowTs(), dot: "gray", text: "Waiting for human instruction…" },
+    wasActivated
+      ? { time: nowTs(), dot: "teal", text: "All agents online. Pipeline active — ready to launch." }
+      : { time: nowTs(), dot: "gray", text: "Waiting for human instruction…" },
   ]);
   const logRef = useRef<HTMLDivElement>(null);
 
@@ -365,6 +373,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
     // Done
     t(11800, () => {
       setSeq("done");
+      try { localStorage.setItem("navecc_seq_done", "1"); } catch {}
       addLog("gray", "All agents online. Pipeline active — ready to launch.");
     });
   }
