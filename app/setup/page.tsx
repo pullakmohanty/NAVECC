@@ -389,7 +389,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
         >
           {seq === "done"
             ? <><Check size={14} strokeWidth={2.5} color="#FFFFFF" />Pipeline active</>
-            : <><Play  size={14} fill="#FFFFFF" strokeWidth={0}   color="#FFFFFF" />Run sequence</>
+            : <><Play  size={14} fill="#FFFFFF" strokeWidth={0}   color="#FFFFFF" />Activate agents →</>
           }
         </button>
       </div>
