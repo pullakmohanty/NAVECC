@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Brain, Truck, HeartPulse, Shield, Bell } from "lucide-react";
 import type { Agent } from "@/data/mockData";
 import type { ElementType } from "react";
-import { AgentModal } from "@/components/ui/AgentModal";
 
 // ── CSS animations ────────────────────────────────────────────────────────────
 
@@ -225,7 +225,7 @@ function AgentCard({
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AgentsPage() {
-  const [openAgent,   setOpenAgent]   = useState<string | null>(null);
+  const router = useRouter();
   const [liveAgents,  setLiveAgents]  = useState<Agent[]>([]);
   const [liveSignals, setLiveSignals] = useState<Array<{ id: string; name: string; type: string; lastPing: string; status: string }>>([]);
   const [signalAges,  setSignalAges]  = useState<Record<string, number>>(INITIAL_AGES);
@@ -367,7 +367,7 @@ export default function AgentsPage() {
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
               <Brain size={20} color="#005EB8" style={{ flexShrink: 0 }} />
-              <div style={{ cursor: "pointer" }} onClick={() => setOpenAgent("cpxo")}>
+              <div style={{ cursor: "pointer" }} onClick={() => router.push("/agents/cpxo")}>
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: "#000000", margin: 0, lineHeight: 1.2 }}>{cpxo.name}</h2>
                 <span style={{ fontSize: 11, color: "#000000" }}>{cpxo.role} · never executes directly</span>
               </div>
@@ -400,7 +400,7 @@ export default function AgentsPage() {
                 flashing={agentFlash}
                 toolCalls={TOOL_CALLS[agent.id] ?? []}
                 callIdx={toolCallIdx[agent.id] ?? 0}
-                onOpenModal={() => setOpenAgent(agent.id)}
+                onOpenModal={() => router.push(`/agents/${agent.id}`)}
               />
             ))}
           </div>
@@ -498,7 +498,6 @@ export default function AgentsPage() {
 
       </div>
 
-      <AgentModal agentId={openAgent} onClose={() => setOpenAgent(null)} />
     </>
   );
 }

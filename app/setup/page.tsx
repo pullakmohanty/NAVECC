@@ -7,7 +7,6 @@ import {
   Radar, Package, RefreshCw,
   Check, Play, Plus, Bot, X,
 } from "lucide-react";
-import { AgentModal } from "@/components/ui/AgentModal";
 
 // ── CSS ───────────────────────────────────────────────────────────────────────
 
@@ -281,8 +280,15 @@ function SubAgentCard({ agent, status, toggle, onEdit }: {
 
 // ── Step 2 ────────────────────────────────────────────────────────────────────
 
+const SETUP_AGENT_ROUTES: Record<string, string> = {
+  delivery:   "delivery-ops",
+  clinical:   "clinical-risk",
+  compliance: "compliance",
+  engagement: "engagement",
+};
+
 function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
-  const [openAgent,  setOpenAgent]  = useState<string | null>(null);
+  const router = useRouter();
   const [seq,        setSeq]        = useState<SeqState>("idle");
   const [cpxoPhase,  setCpxoPhase]  = useState<CPXOPhase>("Configuring");
   const [instruction,setInstruction]= useState("Monitor all active UK homecare deliveries for Ultomiris, Soliris, and Strensiq. Detect silent delivery delays before NHS staff absorb them. Flag exceptions at 4-hour SLA breach. Trigger MHRA pharmacovigilance flag at 6 hours for PNH patients.");
@@ -404,7 +410,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
           <div style={{ width: 32, height: 32, borderRadius: 7, backgroundColor: "#EEEAF8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <Brain size={16} color="#3B3486" />
           </div>
-          <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={() => setOpenAgent("cpxo")}>
+          <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={() => router.push("/agents/cpxo")}>
             <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>CPXO Agent</div>
             <div className="s2-muted" style={{ fontSize: 11.5 }}>Chief Patient Experience Officer</div>
           </div>
@@ -495,7 +501,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
             agent={agent}
             status={statuses[agent.id as AgentId]}
             toggle={toggles[agent.id as AgentId]}
-            onEdit={() => setOpenAgent(agent.id)}
+            onEdit={() => router.push(`/agents/${SETUP_AGENT_ROUTES[agent.id] ?? agent.id}`)}
           />
         ))}
         {SUB_AGENTS.filter(a => a.fullWidth).map(agent => (
@@ -504,7 +510,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
               agent={agent}
               status={statuses[agent.id as AgentId]}
               toggle={toggles[agent.id as AgentId]}
-              onEdit={() => setOpenAgent(agent.id)}
+              onEdit={() => router.push(`/agents/${SETUP_AGENT_ROUTES[agent.id] ?? agent.id}`)}
             />
           </div>
         ))}
@@ -621,7 +627,6 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
 
       <StepFooter onBack={onBack} nextLabel="Next — review and launch →" onNext={onNext} />
 
-      <AgentModal agentId={openAgent} onClose={() => setOpenAgent(null)} />
     </div>
   );
 }
