@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   Brain,
   Pill, Folder,
@@ -421,6 +422,7 @@ function ChatPopup({ onClose }: { onClose: () => void }) {
 
 // ─── Page ──────────────────────────────────────────────────────────────────
 export default function DashboardPage() {
+  const router          = useRouter();
   const [chatOpen,      setChatOpen]      = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [incidents,     setIncidents]     = useState<Incident[]>([]);
@@ -701,7 +703,10 @@ export default function DashboardPage() {
                       <div style={{fontSize:9.5,color:"#999",lineHeight:1.45,marginBottom:7}}>{action.detail}</div>
                       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                         <span style={{fontSize:9,color:"#bbb",background:"#F4F7FA",border:"0.5px solid #e8e8e8",padding:"2px 7px",borderRadius:8}}>⏱ {action.timeRemaining}</span>
-                        <button style={{fontSize:10,fontWeight:600,color:"#028090",background:"transparent",border:"1px solid #028090",borderRadius:4,padding:"2px 9px",cursor:"pointer"}}>Review →</button>
+                        <button
+                          onClick={() => router.push(`/root-cause?tab=case-review&incident=${action.incidentId}`)}
+                          style={{fontSize:10,fontWeight:600,color:"#028090",background:"transparent",border:"1px solid #028090",borderRadius:4,padding:"2px 9px",cursor:"pointer"}}
+                        >Review →</button>
                       </div>
                     </div>
                   );

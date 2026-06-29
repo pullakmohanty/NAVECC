@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   PieChart, Pie, Cell, Tooltip, Label,
   BarChart, Bar, XAxis, YAxis, LabelList, ResponsiveContainer,
@@ -361,10 +361,16 @@ function Tab({ label, badge, active, onClick }: { label: string; badge?: number;
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-export default function RootCausePage() {
-  const router = useRouter();
+function RootCausePageInner() {
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam      = searchParams.get("tab");
+  const incidentParam = searchParams.get("incident");
+
   const [pendingApprovals, setPendingApprovals] = useState<Approval[]>([]);
-  const [activeTab,     setActiveTab]     = useState<"analysis" | "review">("analysis");
+  const [activeTab,     setActiveTab]     = useState<"analysis" | "review">(
+    tabParam === "case-review" ? "review" : "analysis"
+  );
   const [activeDrug,    setActiveDrug]    = useState("All drugs");
   const [activePathway, setActivePathway] = useState("All");
 
@@ -379,7 +385,14 @@ export default function RootCausePage() {
   const [reviewedCases,     setReviewedCases]     = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    fetch("/api/approvals").then(r => r.json()).then(setPendingApprovals);
+    fetch("/api/approvals").then(r => r.json()).then((data: Approval[]) => {
+      setPendingApprovals(data);
+      if (incidentParam) {
+        const match = data.find((a) => a.incidentId === incidentParam);
+        if (match) selectCase(match.id);
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Fetch incident when case review tab is active or selected case changes
@@ -784,5 +797,13 @@ export default function RootCausePage() {
       )}
 
     </div>
+  );
+}
+
+export default function RootCausePage() {
+  return (
+    <Suspense fallback={<div style={{ padding: 24, fontSize: 13, color: "#64748B" }}>Loading…</div>}>
+      <RootCausePageInner />
+    </Suspense>
   );
 }
