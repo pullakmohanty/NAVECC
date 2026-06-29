@@ -118,11 +118,8 @@ export default function AgentDetailPage() {
         </div>
       </div>
 
-      {/* Two-column body */}
-      <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
-
-        {/* ── Left column ── */}
-        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* Body */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
           {/* Overview */}
           <div style={{ backgroundColor: "#FFFFFF", border: "0.5px solid #E2E8F0", borderRadius: 10, padding: "20px 24px" }}>
@@ -224,73 +221,6 @@ export default function AgentDetailPage() {
             </button>
           </div>
 
-        </div>
-
-        {/* ── Right column (300px) ── */}
-        <div style={{ width: 300, flexShrink: 0, display: "flex", flexDirection: "column", gap: 14 }}>
-
-          {/* Current Task */}
-          <div style={{ backgroundColor: "#FFFFFF", border: "0.5px solid #E2E8F0", borderRadius: 10, padding: "18px 20px" }}>
-            <span style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", color: "#64748B", display: "block", marginBottom: 12 }}>
-              Current Task
-            </span>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 10 }}>
-              <span style={{
-                width: 7, height: 7, borderRadius: "50%", flexShrink: 0, marginTop: 5,
-                backgroundColor: isAlert ? "#E05C5C" : "#028090",
-                display: "inline-block",
-              }} />
-              <p style={{ fontSize: 13, color: "#334155", fontStyle: "italic", margin: 0, lineHeight: 1.6 }}>
-                {profile.currentTask}
-              </p>
-            </div>
-            <span style={{ fontSize: 11, color: "#64748B" }}>Last heartbeat: 1 min ago</span>
-          </div>
-
-          {/* Common Use Cases */}
-          <div style={{ backgroundColor: "#FFFFFF", border: "0.5px solid #E2E8F0", borderRadius: 10, padding: "18px 20px" }}>
-            <span style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", color: "#64748B", display: "block", marginBottom: 12 }}>
-              Common Use Cases
-            </span>
-            <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
-              {profile.useCases.map((uc, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                  <span style={{ fontSize: 13, color: "#005EB8", flexShrink: 0, lineHeight: 1.5 }}>→</span>
-                  <span style={{ fontSize: 12, color: "#334155", lineHeight: 1.5 }}>{uc}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Related Agents */}
-          <div style={{ backgroundColor: "#FFFFFF", border: "0.5px solid #E2E8F0", borderRadius: 10, padding: "18px 20px" }}>
-            <span style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", color: "#64748B", display: "block", marginBottom: 12 }}>
-              Related Agents
-            </span>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {profile.relatedAgents.map(ra => {
-                const RaIcon = AGENT_ICONS[ra.id] ?? Brain;
-                const raProfile = agentProfiles[ra.id];
-                return (
-                  <div key={ra.id} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <div style={{
-                      width: 28, height: 28, borderRadius: 6, flexShrink: 0,
-                      backgroundColor: (raProfile?.color ?? "#64748B") + "1A",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      <RaIcon size={14} color={raProfile?.color ?? "#64748B"} />
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 500, color: "#0D1B3E" }}>{ra.name}</div>
-                      <div style={{ fontSize: 11, color: "#64748B" }}>{ra.desc}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-        </div>
       </div>
     </div>
   );
