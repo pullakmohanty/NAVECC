@@ -439,11 +439,6 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
               cursor: seq !== "idle" ? "default" : "text",
             }}
           />
-          {seq === "idle" && (
-            <p className="s2-muted" style={{ fontSize: 11, margin: "5px 0 0 0" }}>
-              This instruction is sent to CPXO when you click <strong>Run sequence</strong>.
-            </p>
-          )}
         </div>
 
         {/* Config panel — read-only fields */}
