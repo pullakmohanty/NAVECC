@@ -9,7 +9,7 @@ import {
 
 const navLinks = [
   { href: "/",                      label: "Dashboard",     icon: LayoutDashboard },
-  { href: "/incidents/INC-00934",   label: "Incidents",     icon: AlertCircle     },
+  { href: "/incidents",              label: "Incidents",     icon: AlertCircle     },
   { href: "/root-cause",            label: "Root Cause",    icon: PieChart        },
   { href: "/audit-log",             label: "Audit Log",     icon: FileText        },
   { href: "/agents",                label: "Agent Monitor", icon: Bot             },
@@ -22,7 +22,7 @@ export default function Sidebar() {
 
   function isActive(href: string) {
     if (href === "/") return pathname === "/";
-    const base = href.startsWith("/incidents/") ? "/incidents" : href;
+    const base = href;
     return pathname.startsWith(base);
   }
 
