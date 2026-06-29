@@ -78,7 +78,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <div style={{ fontSize: 11, color: "#000000", textAlign: "center", marginTop: 20 }}>
-          Arvion Biosciences · UK Homecare Operations
+          Arvion Biosciences UK
         </div>
       </div>
     </div>

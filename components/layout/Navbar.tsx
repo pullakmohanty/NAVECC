@@ -44,7 +44,7 @@ export default function Navbar() {
             fontWeight: 400,
           }}
         >
-          Arvion Biosciences · UK Homecare Operations
+          Arvion Biosciences UK
         </span>
       </div>
 

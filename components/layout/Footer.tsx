@@ -17,7 +17,7 @@ export default function Footer() {
       }}
     >
       <span style={{ fontSize: 11, color: "#000000" }}>
-        Arvion Biosciences · UK Homecare Operations · Data as of 25 Jun 2026 · 09:14
+        Arvion Biosciences UK · Data as of 25 Jun 2026 · 09:14
       </span>
     </footer>
   );
