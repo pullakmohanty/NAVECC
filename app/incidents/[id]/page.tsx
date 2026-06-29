@@ -64,6 +64,34 @@ export default function IncidentDetailPage() {
   const [auditEntries,  setAuditEntries]  = useState<AuditEntry[]>([]);
   const [hoveredId,     setHoveredId]     = useState<string | null>(null);
 
+  // Review panel state
+  const [reviewDecision,   setReviewDecision]   = useState("");
+  const [reviewRootCause,  setReviewRootCause]  = useState("accept");
+  const [reviewNotes,      setReviewNotes]      = useState("");
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewDone,       setReviewDone]       = useState(false);
+
+  // Reset review form when navigating to a different incident
+  useEffect(() => {
+    setReviewDecision("");
+    setReviewRootCause("accept");
+    setReviewNotes("");
+    setReviewDone(false);
+  }, [id]);
+
+  async function handleReviewSubmit(forcedDecision?: string) {
+    const decision = forcedDecision ?? reviewDecision;
+    if (!decision || !incident) return;
+    setReviewSubmitting(true);
+    await fetch("/api/review", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ incidentId: incident.id, decision, rootCause: reviewRootCause, evidence: "Accept", notes: reviewNotes }),
+    });
+    setReviewSubmitting(false);
+    setReviewDone(true);
+  }
+
   // Fetch incident list (for left panel)
   useEffect(() => {
     fetch("/api/incidents").then(r => r.json()).then(setAllIncidents);
@@ -295,6 +323,158 @@ export default function IncidentDetailPage() {
           ))}
         </div>
 
+      </div>
+
+      {/* ══ RIGHT — Case review panel ══════════════════════════════════════════ */}
+      <div style={{
+        width: 272, flexShrink: 0,
+        backgroundColor: "#FFFFFF",
+        border: "1px solid #F0F4F5",
+        borderRadius: 10, overflow: "hidden",
+        display: "flex", flexDirection: "column",
+      }}>
+        {/* Panel header */}
+        <div style={{
+          padding: "10px 14px", borderBottom: "1px solid #F0F4F5",
+          backgroundColor: "#F8FAFC", flexShrink: 0,
+        }}>
+          <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#000000" }}>
+            Case review
+          </span>
+        </div>
+
+        <div style={{ overflowY: "auto", flex: 1, padding: "14px" }}>
+
+          {/* Human governance note */}
+          <div style={{ borderTop: "1.5px dashed #E2E8F0", paddingTop: 10, marginBottom: 14 }}>
+            <span style={{ fontSize: 10, color: "#000000", lineHeight: 1.5 }}>
+              Human involvement — post-action only. Actions have already executed.
+            </span>
+          </div>
+
+          {/* Process stepper */}
+          <div style={{ marginBottom: 16 }}>
+            <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 10 }}>
+              Process status
+            </span>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              {[
+                { label: "Detected",     done: true  },
+                { label: "Classified",   done: true  },
+                { label: "Actioned",     done: true  },
+                { label: "Under Review", done: false, active: !reviewDone },
+                { label: "Closed",       done: reviewDone },
+              ].map((step, i, arr) => (
+                <React.Fragment key={i}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                    <div style={{
+                      width: 22, height: 22, borderRadius: "50%",
+                      backgroundColor: step.done || step.active ? "#028090" : "#F4F7FA",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 10, fontWeight: 700,
+                      color: step.done || step.active ? "#FFFFFF" : "#94A3B8",
+                    }}>
+                      {step.done ? "✓" : i + 1}
+                    </div>
+                    <span style={{ fontSize: 9, fontWeight: step.active ? 600 : 400, color: step.active ? "#028090" : step.done ? "#000000" : "#94A3B8", whiteSpace: "nowrap", textAlign: "center" }}>
+                      {step.label}
+                    </span>
+                  </div>
+                  {i < arr.length - 1 && (
+                    <div style={{ flex: 1, height: 2, backgroundColor: step.done ? "#028090" : "#F4F7FA", margin: "0 4px", marginBottom: 18 }} />
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          </div>
+
+          {/* Decision form or success */}
+          {reviewDone ? (
+            <div style={{ backgroundColor: "#F0FDF4", border: "0.5px solid #BBF7D0", borderRadius: 8, padding: "16px 14px", textAlign: "center" }}>
+              <div style={{ fontSize: 18, marginBottom: 6 }}>✓</div>
+              <p style={{ fontSize: 13, fontWeight: 600, color: "#028090", margin: "0 0 4px 0" }}>Review submitted</p>
+              <p style={{ fontSize: 11, color: "#000000", margin: 0, lineHeight: 1.5 }}>Appended to Reasoning Ledger for {incident?.id}.</p>
+            </div>
+          ) : (
+            <>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#005EB8", display: "block", marginBottom: 12 }}>
+                Post-action governance decision
+              </span>
+
+              {/* Your decision */}
+              <div style={{ marginBottom: 10 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 5 }}>
+                  Your decision
+                </span>
+                <select
+                  value={reviewDecision}
+                  onChange={e => setReviewDecision(e.target.value)}
+                  style={{ width: "100%", fontSize: 12, color: "#005EB8", backgroundColor: "#FAFBFC", border: "1px solid #F0F4F5", borderRadius: 6, padding: "6px 8px", outline: "none", cursor: "pointer" }}
+                >
+                  <option value="">Select decision…</option>
+                  <option value="approve">Approve automated action</option>
+                  <option value="escalate">Escalate to clinical team</option>
+                  <option value="override">Override — manual action taken</option>
+                </select>
+              </div>
+
+              {/* Root cause classification */}
+              <div style={{ marginBottom: 10 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 5 }}>
+                  Root cause classification
+                </span>
+                <select
+                  value={reviewRootCause}
+                  onChange={e => setReviewRootCause(e.target.value)}
+                  style={{ width: "100%", fontSize: 12, color: "#005EB8", backgroundColor: "#FAFBFC", border: "1px solid #F0F4F5", borderRadius: 6, padding: "6px 8px", outline: "none", cursor: "pointer" }}
+                >
+                  <option value="accept">Accept — {incident?.rootCause}</option>
+                  <option value="override">Override — different root cause</option>
+                </select>
+              </div>
+
+              {/* Review notes */}
+              <div style={{ marginBottom: 12 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 5 }}>
+                  Review notes
+                </span>
+                <textarea
+                  value={reviewNotes}
+                  onChange={e => setReviewNotes(e.target.value)}
+                  placeholder="Add governance notes, context, or follow-up actions…"
+                  rows={3}
+                  style={{ width: "100%", fontSize: 12, color: "#000000", backgroundColor: "#FAFBFC", border: "1px solid #F0F4F5", borderRadius: 6, padding: "7px 8px", outline: "none", resize: "vertical", fontFamily: "inherit", lineHeight: 1.5, boxSizing: "border-box" }}
+                />
+              </div>
+
+              {/* Buttons */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <button
+                  onClick={() => handleReviewSubmit()}
+                  disabled={!reviewDecision || reviewSubmitting}
+                  style={{ width: "100%", fontSize: 12, fontWeight: 600, color: !reviewDecision || reviewSubmitting ? "#94A3B8" : "#FFFFFF", backgroundColor: !reviewDecision || reviewSubmitting ? "#F0F4F5" : "#005EB8", border: "none", borderRadius: 6, padding: "8px 12px", cursor: !reviewDecision || reviewSubmitting ? "not-allowed" : "pointer" }}
+                >
+                  {reviewSubmitting ? "Submitting…" : "Approve & Close →"}
+                </button>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button
+                    onClick={() => { setReviewDecision("escalate"); handleReviewSubmit("escalate"); }}
+                    disabled={reviewSubmitting}
+                    style={{ flex: 1, fontSize: 11, fontWeight: 500, color: "#028090", backgroundColor: "transparent", border: "1px solid #028090", borderRadius: 6, padding: "7px 8px", cursor: "pointer" }}
+                  >
+                    Escalate
+                  </button>
+                  <button
+                    onClick={() => {}}
+                    style={{ flex: 1, fontSize: 11, fontWeight: 400, color: "#000000", backgroundColor: "transparent", border: "1px solid #F0F4F5", borderRadius: 6, padding: "7px 8px", cursor: "pointer" }}
+                  >
+                    Save Draft
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
     </div>
