@@ -213,7 +213,18 @@ export default function IncidentDetailPage() {
           </div>
         </div>
 
-        {/* ── SIGNAL CARDS — 3 columns, first thing you see ── */}
+        {/* ── EVENT SUMMARY ── */}
+        <div style={{
+          backgroundColor: "#F8FAFC", border: "1px solid #F0F4F5",
+          borderRadius: 8, padding: "14px 18px",
+        }}>
+          <SectionLabel>Event summary</SectionLabel>
+          <p style={{ fontSize: 13, fontStyle: "italic", color: "#000000", margin: 0, lineHeight: 1.65 }}>
+            &ldquo;{incident.eventSummary}&rdquo;
+          </p>
+        </div>
+
+        {/* ── SIGNAL CARDS — 3 columns ── */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
           {incident.dataSources.includes("COURIER") && (
             <DataSourceCard
@@ -258,17 +269,6 @@ export default function IncidentDetailPage() {
             <Field label="Patient complaint filed" value={incident.complaintFiled ? "Filed" : "None — patient was unaware"} />
             <Field label="Detected"              value={fmtDetected(incident.detectedAt)} />
           </div>
-        </div>
-
-        {/* ── EVENT SUMMARY ── */}
-        <div style={{
-          backgroundColor: "#F8FAFC", border: "1px solid #F0F4F5",
-          borderRadius: 8, padding: "14px 18px",
-        }}>
-          <SectionLabel>Event summary</SectionLabel>
-          <p style={{ fontSize: 13, fontStyle: "italic", color: "#000000", margin: 0, lineHeight: 1.65 }}>
-            &ldquo;{incident.eventSummary}&rdquo;
-          </p>
         </div>
 
         {/* ── NHS STAFF HOURS ── */}
