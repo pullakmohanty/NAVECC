@@ -463,17 +463,6 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
               <input type="text" defaultValue="Zero silent delivery failures" readOnly className="s2-body"
                 style={{ fontSize: 12, border: "0.5px solid #F0F4F5", borderRadius: 6, padding: "5px 10px", backgroundColor: "#FFFFFF", width: 260 }} />
             </div>
-
-            {/* Instruction source (read-only display — updates after sequence runs) */}
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span className="s2-muted" style={{ fontSize: 12, width: 150, flexShrink: 0 }}>Instruction source</span>
-              <span
-                className={instrSrc === "Awaiting human input…" ? "s2-gray s2-it" : "s2-teal"}
-                style={{ fontSize: 12, transition: "color 0.4s" }}
-              >
-                {instrSrc}
-              </span>
-            </div>
           </div>
 
           {/* Tools */}
