@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Brain, Truck, HeartPulse, Shield, Bell } from "lucide-react";
 import type { ElementType } from "react";
 import { agentProfiles } from "@/data/agentProfiles";
@@ -15,9 +15,11 @@ const AGENT_ICONS: Record<string, ElementType> = {
 };
 
 export default function AgentDetailPage() {
-  const params  = useParams();
-  const router  = useRouter();
-  const id      = (params?.id as string) ?? "";
+  const params        = useParams();
+  const router        = useRouter();
+  const searchParams  = useSearchParams();
+  const from          = searchParams.get("from");
+  const id            = (params?.id as string) ?? "";
   const profile = agentProfiles[id];
 
   const [active, setActive] = useState(true);
@@ -47,7 +49,11 @@ export default function AgentDetailPage() {
 
       {/* Back button */}
       <button
-        onClick={() => router.back()}
+        onClick={() => {
+          if (from === "setup") router.push("/setup?step=2");
+          else if (from === "agents") router.push("/agents");
+          else router.back();
+        }}
         style={{
           display: "inline-flex", alignItems: "center", gap: 6,
           background: "none", border: "none", cursor: "pointer",
@@ -55,7 +61,7 @@ export default function AgentDetailPage() {
         }}
       >
         <ArrowLeft size={14} color="#64748B" />
-        Back to agents
+        {from === "setup" ? "Back to agent setup" : from === "agents" ? "Back to agent monitor" : "Back"}
       </button>
 
       {/* Header card */}
