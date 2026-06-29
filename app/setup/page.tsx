@@ -755,7 +755,7 @@ export default function SetupPage() {
 
   const handleLaunch = () => {
     setLaunching(true);
-    setTimeout(() => router.push("/incidents"), 1500);
+    setTimeout(() => router.push("/incidents/INC-00934"), 1500);
   };
 
   return (
