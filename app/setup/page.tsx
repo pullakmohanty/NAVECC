@@ -769,7 +769,7 @@ export default function SetupPage() {
           </div>
         ) : (
           <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 12, padding: 28, width: "100%", maxWidth: 820 }}>
-            {currentStep === 1 && <Step1 selected={selectedUseCase} onSelect={setSelectedUseCase} onNext={() => setCurrentStep(2)} />}
+            {currentStep === 1 && <Step1 selected={selectedUseCase} onSelect={setSelectedUseCase} onNext={() => { try { localStorage.removeItem("navecc_seq_done"); } catch {} setCurrentStep(2); }} />}
             {currentStep === 2 && <Step2 onBack={() => setCurrentStep(1)} onNext={() => setCurrentStep(3)} />}
             {currentStep === 3 && <Step3 onBack={() => setCurrentStep(2)} onLaunch={handleLaunch} />}
           </div>
