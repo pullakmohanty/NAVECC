@@ -7,6 +7,7 @@ import {
   BarChart, Bar, XAxis, YAxis, LabelList, ResponsiveContainer,
 } from "recharts";
 import AuditRow from "@/components/ui/AuditRow";
+import { UrgencyDot } from "@/components/ui/UrgencyDot";
 import type { Incident, AuditEntry } from "@/data/mockData";
 import { severityStyles, dataSourceStyles, chartDefaults } from "@/lib/design-system";
 
@@ -260,8 +261,8 @@ function RcCard({ card, onNavigate }: { card: CardData; onNavigate: (id: string)
                   </span>
                   <span style={{ color: "#000000", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{inc.drug}</span>
                   <span style={{ color: "#000000", fontWeight: 600, flexShrink: 0 }}>{inc.delay}</span>
-                  <span style={{ fontSize: 11, fontWeight: 500, color: "#000000", flexShrink: 0 }}>
-                    {inc.severity}
+                  <span style={{ flexShrink: 0 }}>
+                    <UrgencyDot urgency={inc.severity as "CRITICAL" | "HIGH" | "MEDIUM" | "LOW"} />
                   </span>
                 </div>
               );
@@ -652,7 +653,7 @@ function RootCausePageInner() {
                 <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 10, padding: "12px 16px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 5 }}>
                     <span style={{ fontSize: 11, fontFamily: "var(--font-geist-mono), monospace", color: "#028090", fontWeight: 500 }}>{reviewIncident.id}</span>
-                    <span style={{ fontSize: 10, fontWeight: 600, color: (severityStyles[reviewIncident.severity] ?? severityStyles.MEDIUM).text, backgroundColor: (severityStyles[reviewIncident.severity] ?? severityStyles.MEDIUM).bg, border: `0.5px solid ${(severityStyles[reviewIncident.severity] ?? severityStyles.MEDIUM).border}`, padding: "2px 8px", borderRadius: 9999 }}>{reviewIncident.severity}</span>
+                    <UrgencyDot urgency={reviewIncident.severity as "CRITICAL" | "HIGH" | "MEDIUM" | "LOW"} />
                     <span style={{ fontSize: 10, color: "#000000" }}>·</span>
                     <span style={{ fontSize: 12, color: "#000000" }}>{reviewIncident.drug}</span>
                     <span style={{ fontSize: 10, color: "#000000" }}>·</span>

@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import type { Incident, AuditEntry } from "@/data/mockData";
 import DataSourceCard from "@/components/ui/DataSourceCard";
 import AuditRow from "@/components/ui/AuditRow";
+import { UrgencyDot } from "@/components/ui/UrgencyDot";
 import StaffHoursChart from "@/components/charts/StaffHoursChart";
 
 
@@ -148,8 +149,8 @@ export default function IncidentDetailPage() {
                     <span style={{ fontSize: 10, fontFamily: "var(--font-geist-mono), monospace", color: "#028090", fontWeight: 500 }}>
                       {inc.id}
                     </span>
-                    <span style={{ fontSize: 11, fontWeight: 500, color: "#000000", marginLeft: "auto" }}>
-                      {inc.severity}
+                    <span style={{ marginLeft: "auto" }}>
+                      <UrgencyDot urgency={inc.severity} />
                     </span>
                   </div>
                   {/* Drug */}
@@ -188,9 +189,7 @@ export default function IncidentDetailPage() {
             <span style={{ fontSize: 11, fontFamily: "var(--font-geist-mono), monospace", color: "#028090", fontWeight: 500 }}>
               {incident.id}
             </span>
-            <span style={{ fontSize: 11, fontWeight: 500, color: "#000000" }}>
-              {incident.severity}
-            </span>
+            <UrgencyDot urgency={incident.severity} />
             <span style={{ fontSize: 11, fontWeight: 500, color: "#000000" }}>
               {incident.status}
             </span>

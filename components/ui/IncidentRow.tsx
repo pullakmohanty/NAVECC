@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Incident, Severity } from "@/data/mockData";
+import { UrgencyDot } from "@/components/ui/UrgencyDot";
 
 const severityDotHex: Record<Severity, string> = {
   CRITICAL: "#005EB8",
@@ -74,9 +75,7 @@ export default function IncidentRow({ incident }: { incident: Incident }) {
 
       {/* Severity */}
       <td style={{ paddingRight: 8, whiteSpace: "nowrap" }}>
-        <span style={{ fontSize: 11, fontWeight: 500, color: "#000000" }}>
-          {incident.severity}
-        </span>
+        <UrgencyDot urgency={incident.severity} />
       </td>
 
       {/* Status */}

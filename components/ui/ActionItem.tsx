@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Severity } from "@/data/mockData";
+import { UrgencyDot } from "@/components/ui/UrgencyDot";
 
 interface ActionItemProps {
   id: string;
@@ -75,9 +76,7 @@ export default function ActionItem({
           >
             {category}
           </span>
-          <span style={{ fontSize: 11, fontWeight: 500, color: "#000000" }}>
-            {severity}
-          </span>
+          <UrgencyDot urgency={severity} />
         </div>
 
         {/* Title */}
