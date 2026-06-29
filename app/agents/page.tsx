@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Brain, Truck, HeartPulse, Shield, Bell } from "lucide-react";
 import type { Agent } from "@/data/mockData";
 import type { ElementType } from "react";
@@ -138,11 +138,11 @@ const logColor: Record<LogEntry["type"], string> = {
 // ── Agent card ────────────────────────────────────────────────────────────────
 
 function AgentCard({
-  agent, flashing, toolCalls, callIdx, agentHref,
+  agent, flashing, toolCalls, callIdx, onOpenModal,
 }: {
   agent: Agent; flashing: boolean;
   toolCalls: ToolCall[]; callIdx: number;
-  agentHref: string;
+  onOpenModal: () => void;
 }) {
   const isAlert  = agent.status === "ALERT";
   const dotColor = isAlert ? "#005EB8" : "#028090";
@@ -168,13 +168,13 @@ function AgentCard({
 
         {/* Row 1: icon + name/role + status */}
         <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 8 }}>
-          <Link href={agentHref} style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }} onClick={onOpenModal}>
             <Icon size={18} color={agent.color} style={{ flexShrink: 0 }} />
             <div>
               <span style={{ fontSize: 14, fontWeight: 600, color: "#005EB8", display: "block", lineHeight: 1.2 }}>{agent.name}</span>
               <span style={{ fontSize: 11, color: "#000000" }}>{agent.role}</span>
             </div>
-          </Link>
+          </div>
           <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0, marginTop: 2 }}>
             <span
               className={isAlert ? "pulse-dot" : undefined}
@@ -225,6 +225,7 @@ function AgentCard({
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export default function AgentsPage() {
+  const router = useRouter();
   const [liveAgents,  setLiveAgents]  = useState<Agent[]>([]);
   const [liveSignals, setLiveSignals] = useState<Array<{ id: string; name: string; type: string; lastPing: string; status: string }>>([]);
   const [signalAges,  setSignalAges]  = useState<Record<string, number>>(INITIAL_AGES);
@@ -366,10 +367,10 @@ export default function AgentsPage() {
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
               <Brain size={20} color="#005EB8" style={{ flexShrink: 0 }} />
-              <Link href="/agents/cpxo?from=agents" style={{ textDecoration: "none" }}>
+              <div style={{ cursor: "pointer" }} onClick={() => router.push("/agents/cpxo?from=agents")}>
                 <h2 style={{ fontSize: 18, fontWeight: 700, color: "#000000", margin: 0, lineHeight: 1.2 }}>{cpxo.name}</h2>
                 <span style={{ fontSize: 11, color: "#000000" }}>{cpxo.role} · never executes directly</span>
-              </Link>
+              </div>
               <div style={{ marginLeft: 12, display: "flex", alignItems: "center", gap: 5 }}>
                 <span className="pulse-dot" style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#028090", display: "inline-block" }} />
                 <span style={{ fontSize: 11, fontWeight: 700, color: "#028090", letterSpacing: "0.04em" }}>ACTIVE</span>
@@ -399,7 +400,7 @@ export default function AgentsPage() {
                 flashing={agentFlash}
                 toolCalls={TOOL_CALLS[agent.id] ?? []}
                 callIdx={toolCallIdx[agent.id] ?? 0}
-                agentHref={`/agents/${agent.id}?from=agents`}
+                onOpenModal={() => router.push(`/agents/${agent.id}?from=agents`)}
               />
             ))}
           </div>

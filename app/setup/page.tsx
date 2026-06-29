@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Brain, Truck, HeartPulse, Shield, Bell,
@@ -215,8 +214,8 @@ function Toggle({ on }: { on: boolean }) {
 
 // ── SubAgentCard ──────────────────────────────────────────────────────────────
 
-function SubAgentCard({ agent, status, toggle, editHref }: {
-  agent: SubAgentDef; status: AgentStatus; toggle: boolean; editHref: string;
+function SubAgentCard({ agent, status, toggle, onEdit }: {
+  agent: SubAgentDef; status: AgentStatus; toggle: boolean; onEdit: () => void;
 }) {
   const locked  = status === "locked";
   const calling = status === "calling";
@@ -243,10 +242,10 @@ function SubAgentCard({ agent, status, toggle, editHref }: {
         </div>
 
         {/* Name + role — clickable */}
-        <Link href={editHref} style={{ flex: 1, minWidth: 0, textDecoration: "none", display: "block" }}>
+        <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={onEdit}>
           <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>{agent.label}</div>
           <div className="s2-muted" style={{ fontSize: 11.5 }}>{agent.role}</div>
-        </Link>
+        </div>
 
         {/* Status pill */}
         <span
@@ -264,17 +263,16 @@ function SubAgentCard({ agent, status, toggle, editHref }: {
         <Toggle on={toggle} />
 
         {/* Edit */}
-        <Link
-          href={editHref}
+        <button
+          onClick={onEdit}
           className="s2-teal"
           style={{
-            fontSize: 12, backgroundColor: "transparent",
-            textDecoration: "none",
+            fontSize: 12, backgroundColor: "transparent", border: "none",
             cursor: "pointer", padding: "4px 6px", flexShrink: 0,
           }}
         >
           Edit
-        </Link>
+        </button>
       </div>
     </div>
   );
@@ -290,6 +288,7 @@ const SETUP_AGENT_ROUTES: Record<string, string> = {
 };
 
 function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
+  const router = useRouter();
   const [seq,        setSeq]        = useState<SeqState>("idle");
   const [cpxoPhase,  setCpxoPhase]  = useState<CPXOPhase>("Configuring");
   const [instruction,setInstruction]= useState("Monitor all active UK homecare deliveries for Ultomiris, Soliris, and Strensiq. Detect silent delivery delays before NHS staff absorb them. Flag exceptions at 4-hour SLA breach. Trigger MHRA pharmacovigilance flag at 6 hours for PNH patients.");
@@ -411,10 +410,10 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
           <div style={{ width: 32, height: 32, borderRadius: 7, backgroundColor: "#EEEAF8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <Brain size={16} color="#3B3486" />
           </div>
-          <Link href="/agents/cpxo?from=setup" style={{ flex: 1, minWidth: 0, textDecoration: "none", display: "block" }}>
+          <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={() => router.push("/agents/cpxo?from=setup")}>
             <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>CPXO Agent</div>
             <div className="s2-muted" style={{ fontSize: 11.5 }}>Chief Patient Experience Officer</div>
-          </Link>
+          </div>
           <span
             className={cpxoPillCls}
             style={{ fontSize: 10, padding: "2px 8px", borderRadius: 10, backgroundColor: cpxoPillBg, flexShrink: 0, transition: "background-color 0.4s" }}
@@ -502,7 +501,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
             agent={agent}
             status={statuses[agent.id as AgentId]}
             toggle={toggles[agent.id as AgentId]}
-            editHref={`/agents/${SETUP_AGENT_ROUTES[agent.id] ?? agent.id}?from=setup`}
+            onEdit={() => router.push(`/agents/${SETUP_AGENT_ROUTES[agent.id] ?? agent.id}?from=setup`)}
           />
         ))}
         {SUB_AGENTS.filter(a => a.fullWidth).map(agent => (
@@ -511,7 +510,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
               agent={agent}
               status={statuses[agent.id as AgentId]}
               toggle={toggles[agent.id as AgentId]}
-              editHref={`/agents/${SETUP_AGENT_ROUTES[agent.id] ?? agent.id}?from=setup`}
+              onEdit={() => router.push(`/agents/${SETUP_AGENT_ROUTES[agent.id] ?? agent.id}?from=setup`)}
             />
           </div>
         ))}
