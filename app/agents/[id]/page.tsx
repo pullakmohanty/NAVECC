@@ -211,9 +211,9 @@ export default function AgentDetailPage() {
               onClick={handleSave}
               style={{
                 fontSize: 13, fontWeight: 500,
-                backgroundColor: saved ? "#2D9E6A" : "#028090",
-                color: "#FFFFFF",
-                border: "none", borderRadius: 7, padding: "8px 16px",
+                backgroundColor: "transparent",
+                color: saved ? "#2D9E6A" : "#028090",
+                border: `1px solid ${saved ? "#2D9E6A" : "#028090"}`, borderRadius: 7, padding: "8px 16px",
                 cursor: "pointer", transition: "background-color 0.2s",
               }}
             >
