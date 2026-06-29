@@ -84,7 +84,7 @@ const SUB_AGENTS: SubAgentDef[] = [
   { id: "delivery",   Icon: Truck,      color: "#028090", chipBg: "#E6F4F5", label: "Delivery Ops Agent",  role: "Logistics & courier tracking" },
   { id: "clinical",   Icon: HeartPulse, color: "#E05C5C", chipBg: "#FDECEA", label: "Clinical Risk Agent", role: "Patient safety & severity"    },
   { id: "compliance", Icon: Shield,     color: "#E8A838", chipBg: "#FEF9EC", label: "Compliance Agent",    role: "GDPR & pharma audit"          },
-  { id: "engagement", Icon: Bell,       color: "#185FA5", chipBg: "#EBF2FB", label: "Engagement Agent",    role: "Alerts & comms", fullWidth: true },
+  { id: "engagement", Icon: Bell,       color: "#185FA5", chipBg: "#EBF2FB", label: "Engagement Agent",    role: "Alerts & comms" },
 ];
 
 const BADGE_META = [
