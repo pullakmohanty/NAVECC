@@ -7,6 +7,7 @@ import {
   Radar, Package, RefreshCw,
   Check, Plus, Bot, X,
 } from "lucide-react";
+import { AgentPanel } from "@/components/ui/AgentPanel";
 
 // ── CSS ───────────────────────────────────────────────────────────────────────
 
@@ -290,7 +291,7 @@ const SETUP_AGENT_ROUTES: Record<string, string> = {
 };
 
 function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
-  const router = useRouter();
+  const [activePanel, setActivePanel] = useState<string | null>(null);
   const wasActivated = (() => { try { return localStorage.getItem("navecc_seq_done") === "1"; } catch { return false; } })();
 
   const [seq,        setSeq]        = useState<SeqState>(wasActivated ? "done" : "idle");
@@ -436,7 +437,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
           <div style={{ width: 32, height: 32, borderRadius: 7, backgroundColor: "#EEEAF8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <Brain size={16} color="#3B3486" />
           </div>
-          <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={() => router.push("/agents/cpxo?from=setup")}>
+          <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={() => setActivePanel("cpxo")}>
             <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>CPXO Agent</div>
             <div className="s2-muted" style={{ fontSize: 11.5 }}>Chief Patient Experience Officer</div>
           </div>
@@ -527,7 +528,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
             agent={agent}
             status={statuses[agent.id as AgentId]}
             toggle={toggles[agent.id as AgentId]}
-            onEdit={() => router.push(`/agents/${SETUP_AGENT_ROUTES[agent.id] ?? agent.id}?from=setup`)}
+            onEdit={() => setActivePanel(SETUP_AGENT_ROUTES[agent.id] ?? agent.id)}
           />
         ))}
         {SUB_AGENTS.filter(a => a.fullWidth).map(agent => (
@@ -536,7 +537,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
               agent={agent}
               status={statuses[agent.id as AgentId]}
               toggle={toggles[agent.id as AgentId]}
-              onEdit={() => router.push(`/agents/${SETUP_AGENT_ROUTES[agent.id] ?? agent.id}?from=setup`)}
+              onEdit={() => setActivePanel(SETUP_AGENT_ROUTES[agent.id] ?? agent.id)}
             />
           </div>
         ))}
@@ -652,6 +653,8 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
       </div>
 
       <StepFooter onBack={onBack} nextLabel="Next — review and launch" onNext={onNext} nextDisabled={seq !== "done"} />
+
+      <AgentPanel key={activePanel ?? "closed"} agentId={activePanel} onClose={() => setActivePanel(null)} />
 
     </div>
   );
