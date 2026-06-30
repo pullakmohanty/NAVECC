@@ -317,14 +317,14 @@ export default function IncidentDetailPage() {
             <Field label="Delay cause"           value={incident.delayCause} />
             <Field
               label="Arvion visibility without NavECC"
-              value={incident.arvionVisibility === "ZERO" ? "Zero — no signal received" : incident.arvionVisibility === "PARTIAL" ? "Partial — limited signal" : "Full visibility"}
+              value={incident.arvionVisibility === "ZERO" ? "Zero, no signal received" : incident.arvionVisibility === "PARTIAL" ? "Partial, limited signal" : "Full visibility"}
               redValue={incident.arvionVisibility === "ZERO"}
             />
             <Field label="Treatment postponed"   value={`${incident.treatmentPostponedHours} hours`} />
-            <Field label="Proactive action"      value="Detected post-delivery — Phase 1 scope" />
+            <Field label="Proactive action"      value="Detected post-delivery (Phase 1 scope)" />
             <Field label="NHS staff time lost"   value={fmtHours(incident.nhsStaffHoursLost)} />
             <Field label="Pathway"               value={incident.pathway} />
-            <Field label="Patient complaint filed" value={incident.complaintFiled ? "Filed" : "None — patient was unaware"} />
+            <Field label="Patient complaint filed" value={incident.complaintFiled ? "Filed" : "None, patient was unaware"} />
             <Field label="Detected"              value={fmtDetected(incident.detectedAt)} />
           </div>
         </div>

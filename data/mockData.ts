@@ -143,9 +143,9 @@ export const incidents: Incident[] = [
     courierRef: "DPD-7741882",
     location: "M6 · J7–J8 Birmingham",
     isUnread: true,
-    delayCause: "M6 congestion — courier stationary near J7–J8 Birmingham for 7+ hours",
+    delayCause: "M6 congestion: courier stationary near J7–J8 Birmingham for 7+ hours",
     eventSummary:
-      "Ultomiris 500mg dispatched at 07:00 for a PNH patient scheduled for infusion at 10:00. DPD courier became stationary on the M6 near Junction 7–8 Birmingham at 07:43. Cell-signal tag detected no movement by 08:12. Homecare nurse check-in window opened at 08:31 with no confirmation received. Supply chain portal timestamp remained stale from 07:43. A weak email signal — the homecare nurse sending 'still waiting' — was automatically detected at 08:44. CPXO raised exception INC-00934 at 08:47, before NHS staff were aware the delivery was late. Without NavECC, the courier would have arrived 7 hours late, the nurse would have quietly rescheduled, and Arvion would have seen only a late timestamp with zero context.",
+      "Ultomiris 500mg dispatched at 07:00 for a PNH patient scheduled for infusion at 10:00. DPD courier became stationary on the M6 near Junction 7–8 Birmingham at 07:43. Cell-signal tag detected no movement by 08:12. Homecare nurse check-in window opened at 08:31 with no confirmation received. Supply chain portal timestamp remained stale from 07:43. A weak email signal was automatically detected at 08:44, the homecare nurse sending 'still waiting'. CPXO raised exception INC-00934 at 08:47, before NHS staff were aware the delivery was late. Without NavECC, the courier would have arrived 7 hours late, the nurse would have quietly rescheduled, and Arvion would have seen only a late timestamp with zero context.",
   },
   {
     id: "INC-00928",
