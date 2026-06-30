@@ -411,7 +411,7 @@ export default function IncidentDetailPage() {
                     </span>
                   </div>
                   {i < arr.length - 1 && (
-                    <div style={{ flex: 1, height: 2, backgroundColor: step.done ? "#028090" : "#F4F7FA", margin: "0 4px", marginBottom: 18 }} />
+                    <span style={{ fontSize: 12, color: step.done ? "#028090" : "#94A3B8", margin: "0 4px", marginBottom: 18 }}>-</span>
                   )}
                 </React.Fragment>
               ))}
