@@ -530,7 +530,7 @@ export default function IncidentDetailPage() {
                   disabled={!reviewDecision || reviewSubmitting}
                   style={{ width: "100%", fontSize: 12, fontWeight: 600, color: !reviewDecision || reviewSubmitting ? "#94A3B8" : "#FFFFFF", backgroundColor: !reviewDecision || reviewSubmitting ? "#F0F4F5" : "#005EB8", border: "none", borderRadius: 6, padding: "8px 12px", cursor: !reviewDecision || reviewSubmitting ? "not-allowed" : "pointer" }}
                 >
-                  {reviewSubmitting ? "Submitting…" : "Approve & Close →"}
+                  {reviewSubmitting ? "Submitting…" : "Acknowledge action"}
                 </button>
                 <div style={{ display: "flex", gap: 6 }}>
                   <button
