@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, AlertCircle, PieChart,
-  FileText, Bot, Network, LogOut,
+  FileText, Bot, Network,
 } from "lucide-react";
 
 const navLinks = [
@@ -18,17 +18,11 @@ const navLinks = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const router   = useRouter();
 
   function isActive(href: string) {
     if (href === "/") return pathname === "/";
     const base = href.startsWith("/incidents/") ? "/incidents" : href;
     return pathname.startsWith(base);
-  }
-
-  function signOut() {
-    sessionStorage.removeItem("navedas_auth");
-    router.push("/login");
   }
 
   return (
@@ -61,22 +55,6 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      {/* Sign out */}
-      <div style={{ padding: "12px 0", borderTop: "1px solid #F0F4F5" }}>
-        <button
-          onClick={signOut}
-          title="Sign out"
-          style={{
-            display: "flex", alignItems: "center", justifyContent: "center",
-            width: "100%", height: 40, border: "none",
-            backgroundColor: "transparent", cursor: "pointer",
-            color: "#000000",
-          }}
-        >
-          <LogOut size={17} />
-        </button>
-      </div>
     </aside>
   );
 }
