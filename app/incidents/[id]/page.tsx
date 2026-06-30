@@ -253,7 +253,7 @@ export default function IncidentDetailPage() {
             </span>
           </div>
           <h1 style={{ fontSize: 15, fontWeight: 500, color: "#005EB8", margin: "0 0 8px 0", lineHeight: 1.35 }}>
-            {incident.drug} delivery {incident.delayHours}h late — infusion postponed {incident.treatmentPostponedHours} hours — {incident.pathway}
+            {incident.drug} delivery {incident.delayHours}h late · infusion postponed {incident.treatmentPostponedHours} hours · {incident.pathway}
           </h1>
           <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
             {[
