@@ -24,6 +24,7 @@ const CSS = `
   .s2-green { color: #15803D !important; }
   .s2-amber-t { color: #92400E !important; }
   .s2-white { color: #FFFFFF !important; }
+  .s2-disabled-text { color: #94A3B8 !important; }
   .s2-it    { font-style: italic; }
   .s2-mono  { font-family: var(--font-geist-mono), monospace; }
   .s2-up    { text-transform: uppercase; letter-spacing: 0.06em; }
@@ -179,12 +180,13 @@ function StepFooter({ onBack, nextLabel, onNext, nextDisabled }: {
       <button
         onClick={nextDisabled ? undefined : onNext}
         disabled={!!nextDisabled}
-        className="s2-white"
+        className={nextDisabled ? "s2-disabled-text" : "s2-white"}
         style={{
           fontSize: 13, fontWeight: 500,
           backgroundColor: nextDisabled ? "#E2E8F0" : "#0D1B3E",
           border: "none", borderRadius: 8, padding: "9px 18px",
-          cursor: nextDisabled ? "default" : "pointer",
+          cursor: nextDisabled ? "not-allowed" : "pointer",
+          opacity: nextDisabled ? 0.6 : 1,
         }}
       >
         {nextLabel}
@@ -634,7 +636,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
         </div>
       </div>
 
-      <StepFooter onBack={onBack} nextLabel="Next — review and launch →" onNext={onNext} />
+      <StepFooter onBack={onBack} nextLabel="Next — review and launch →" onNext={onNext} nextDisabled={seq !== "done"} />
 
     </div>
   );
