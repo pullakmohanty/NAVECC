@@ -633,7 +633,9 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
       {/* ── Live log ── */}
       <div style={{ backgroundColor: "#F8FAFC", border: "0.5px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
         <div style={{ padding: "8px 14px", borderBottom: "0.5px solid #F0F4F5" }}>
-          <span className="s2-muted s2-up" style={{ fontSize: 10, fontWeight: 600 }}>Live log</span>
+          <span className="s2-muted s2-up" style={{ fontSize: 10, fontWeight: 600 }}>
+            {seq === "running" ? "Activating…" : seq === "done" ? "Activated" : "Live log"}
+          </span>
         </div>
         <div ref={logRef} style={{ maxHeight: 160, overflowY: "auto", padding: "6px 0" }}>
           {logs.map((entry, i) => (
