@@ -704,9 +704,9 @@ export default function DashboardPage() {
                       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                         <span style={{fontSize:9,color:"#bbb",background:"#F4F7FA",border:"0.5px solid #e8e8e8",padding:"2px 7px",borderRadius:8}}>⏱ {action.timeRemaining}</span>
                         <button
-                          onClick={() => router.push(`/root-cause?tab=case-review&incident=${action.incidentId}`)}
+                          onClick={() => router.push(`/incidents/${action.incidentId}`)}
                           style={{fontSize:10,fontWeight:600,color:"#028090",background:"transparent",border:"1px solid #028090",borderRadius:4,padding:"2px 9px",cursor:"pointer"}}
-                        >Review →</button>
+                        >Review</button>
                       </div>
                     </div>
                   );
