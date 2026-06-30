@@ -176,7 +176,7 @@ function StepFooter({ onBack, nextLabel, onNext, nextDisabled }: {
         className="s2-muted"
         style={{ fontSize: 13, backgroundColor: "transparent", border: "none", cursor: "pointer", padding: "8px 4px" }}
       >
-        ← Back
+        Back
       </button>
       <button
         onClick={nextDisabled ? undefined : onNext}
