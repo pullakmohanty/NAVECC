@@ -500,7 +500,7 @@ export default function DashboardPage() {
 
         {/* ── Filter pills — fixed in navbar space ─────────────── */}
         <div style={{
-          position:"fixed", top:0, right:172, height:48,
+          position:"fixed", top:0, right:230, height:48,
           display:"flex", alignItems:"center", gap:4, zIndex:55,
         }}>
           {(['7d','30d','90d'] as const).map(f => (
