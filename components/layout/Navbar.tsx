@@ -12,7 +12,7 @@ export default function Navbar() {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingLeft: 24,
+        paddingLeft: 14,
         paddingRight: 24,
         borderBottom: "1px solid #F0F4F5",
       }}
