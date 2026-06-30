@@ -1,5 +1,3 @@
-import UserProfile from "@/components/ui/UserProfile";
-
 export default function Navbar() {
   return (
     <header
@@ -48,11 +46,6 @@ export default function Navbar() {
         >
           Arvion Biosciences UK
         </span>
-      </div>
-
-      {/* Right — actions + user */}
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <UserProfile />
       </div>
     </header>
   );

@@ -6,6 +6,7 @@ import {
   LayoutDashboard, AlertCircle, PieChart,
   FileText, Bot, Network,
 } from "lucide-react";
+import UserProfile from "@/components/ui/UserProfile";
 
 const navLinks = [
   { href: "/",                      label: "Dashboard",     icon: LayoutDashboard },
@@ -55,6 +56,17 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          padding: "12px 0",
+          borderTop: "1px solid #F0F4F5",
+        }}
+      >
+        <UserProfile compact />
+      </div>
     </aside>
   );
 }
