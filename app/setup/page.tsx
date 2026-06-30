@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   Brain, Truck, HeartPulse, Shield, Bell,
   Radar, Package, RefreshCw,
-  Check, Play, Plus, Bot, X,
+  Check, Plus, Bot, X,
 } from "lucide-react";
 
 // ── CSS ───────────────────────────────────────────────────────────────────────
@@ -294,6 +294,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
   const wasActivated = (() => { try { return localStorage.getItem("navecc_seq_done") === "1"; } catch { return false; } })();
 
   const [seq,        setSeq]        = useState<SeqState>(wasActivated ? "done" : "idle");
+  const [toggleOn,   setToggleOn]   = useState(wasActivated);
   const [cpxoPhase,  setCpxoPhase]  = useState<CPXOPhase>(wasActivated ? "Active — orchestrating" : "Configuring");
   const [instruction,setInstruction]= useState("Monitor all active UK homecare deliveries for Ultomiris, Soliris, and Strensiq. Detect silent delivery delays before NHS staff absorb them. Flag exceptions at 4-hour SLA breach. Trigger MHRA pharmacovigilance flag at 6 hours for PNH patients.");
   const [instrSrc,   setInstrSrc]   = useState(wasActivated ? "activated" : "Awaiting human input…");
@@ -342,6 +343,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
 
   function runSequence() {
     if (seq !== "idle") return;
+    setToggleOn(true);
     setSeq("running");
     const src = instruction.trim() || "Silent delivery delay — Arvion UK";
     const t   = (ms: number, fn: () => void) => setTimeout(fn, ms);
@@ -380,6 +382,24 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
     });
   }
 
+  function resetAgents() {
+    setToggleOn(false);
+    setSeq("idle");
+    setCpxoPhase("Configuring");
+    setInstrSrc("Awaiting human input…");
+    setStatuses({ delivery: "locked", clinical: "locked", compliance: "locked", engagement: "locked" });
+    setToggles({ delivery: false, clinical: false, compliance: false, engagement: false });
+    setLogs([{ time: nowTs(), dot: "gray", text: "Waiting for human instruction…" }]);
+    try { localStorage.removeItem("navecc_seq_done"); } catch {}
+  }
+
+  function handleActivateToggle() {
+    if (seq === "idle") runSequence();
+    else if (seq === "done") resetAgents();
+  }
+
+  const activating = seq === "running";
+
   const cpxoPillBg  = cpxoPhase === "Active — orchestrating" ? "#DCFCE7" : "#F4F7FA";
   const cpxoPillCls = cpxoPhase === "Active — orchestrating" ? "s2-green" : "s2-gray";
 
@@ -394,22 +414,17 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
           <div className="s2-muted" style={{ fontSize: 12 }}>Silent delivery delay detection · 5 agents</div>
         </div>
         <button
-          onClick={runSequence}
-          disabled={seq !== "idle"}
-          className="s2-white"
+          onClick={handleActivateToggle}
+          disabled={activating}
           style={{
-            display: "flex", alignItems: "center", gap: 7,
-            fontSize: 13, fontWeight: 500,
-            backgroundColor: seq === "done" ? "#185FA5" : "#1d9e75",
-            border: "none", borderRadius: 8, padding: "9px 16px",
-            cursor: seq === "idle" ? "pointer" : "default",
-            transition: "background-color 0.3s",
+            display: "flex", alignItems: "center",
+            backgroundColor: "transparent",
+            border: "none", padding: 4,
+            cursor: activating ? "default" : "pointer",
+            opacity: activating ? 0.6 : 1,
           }}
         >
-          {seq === "done"
-            ? <><Check size={14} strokeWidth={2.5} color="#FFFFFF" />Pipeline active</>
-            : <><Play  size={14} fill="#FFFFFF" strokeWidth={0}   color="#FFFFFF" />Activate agents →</>
-          }
+          <Toggle on={toggleOn} />
         </button>
       </div>
 
