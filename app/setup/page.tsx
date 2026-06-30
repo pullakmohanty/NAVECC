@@ -651,7 +651,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
         </div>
       </div>
 
-      <StepFooter onBack={onBack} nextLabel="Next — review and launch →" onNext={onNext} nextDisabled={seq !== "done"} />
+      <StepFooter onBack={onBack} nextLabel="Next — review and launch" onNext={onNext} nextDisabled={seq !== "done"} />
 
     </div>
   );
@@ -710,7 +710,7 @@ function Step1({ selected, onSelect, onNext }: {
           <span style={{ fontSize: 13 }}>Silent delivery delay detection selected · <strong>5 agents will activate</strong></span>
         </div>
       )}
-      <StepFooter nextLabel="Next — customise agents →" onNext={onNext} nextDisabled={!selected} />
+      <StepFooter nextLabel="Next — customise agents" onNext={onNext} nextDisabled={!selected} />
     </div>
   );
 }
