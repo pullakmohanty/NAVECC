@@ -73,7 +73,7 @@ export default function LoginPage() {
             border: "none", borderRadius: 6, cursor: "pointer",
           }}
         >
-          Sign in →
+          Sign in
         </button>
 
         {/* Footer */}
