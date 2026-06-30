@@ -64,6 +64,7 @@ export default function IncidentDetailPage() {
   const [incident,      setIncident]      = useState<Incident | null>(null);
   const [auditEntries,  setAuditEntries]  = useState<AuditEntry[]>([]);
   const [hoveredId,     setHoveredId]     = useState<string | null>(null);
+  const [severityFilter, setSeverityFilter] = useState("All");
 
   // Review panel state
   const [reviewDecision,   setReviewDecision]   = useState("");
@@ -115,6 +116,11 @@ export default function IncidentDetailPage() {
 
   const hasPendingApproval = pendingApprovals.some(a => a.incidentId === id);
 
+  const severityFilters = ["All", "CRITICAL", "HIGH", "MEDIUM"];
+  const filteredIncidents = severityFilter === "All"
+    ? allIncidents
+    : allIncidents.filter(inc => inc.severity === severityFilter);
+
   return (
     <div style={{
       display: "flex", gap: 12,
@@ -143,13 +149,35 @@ export default function IncidentDetailPage() {
             backgroundColor: "rgba(2,128,144,0.08)", padding: "1px 6px",
             borderRadius: 8, marginLeft: 8,
           }}>
-            {allIncidents.length}
+            {filteredIncidents.length}
           </span>
+        </div>
+
+        {/* Severity filter */}
+        <div style={{
+          display: "flex", gap: 6, flexWrap: "wrap",
+          padding: "8px 12px", borderBottom: "1px solid #F0F4F5", flexShrink: 0,
+        }}>
+          {severityFilters.map(sev => {
+            const active = severityFilter === sev;
+            return (
+              <button key={sev} onClick={() => setSeverityFilter(sev)} style={{
+                fontSize: 10, fontWeight: active ? 500 : 400,
+                color: active ? "#028090" : "#000000",
+                backgroundColor: active ? "rgba(2,128,144,0.07)" : "#FFFFFF",
+                border: active ? "1px solid #028090" : "1px solid #F0F4F5",
+                borderRadius: 6, padding: "3px 9px", cursor: "pointer",
+                textTransform: "capitalize" as const,
+              }}>
+                {sev === "All" ? "All" : sev.charAt(0) + sev.slice(1).toLowerCase()}
+              </button>
+            );
+          })}
         </div>
 
         {/* Incident rows */}
         <div style={{ overflowY: "auto", flex: 1 }}>
-          {allIncidents.map(inc => {
+          {filteredIncidents.map(inc => {
             const sc       = SEV_COLOR[inc.severity] ?? "#000000";
             const isActive = inc.id === id;
             const isHover  = hoveredId === inc.id && !isActive;
