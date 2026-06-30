@@ -40,6 +40,10 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+function fmtTime(iso: string) {
+  return new Date(iso).toISOString().slice(11, 19);
+}
+
 function Field({ label, value, redValue }: { label: string; value: string; redValue?: boolean }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -383,37 +387,79 @@ export default function IncidentDetailPage() {
           </div>
 
           {/* Process stepper */}
-          <div style={{ marginBottom: 16 }}>
+          <div style={{ marginBottom: 14 }}>
             <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 10 }}>
               Process status
             </span>
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }}>
               {[
-                { label: "Detected",     done: true  },
-                { label: "Classified",   done: true  },
-                { label: "Actioned",     done: true  },
-                { label: "Under Review", done: false, active: !reviewDone },
-                { label: "Closed",       done: reviewDone },
+                { label: "Detected",  done: true  },
+                { label: "Classified", done: true  },
+                { label: "Actioned",  done: true  },
+                { label: "Review",    done: false, active: !reviewDone },
+                { label: "Closed",    done: reviewDone },
               ].map((step, i, arr) => (
                 <React.Fragment key={i}>
-                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0 }}>
                     <div style={{
                       width: 22, height: 22, borderRadius: "50%",
                       backgroundColor: step.done || step.active ? "#028090" : "#F4F7FA",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: 10, fontWeight: 700,
                       color: step.done || step.active ? "#FFFFFF" : "#94A3B8",
+                      flexShrink: 0,
                     }}>
                       {step.done ? "✓" : i + 1}
                     </div>
-                    <span style={{ fontSize: 9, fontWeight: step.active ? 600 : 400, color: step.active ? "#028090" : step.done ? "#000000" : "#94A3B8", whiteSpace: "nowrap", textAlign: "center" }}>
+                    <span style={{ fontSize: 8, fontWeight: step.active ? 600 : 400, color: step.active ? "#028090" : step.done ? "#000000" : "#94A3B8", whiteSpace: "nowrap", textAlign: "center" }}>
                       {step.label}
                     </span>
                   </div>
                   {i < arr.length - 1 && (
-                    <span style={{ fontSize: 12, color: step.done ? "#028090" : "#94A3B8", margin: "0 4px", marginBottom: 18 }}>-</span>
+                    <span style={{ flex: 1, minWidth: 4, height: 1, backgroundColor: step.done ? "#028090" : "#E2E8F0", margin: "10px 2px 0" }} />
                   )}
                 </React.Fragment>
+              ))}
+            </div>
+          </div>
+
+          {/* Reasoning Ledger — compact, fixed-height scrollable */}
+          <div style={{ marginBottom: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+              <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000" }}>
+                Reasoning ledger
+              </span>
+              <span style={{ fontSize: 8, fontWeight: 600, color: "#000000", backgroundColor: "#F4F7FA", padding: "1px 6px", borderRadius: 4, letterSpacing: "0.04em" }}>
+                APPEND-ONLY
+              </span>
+            </div>
+            <div style={{
+              maxHeight: 160, overflowY: "auto",
+              border: "0.5px solid #F0F4F5", borderRadius: 8, padding: "8px",
+              display: "flex", flexDirection: "column", gap: 8,
+            }}>
+              {auditEntries.length === 0 ? (
+                <span style={{ fontSize: 10, color: "#94A3B8" }}>No ledger entries yet.</span>
+              ) : auditEntries.map(entry => (
+                <div
+                  key={entry.id}
+                  style={{
+                    borderLeft: entry.isMHRAFlag ? "2px solid #E8A838" : "2px solid transparent",
+                    paddingLeft: 6,
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 1 }}>
+                    <span style={{ fontSize: 9, fontFamily: "var(--font-geist-mono), monospace", color: "#000000" }}>
+                      {fmtTime(entry.timestamp)}
+                    </span>
+                    <span style={{ fontSize: 9, fontWeight: 500, color: "#000000" }}>
+                      {entry.actor}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: 11, fontWeight: 500, color: "#005EB8", margin: 0, lineHeight: 1.4 }}>
+                    {entry.title}
+                  </p>
+                </div>
               ))}
             </div>
           </div>
