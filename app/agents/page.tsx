@@ -135,14 +135,34 @@ const logColor: Record<LogEntry["type"], string> = {
   normal: "#028090", warning: "#028090", critical: "#005EB8",
 };
 
+// ── Enable/disable toggle switch ────────────────────────────────────────────
+
+function Toggle({ on }: { on: boolean }) {
+  return (
+    <div style={{
+      width: 34, height: 20, borderRadius: 10, flexShrink: 0,
+      backgroundColor: on ? "#1d9e75" : "#E2E8F0",
+      position: "relative",
+      transition: "background-color 0.25s",
+    }}>
+      <div style={{
+        width: 14, height: 14, borderRadius: "50%", backgroundColor: "#FFFFFF",
+        position: "absolute", top: 3, left: on ? 17 : 3,
+        transition: "left 0.2s",
+      }} />
+    </div>
+  );
+}
+
 // ── Agent card ────────────────────────────────────────────────────────────────
 
 function AgentCard({
-  agent, flashing, toolCalls, callIdx, onOpenModal,
+  agent, flashing, toolCalls, callIdx, onOpenModal, enabled, onToggleEnabled,
 }: {
   agent: Agent; flashing: boolean;
   toolCalls: ToolCall[]; callIdx: number;
   onOpenModal: () => void;
+  enabled: boolean; onToggleEnabled: () => void;
 }) {
   const isAlert  = agent.status === "ALERT";
   const dotColor = isAlert ? "#005EB8" : "#028090";
@@ -161,6 +181,8 @@ function AgentCard({
         display: "flex",
         flexDirection: "column",
         overflow: "hidden",
+        opacity: enabled ? 1 : 0.5,
+        transition: "opacity 0.3s ease",
         animation: flashing ? "agentFlash 0.8s ease" : undefined,
       }}
     >
@@ -184,6 +206,23 @@ function AgentCard({
           </div>
         </div>
 
+        {/* Row 1b: enable/disable badge + toggle */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{
+            fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 10,
+            backgroundColor: enabled ? "#EAF3DE" : "#F4F7FA",
+            color: enabled ? "#000000" : "#64748B",
+          }}>
+            {enabled ? "Active" : "Inactive"}
+          </span>
+          <button
+            onClick={onToggleEnabled}
+            style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex" }}
+          >
+            <Toggle on={enabled} />
+          </button>
+        </div>
+
         {/* Row 2: heartbeat */}
         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
           <span style={{ fontSize: 11, color: "#000000" }}>Last heartbeat</span>
@@ -191,8 +230,8 @@ function AgentCard({
         </div>
 
         {/* Row 3: current task */}
-        <p style={{ fontSize: 12, fontStyle: "italic", color: "#000000", margin: 0, lineHeight: 1.5 }}>
-          {agent.currentTask}
+        <p style={{ fontSize: enabled ? 12 : 11, fontStyle: "italic", color: enabled ? "#000000" : "#64748B", margin: 0, lineHeight: 1.5 }}>
+          {enabled ? agent.currentTask : "Waiting for activation"}
         </p>
 
         {/* Row 4: tool calls */}
@@ -235,6 +274,16 @@ export default function AgentsPage() {
   const [liveLog,        setLiveLog]        = useState<LogEntry[]>(INITIAL_LOG);
   const [ledgerEntries,  setLedgerEntries]  = useState<LedgerEntry[]>([]);
   const [toolCallIdx,    setToolCallIdx]    = useState<Record<string, number>>({ "delivery-ops": 0, "clinical-risk": 0, "compliance": 0, "engagement": 0 });
+
+  const [agentEnabled, setAgentEnabled] = useState<Record<string, boolean>>({
+    "delivery-ops": true,
+    "clinical-risk": true,
+    "compliance": true,
+    "engagement": true,
+  });
+  function toggleAgent(id: string) {
+    setAgentEnabled(prev => ({ ...prev, [id]: !prev[id] }));
+  }
 
   const logIdRef    = useRef(100);
   const logCycleRef = useRef(0);
@@ -401,6 +450,8 @@ export default function AgentsPage() {
                 toolCalls={TOOL_CALLS[agent.id] ?? []}
                 callIdx={toolCallIdx[agent.id] ?? 0}
                 onOpenModal={() => setActivePanel(agent.id)}
+                enabled={agentEnabled[agent.id] ?? true}
+                onToggleEnabled={() => toggleAgent(agent.id)}
               />
             ))}
           </div>

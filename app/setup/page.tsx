@@ -217,21 +217,21 @@ function Toggle({ on }: { on: boolean }) {
 
 // ── SubAgentCard ──────────────────────────────────────────────────────────────
 
-function SubAgentCard({ agent, status, toggle, onEdit }: {
-  agent: SubAgentDef; status: AgentStatus; toggle: boolean; onEdit: () => void;
+function SubAgentCard({ agent, status, enabled, onToggleEnabled, onEdit }: {
+  agent: SubAgentDef; status: AgentStatus; enabled: boolean; onToggleEnabled: () => void; onEdit: () => void;
 }) {
   const locked  = status === "locked";
   const calling = status === "calling";
   const active  = status === "active";
 
-  const pillBg  = active ? "#DCFCE7" : calling ? "#FEF9C3" : "#F4F7FA";
-  const pillCls = active ? "s2-green" : calling ? "s2-amber-t" : "s2-gray";
-  const pillTxt = active ? "Active" : calling ? "Calling…" : "Waiting for CPXO";
+  const pillBg  = !enabled ? "#F4F7FA" : active ? "#EAF3DE" : calling ? "#FEF9C3" : "#F4F7FA";
+  const pillCls = !enabled ? "s2-muted" : active ? "s2-green" : calling ? "s2-amber-t" : "s2-gray";
+  const pillTxt = !enabled ? "Inactive" : active ? "Active" : calling ? "Calling…" : "Waiting for CPXO";
 
   return (
     <div style={{
       backgroundColor: "#FFFFFF",
-      opacity: locked ? 0.42 : 1,
+      opacity: !enabled ? 0.5 : locked ? 0.42 : 1,
       transition: "opacity 0.4s ease",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px" }}>
@@ -247,7 +247,11 @@ function SubAgentCard({ agent, status, toggle, onEdit }: {
         {/* Name + role — clickable */}
         <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={onEdit}>
           <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>{agent.label}</div>
-          <div className="s2-muted" style={{ fontSize: 11.5 }}>{agent.role}</div>
+          {enabled ? (
+            <div className="s2-muted" style={{ fontSize: 11.5 }}>{agent.role}</div>
+          ) : (
+            <div className="s2-muted s2-it" style={{ fontSize: 11 }}>Waiting for activation</div>
+          )}
         </div>
 
         {/* Status pill */}
@@ -256,14 +260,19 @@ function SubAgentCard({ agent, status, toggle, onEdit }: {
           style={{
             fontSize: 10, padding: "2px 8px", borderRadius: 10,
             backgroundColor: pillBg, whiteSpace: "nowrap", flexShrink: 0,
-            animation: calling ? "cpulse 1.1s infinite" : "none",
+            animation: enabled && calling ? "cpulse 1.1s infinite" : "none",
           }}
         >
           {pillTxt}
         </span>
 
         {/* Toggle */}
-        <Toggle on={toggle} />
+        <button
+          onClick={onToggleEnabled}
+          style={{ background: "none", border: "none", padding: 0, cursor: "pointer", display: "flex", flexShrink: 0 }}
+        >
+          <Toggle on={enabled} />
+        </button>
 
         {/* Edit */}
         <button
@@ -304,11 +313,20 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
       ? { delivery: "active", clinical: "active", compliance: "active", engagement: "active" }
       : { delivery: "locked", clinical: "locked", compliance: "locked", engagement: "locked" }
   );
-  const [toggles, setToggles] = useState<Record<AgentId, boolean>>(
+  const [, setToggles] = useState<Record<AgentId, boolean>>(
     wasActivated
       ? { delivery: true, clinical: true, compliance: true, engagement: true }
       : { delivery: false, clinical: false, compliance: false, engagement: false }
   );
+  const [agentEnabled, setAgentEnabled] = useState<Record<string, boolean>>({
+    "delivery-ops": true,
+    "clinical-risk": true,
+    "compliance": true,
+    "engagement": true,
+  });
+  function toggleAgent(id: string) {
+    setAgentEnabled(prev => ({ ...prev, [id]: !prev[id] }));
+  }
   const [logs, setLogs] = useState<LogEntry[]>([
     wasActivated
       ? { time: nowTs(), dot: "teal", text: "All agents online. Pipeline active — ready to launch." }
@@ -447,7 +465,6 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
           >
             {cpxoPhase}
           </span>
-          <span className="s2-gray s2-it" style={{ fontSize: 11, flexShrink: 0 }}>Always on</span>
         </div>
 
         {/* Human instruction — prominent input block */}
@@ -527,7 +544,8 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
             key={agent.id}
             agent={agent}
             status={statuses[agent.id as AgentId]}
-            toggle={toggles[agent.id as AgentId]}
+            enabled={agentEnabled[SETUP_AGENT_ROUTES[agent.id]]}
+            onToggleEnabled={() => toggleAgent(SETUP_AGENT_ROUTES[agent.id])}
             onEdit={() => setActivePanel(SETUP_AGENT_ROUTES[agent.id] ?? agent.id)}
           />
         ))}
@@ -536,7 +554,8 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
             <SubAgentCard
               agent={agent}
               status={statuses[agent.id as AgentId]}
-              toggle={toggles[agent.id as AgentId]}
+              enabled={agentEnabled[SETUP_AGENT_ROUTES[agent.id]]}
+              onToggleEnabled={() => toggleAgent(SETUP_AGENT_ROUTES[agent.id])}
               onEdit={() => setActivePanel(SETUP_AGENT_ROUTES[agent.id] ?? agent.id)}
             />
           </div>
@@ -630,11 +649,11 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
         </div>
       </div>
 
-      {/* ── Live log ── */}
+      {/* ── Activity feed ── */}
       <div style={{ backgroundColor: "#F8FAFC", border: "0.5px solid #E2E8F0", borderRadius: 10, overflow: "hidden" }}>
         <div style={{ padding: "8px 14px", borderBottom: "0.5px solid #F0F4F5" }}>
           <span className="s2-muted s2-up" style={{ fontSize: 10, fontWeight: 600 }}>
-            {seq === "running" ? "Activating…" : seq === "done" ? "Activated" : "Live log"}
+            {seq === "running" ? "Activating…" : seq === "done" ? "Activated" : "Activity feed"}
           </span>
         </div>
         <div ref={logRef} style={{ maxHeight: 160, overflowY: "auto", padding: "6px 0" }}>
