@@ -442,7 +442,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2 }}>
         <div>
           <div className="s2-head" style={{ fontSize: 15, fontWeight: 600, marginBottom: 2 }}>Customise agents</div>
-          <div className="s2-muted" style={{ fontSize: 12 }}>Silent delivery delay detection · 5 agents</div>
+          <div className="s2-muted" style={{ fontSize: 12 }}>Silent delivery delay detection · CPXO + 4 specialist agents</div>
         </div>
         <button
           onClick={handleActivateToggle}
@@ -750,7 +750,7 @@ function Step1({ selected, onSelect, onNext }: {
       {selected && (
         <div style={{ display: "flex", alignItems: "center", gap: 8, backgroundColor: "#E8F1FB", border: "1px solid #085040", borderRadius: 8, padding: "10px 14px", marginBottom: 20, animation: "fadeIn 0.2s ease" }}>
           <Check size={14} color="#085040" />
-          <span style={{ fontSize: 13 }}>Silent delivery delay detection selected · <strong>5 agents will activate</strong></span>
+          <span style={{ fontSize: 13 }}>Silent delivery delay detection selected · <strong>CPXO + 4 specialist agents will activate</strong></span>
         </div>
       )}
       <StepFooter nextLabel="Next - customise agents" onNext={onNext} nextDisabled={!selected} />
@@ -763,7 +763,7 @@ function Step1({ selected, onSelect, onNext }: {
 function Step3({ onBack, onLaunch }: { onBack: () => void; onLaunch: () => void }) {
   const SUMMARY = [
     { label: "Use case",           value: "Silent delivery delay detection" },
-    { label: "Agents active",      value: "5 agents" },
+    { label: "Agents active",      value: "CPXO + 4 specialists" },
     { label: "CPXO heartbeat",     value: "Every 30 seconds" },
     { label: "SLA threshold",      value: "4 hours (PNH)" },
     { label: "MHRA flag at",       value: "6 hours (PNH)" },
