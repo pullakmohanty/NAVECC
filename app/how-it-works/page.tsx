@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Brain, Truck, HeartPulse, Shield, Bell, Database } from "lucide-react";
+import { Network, Truck, HeartPulse, Shield, Bell, Database } from "lucide-react";
 
 const CSS = `
   @keyframes toolIn   { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
@@ -18,7 +18,7 @@ interface AgentData { steps: Step[]; tools: Tool[]; task: string; goal?: GoalCha
 
 const DATA: Record<string, AgentData> = {
   cpxo: {
-    task: "Active execution — heartbeat cycle #47",
+    task: "Active execution - heartbeat cycle #47",
     steps: [
       { text: "Wake on heartbeat",                   detail: "Cycle initiated · 09:14:00" },
       { text: "Read Signal 1: Real-time logistics",  detail: "DPD-7741882 stationary M6 J7-J8 · 7.2h" },
@@ -42,7 +42,7 @@ const DATA: Record<string, AgentData> = {
     },
   },
   delivery: {
-    task: "Track INC-00934 courier — M6 route update",
+    task: "Track INC-00934 courier - M6 route update",
     steps: [
       { text: "Received task from CPXO",     detail: "INC-00934 · Priority: LIFE-CRITICAL" },
       { text: "Query courier GPS position",  detail: "DPD-7741882 · M6 J7-J8 · stationary 7.2h" },
@@ -59,7 +59,7 @@ const DATA: Record<string, AgentData> = {
     ],
   },
   clinical: {
-    task: "Assess INC-00934 — PNH threshold breach",
+    task: "Assess INC-00934 - PNH threshold breach",
     steps: [
       { text: "Received task from CPXO" },
       { text: "Load patient clinical profile",  detail: "ARV-05934 · Diagnosis: PNH · Ultomiris 500mg" },
@@ -96,7 +96,7 @@ const DATA: Record<string, AgentData> = {
     ],
   },
   engagement: {
-    task: "Notify homecare and ops team — INC-00934",
+    task: "Notify homecare and ops team - INC-00934",
     steps: [
       { text: "Received task from CPXO" },
       { text: "Identify notification targets", detail: "Homecare nurse · St Thomas · Arvion ops" },
@@ -123,21 +123,21 @@ const LEDGER_FEED = [
 ];
 
 const PANEL_ROWS = [
-  { id:"cpxo",       Icon:Brain,      color:"#005EB8", label:"CPXO Agent",       role:"Chief Patient Experience Officer", dot:"green"  },
-  { id:"delivery",   Icon:Truck,      color:"#028090", label:"Delivery Ops",     role:"Logistics & courier tracking",     dot:"green"  },
+  { id:"cpxo",       Icon:Network,      color:"#005EB8", label:"CPXO Agent",       role:"Chief Patient Experience Officer", dot:"green"  },
+  { id:"delivery",   Icon:Truck,      color:"#085040", label:"Delivery Ops",     role:"Logistics & courier tracking",     dot:"green"  },
   { id:"clinical",   Icon:HeartPulse, color:"#005EB8", label:"Clinical Risk",    role:"Patient safety & severity",        dot:"red"    },
-  { id:"compliance", Icon:Shield,     color:"#028090", label:"Compliance",       role:"GDPR & pharma audit",              dot:"green"  },
+  { id:"compliance", Icon:Shield,     color:"#085040", label:"Compliance",       role:"GDPR & pharma audit",              dot:"green"  },
   { id:"engagement", Icon:Bell,       color:"#005EB8", label:"Engagement",       role:"Alerts & comms",                   dot:"green"  },
   { id:"ledger",     Icon:Database,   color:"#005EB8", label:"Reasoning Ledger", role:"Append-only database",             dot:"purple" },
 ];
 
 const TOOL_STYLE: Record<ToolType,{bg:string;color:string}> = {
-  READ:     {bg:"#EFF6FF",color:"#000000"},
-  WRITE:    {bg:"#F5F3FF",color:"#000000"},
-  DELEGATE: {bg:"#E6F4F5",color:"#028090"},
-  CALC:     {bg:"#FEF9E7",color:"#000000"},
-  NOTIFY:   {bg:"#FFF1F2",color:"#000000"},
-  SEND:     {bg:"#F0FDF4",color:"#000000"},
+  READ:     {bg:"#EFF6FF",color:"#212B32"},
+  WRITE:    {bg:"#F5F3FF",color:"#212B32"},
+  DELEGATE: {bg:"#E8F1FB",color:"#085040"},
+  CALC:     {bg:"#FEF9E7",color:"#212B32"},
+  NOTIFY:   {bg:"#FFF1F2",color:"#212B32"},
+  SEND:     {bg:"#E8F1FB",color:"#212B32"},
 };
 
 function ExecStep({ step, state }: { step:Step; state:"done"|"active"|"pending" }) {
@@ -146,13 +146,13 @@ function ExecStep({ step, state }: { step:Step; state:"done"|"active"|"pending" 
     <div style={{display:"flex",gap:10,alignItems:"flex-start",animation:"stepIn 0.3s ease"}}>
       <div style={{width:18,height:18,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>
         {state==="done"
-          ? <span style={{fontSize:13,color:"#028090"}}>✓</span>
+          ? <span style={{fontSize:13,color:"#085040"}}>✓</span>
           : <span className="animate-pulse-dot" style={{width:8,height:8,borderRadius:"50%",backgroundColor:"#005EB8",display:"inline-block"}}/>}
       </div>
       <div>
-        <div style={{fontSize:13,color:"#000000",fontWeight:state==="active"?500:400}}>{step.text}</div>
+        <div style={{fontSize:13,color:"#212B32",fontWeight:state==="active"?500:400}}>{step.text}</div>
         {step.detail && (
-          <div style={{fontSize:11,color:"#000000",marginTop:3,paddingLeft:10,borderLeft:"2px solid #F0F4F5"}}>└─ {step.detail}</div>
+          <div style={{fontSize:11,color:"#212B32",marginTop:3,paddingLeft:10,borderLeft:"2px solid #F0F4F5"}}>└─ {step.detail}</div>
         )}
       </div>
     </div>
@@ -165,10 +165,10 @@ function ToolRow({ tool }: { tool:Tool }) {
     <div style={{animation:"toolIn 0.35s ease",borderBottom:"0.5px solid #F4F7FA",padding:"9px 0"}}>
       <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
         <span style={{fontSize:10,fontWeight:700,color:s.color,backgroundColor:s.bg,padding:"2px 6px",borderRadius:4,flexShrink:0,letterSpacing:"0.04em",marginTop:1}}>{tool.type}</span>
-        <pre style={{fontSize:11,color:"#000000",fontFamily:"var(--font-geist-mono),monospace",margin:0,whiteSpace:"pre-wrap",lineHeight:1.5}}>{tool.call}</pre>
+        <pre style={{fontSize:11,color:"#212B32",fontFamily:"var(--font-geist-mono),monospace",margin:0,whiteSpace:"pre-wrap",lineHeight:1.5}}>{tool.call}</pre>
       </div>
       {tool.result && (
-        <div style={{marginTop:3,paddingLeft:48,fontSize:11,color:"#000000",fontFamily:"var(--font-geist-mono),monospace"}}>→ {tool.result}</div>
+        <div style={{marginTop:3,paddingLeft:48,fontSize:11,color:"#212B32",fontFamily:"var(--font-geist-mono),monospace"}}>→ {tool.result}</div>
       )}
     </div>
   );
@@ -189,31 +189,31 @@ function LedgerExecView() {
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
         <Database size={20} color="#005EB8" />
-        <span style={{fontSize:18,fontWeight:600,color:"#000000"}}>Reasoning Ledger</span>
+        <span style={{fontSize:18,fontWeight:600,color:"#212B32"}}>Reasoning Ledger</span>
         <span style={{fontSize:11,fontWeight:600,color:"#005EB8",backgroundColor:"#EFF6FF",padding:"2px 8px",borderRadius:4}}>RECORDING</span>
       </div>
-      <p style={{fontSize:12,color:"#000000",margin:0}}>Append-only database · tamper-proof · GDPR-ready · regulator-facing</p>
+      <p style={{fontSize:12,color:"#212B32",margin:0}}>Append-only database · tamper-proof · GDPR-ready · regulator-facing</p>
       <div style={{display:"flex",gap:10}}>
         {[{l:"Total entries",v:"148"},{l:"Today",v:"12"},{l:"MHRA flags",v:"3"},{l:"Avg write",v:"0.3ms"}].map(({l,v})=>(
           <div key={l} style={{flex:1,backgroundColor:"#F8FAFC",border:"0.5px solid #F0F4F5",borderRadius:8,padding:"10px 12px"}}>
-            <div style={{fontSize:10,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.05em",color:"#000000",marginBottom:4}}>{l}</div>
-            <div style={{fontSize:20,fontWeight:700,color:"#000000"}}>{v}</div>
+            <div style={{fontSize:10,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.05em",color:"#212B32",marginBottom:4}}>{l}</div>
+            <div style={{fontSize:20,fontWeight:700,color:"#212B32"}}>{v}</div>
           </div>
         ))}
       </div>
       <div style={{backgroundColor:"#FFFFFF",border:"0.5px solid #F0F4F5",borderRadius:10,overflow:"hidden"}}>
         <div style={{padding:"12px 16px",borderBottom:"0.5px solid #F0F4F5",backgroundColor:"#FAFBFC",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span style={{fontSize:13,fontWeight:500,color:"#000000"}}>Recent ledger writes</span>
-          <span style={{fontSize:10,fontWeight:600,color:"#000000",backgroundColor:"#F4F7FA",padding:"2px 8px",borderRadius:4,letterSpacing:"0.05em"}}>APPEND-ONLY · TAMPER-PROOF</span>
+          <span style={{fontSize:13,fontWeight:500,color:"#212B32"}}>Recent ledger writes</span>
+          <span style={{fontSize:10,fontWeight:600,color:"#212B32",backgroundColor:"#F4F7FA",padding:"2px 8px",borderRadius:4,letterSpacing:"0.05em"}}>APPEND-ONLY · TAMPER-PROOF</span>
         </div>
         {entries.map((e,i)=>(
-          <div key={e.id} style={{padding:"11px 16px",borderBottom:i<entries.length-1?"0.5px solid #F4F7FA":"none",borderLeft:e.amber?"3px solid #028090":"3px solid transparent",backgroundColor:e.amber?"#FFFDF5":"#FFFFFF",animation:i===0?"ledgerIn 0.4s ease":undefined}}>
+          <div key={e.id} style={{padding:"11px 16px",borderBottom:i<entries.length-1?"0.5px solid #F4F7FA":"none",borderLeft:e.amber?"3px solid #085040":"3px solid transparent",backgroundColor:e.amber?"#FFFDF5":"#FFFFFF",animation:i===0?"ledgerIn 0.4s ease":undefined}}>
             <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:4}}>
-              <span style={{fontSize:11,color:"#000000",fontFamily:"var(--font-geist-mono),monospace"}}>{e.time}</span>
-              <span style={{fontSize:10,color:"#000000",fontFamily:"var(--font-geist-mono),monospace",backgroundColor:"#F4F7FA",padding:"1px 5px",borderRadius:3}}>{e.id}</span>
-              <span style={{fontSize:10,fontWeight:700,color:"#000000",backgroundColor:e.amber?"#FEF9E7":"#F4F7FA",padding:"1px 5px",borderRadius:3}}>{e.cat}</span>
+              <span style={{fontSize:11,color:"#212B32",fontFamily:"var(--font-geist-mono),monospace"}}>{e.time}</span>
+              <span style={{fontSize:10,color:"#212B32",fontFamily:"var(--font-geist-mono),monospace",backgroundColor:"#F4F7FA",padding:"1px 5px",borderRadius:3}}>{e.id}</span>
+              <span style={{fontSize:10,fontWeight:700,color:"#212B32",backgroundColor:e.amber?"#FEF9E7":"#F4F7FA",padding:"1px 5px",borderRadius:3}}>{e.cat}</span>
             </div>
-            <p style={{fontSize:12,color:"#000000",margin:0,lineHeight:1.5}}>{e.msg}</p>
+            <p style={{fontSize:12,color:"#212B32",margin:0,lineHeight:1.5}}>{e.msg}</p>
           </div>
         ))}
       </div>
@@ -234,19 +234,19 @@ function AgentExecView({ agentId }: { agentId:string }) {
     <div style={{display:"flex",flexDirection:"column",gap:16}}>
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
         <row.Icon size={20} color={row.color} />
-        <span style={{fontSize:18,fontWeight:600,color:"#000000"}}>{row.label}</span>
-        <span style={{fontSize:11,fontWeight:600,color:"#000000",backgroundColor:isAlert?"#FEF2F2":"#F0FDF4",padding:"2px 8px",borderRadius:4}}>{isAlert?"⚠ ALERT":"● ACTIVE"}</span>
+        <span style={{fontSize:18,fontWeight:600,color:"#212B32"}}>{row.label}</span>
+        <span style={{fontSize:11,fontWeight:600,color:"#212B32",backgroundColor:isAlert?"#FEF2F2":"#E8F1FB",padding:"2px 8px",borderRadius:4}}>{isAlert?"⚠ ALERT":"● ACTIVE"}</span>
       </div>
-      <p style={{fontSize:12,color:"#000000",margin:0}}>{row.role} · Last heartbeat: 1 min ago</p>
+      <p style={{fontSize:12,color:"#212B32",margin:0}}>{row.role} · Last heartbeat: 1 min ago</p>
       <div style={{backgroundColor:"#FFFFFF",border:"0.5px solid #F0F4F5",borderRadius:10,padding:"14px 16px"}}>
-        <div style={{fontSize:11,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.05em",color:"#000000",marginBottom:4}}>CURRENT TASK</div>
-        <div style={{fontSize:14,fontWeight:500,color:"#000000"}}>{cfg.task}</div>
-        {agentId==="cpxo" && <div style={{fontSize:11,color:"#000000",marginTop:2}}>Processing INC-00934 · LIFE-CRITICAL</div>}
+        <div style={{fontSize:11,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.05em",color:"#212B32",marginBottom:4}}>CURRENT TASK</div>
+        <div style={{fontSize:14,fontWeight:500,color:"#212B32"}}>{cfg.task}</div>
+        {agentId==="cpxo" && <div style={{fontSize:11,color:"#212B32",marginTop:2}}>Processing INC-00934 · LIFE-CRITICAL</div>}
       </div>
       <div style={{backgroundColor:"#FFFFFF",border:"0.5px solid #F0F4F5",borderRadius:10,overflow:"hidden"}}>
         <div style={{padding:"12px 16px",borderBottom:"0.5px solid #F0F4F5",backgroundColor:"#FAFBFC",display:"flex",justifyContent:"space-between"}}>
-          <span style={{fontSize:13,fontWeight:500,color:"#000000"}}>Execution steps</span>
-          <span style={{fontSize:10,color:"#000000",backgroundColor:"#F4F7FA",padding:"2px 8px",borderRadius:4}}>Step {stepIdx+1}/{cfg.steps.length}</span>
+          <span style={{fontSize:13,fontWeight:500,color:"#212B32"}}>Execution steps</span>
+          <span style={{fontSize:10,color:"#212B32",backgroundColor:"#F4F7FA",padding:"2px 8px",borderRadius:4}}>Step {stepIdx+1}/{cfg.steps.length}</span>
         </div>
         <div style={{padding:"14px 16px",display:"flex",flexDirection:"column",gap:10}}>
           {cfg.steps.map((s,i) => <ExecStep key={i} step={s} state={i<stepIdx?"done":i===stepIdx?"active":"pending"} />)}
@@ -254,7 +254,7 @@ function AgentExecView({ agentId }: { agentId:string }) {
       </div>
       <div style={{backgroundColor:"#FFFFFF",border:"0.5px solid #F0F4F5",borderRadius:10,overflow:"hidden"}}>
         <div style={{padding:"12px 16px",borderBottom:"0.5px solid #F0F4F5",backgroundColor:"#FAFBFC",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span style={{fontSize:13,fontWeight:500,color:"#000000"}}>Tool calls · this cycle</span>
+          <span style={{fontSize:13,fontWeight:500,color:"#212B32"}}>Tool calls · this cycle</span>
           <div style={{display:"flex",gap:5}}>
             {(["READ","WRITE","DELEGATE","CALC","NOTIFY","SEND"] as ToolType[]).filter(t => cfg.tools.some(tc=>tc.type===t)).map(t=>(
               <span key={t} style={{fontSize:9,fontWeight:700,color:TOOL_STYLE[t].color,backgroundColor:TOOL_STYLE[t].bg,padding:"1px 5px",borderRadius:3}}>{t}</span>
@@ -265,13 +265,13 @@ function AgentExecView({ agentId }: { agentId:string }) {
       </div>
       {cfg.goal && (
         <div style={{backgroundColor:"#F8FAFC",border:"0.5px solid #F0F4F5",borderRadius:10,padding:"14px 16px"}}>
-          <div style={{fontSize:11,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.06em",color:"#000000",marginBottom:12}}>Goal ancestry</div>
+          <div style={{fontSize:11,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.06em",color:"#212B32",marginBottom:12}}>Goal ancestry</div>
           <div style={{display:"flex",flexDirection:"column",gap:6}}>
-            <div><div style={{fontSize:10,color:"#000000",marginBottom:2}}>🎯 COMPANY GOAL</div><div style={{fontSize:12,color:"#000000"}}>{cfg.goal.company}</div></div>
+            <div><div style={{fontSize:10,color:"#212B32",marginBottom:2}}>🎯 COMPANY GOAL</div><div style={{fontSize:12,color:"#212B32"}}>{cfg.goal.company}</div></div>
             <div style={{paddingLeft:16,fontSize:11,color:"#F0F4F5"}}>└─</div>
-            <div style={{paddingLeft:24}}><div style={{fontSize:10,color:"#000000",marginBottom:2}}>🏥 DEPARTMENT GOAL</div><div style={{fontSize:12,color:"#000000"}}>{cfg.goal.department}</div></div>
+            <div style={{paddingLeft:24}}><div style={{fontSize:10,color:"#212B32",marginBottom:2}}>🏥 DEPARTMENT GOAL</div><div style={{fontSize:12,color:"#212B32"}}>{cfg.goal.department}</div></div>
             <div style={{paddingLeft:40,fontSize:11,color:"#F0F4F5"}}>└─</div>
-            <div style={{paddingLeft:48}}><div style={{fontSize:10,color:"#000000",fontWeight:600,marginBottom:2}}>⚡ CURRENT TASK</div><div style={{fontSize:12,fontWeight:500,color:"#000000"}}>{cfg.goal.current}</div></div>
+            <div style={{paddingLeft:48}}><div style={{fontSize:10,color:"#212B32",fontWeight:600,marginBottom:2}}>⚡ CURRENT TASK</div><div style={{fontSize:12,fontWeight:500,color:"#212B32"}}>{cfg.goal.current}</div></div>
           </div>
         </div>
       )}
@@ -285,7 +285,7 @@ function AgentExecution() {
     <div style={{display:"flex",minHeight:600,backgroundColor:"#FFFFFF",border:"0.5px solid #F0F4F5",borderRadius:10,overflow:"hidden"}}>
       <div style={{width:300,flexShrink:0,backgroundColor:"#FFFFFF",borderRight:"0.5px solid #F0F4F5"}}>
         <div style={{padding:"14px 16px",borderBottom:"0.5px solid #F0F4F5",backgroundColor:"#FAFBFC"}}>
-          <span style={{fontSize:11,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.06em",color:"#000000"}}>SELECT AGENT</span>
+          <span style={{fontSize:11,fontWeight:500,textTransform:"uppercase",letterSpacing:"0.06em",color:"#212B32"}}>SELECT AGENT</span>
         </div>
         {PANEL_ROWS.map((row) => {
           const isSelected = selected === row.id;
@@ -294,13 +294,13 @@ function AgentExecution() {
           return (
             <div key={row.id}>
               {isLedger && <div style={{borderTop:"0.5px solid #F0F4F5",margin:"4px 0"}}/>}
-              <button onClick={()=>setSelected(row.id)} style={{width:"100%",textAlign:"left",padding:"12px 16px",cursor:"pointer",backgroundColor:isSelected?"rgba(2,128,144,0.06)":"transparent",border:"none",borderLeft:isSelected?"3px solid #028090":"3px solid transparent",borderBottom:"0.5px solid #F4F7FA",display:"flex",alignItems:"center",gap:10}}>
-                <row.Icon size={16} color={isSelected?row.color:"#000000"} />
+              <button onClick={()=>setSelected(row.id)} style={{width:"100%",textAlign:"left",padding:"12px 16px",cursor:"pointer",backgroundColor:isSelected?"rgba(8,80,64,0.06)":"transparent",border:"none",borderLeft:isSelected?"3px solid #085040":"3px solid transparent",borderBottom:"0.5px solid #F4F7FA",display:"flex",alignItems:"center",gap:10}}>
+                <row.Icon size={16} color={isSelected?row.color:"#212B32"} />
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:13,fontWeight:isSelected?600:400,color:"#000000",marginBottom:2}}>{row.label}</div>
-                  <div style={{fontSize:11,color:"#000000",fontStyle:isLedger?"italic":undefined}}>{row.role}</div>
+                  <div style={{fontSize:13,fontWeight:isSelected?600:400,color:"#212B32",marginBottom:2}}>{row.label}</div>
+                  <div style={{fontSize:11,color:"#212B32",fontStyle:isLedger?"italic":undefined}}>{row.role}</div>
                 </div>
-                <span className={isAlert?"animate-pulse-dot":undefined} style={{width:7,height:7,borderRadius:"50%",flexShrink:0,display:"inline-block",backgroundColor:row.dot==="red"?"#005EB8":row.dot==="purple"?"#005EB8":"#028090"}}/>
+                <span className={isAlert?"animate-pulse-dot":undefined} style={{width:7,height:7,borderRadius:"50%",flexShrink:0,display:"inline-block",backgroundColor:row.dot==="red"?"#005EB8":row.dot==="purple"?"#005EB8":"#085040"}}/>
               </button>
             </div>
           );
@@ -321,8 +321,8 @@ export default function HowItWorksPage() {
       <div style={{display:"flex",flexDirection:"column",gap:20}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div>
-            <h1 style={{fontSize:18,fontWeight:500,color:"#000000",margin:0}}>How It Works</h1>
-            <p style={{fontSize:12,color:"#000000",margin:"4px 0 0 0"}}>Live agent execution · tool calls · Navedas Intelligence backend</p>
+            <h1 style={{fontSize:18,fontWeight:500,color:"#212B32",margin:0}}>How It Works</h1>
+            <p style={{fontSize:12,color:"#212B32",margin:"4px 0 0 0"}}>Live agent execution · tool calls · Navedas Intelligence backend</p>
           </div>
           <button
             onClick={() => router.push("/")}

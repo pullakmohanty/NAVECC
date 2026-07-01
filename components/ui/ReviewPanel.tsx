@@ -16,7 +16,7 @@ export default function ReviewPanel({ incidentId }: { incidentId: string }) {
     fontWeight: 500 as const,
     textTransform: "uppercase" as const,
     letterSpacing: "0.05em",
-    color: "#000000",
+    color: "#212B32",
     display: "block" as const,
     marginBottom: 6,
   };
@@ -45,7 +45,7 @@ export default function ReviewPanel({ incidentId }: { incidentId: string }) {
       });
       setSubmitted(true);
     } catch {
-      setError("Submission failed — please try again.");
+      setError("Submission failed - please try again.");
     } finally {
       setLoading(false);
     }
@@ -55,22 +55,22 @@ export default function ReviewPanel({ incidentId }: { incidentId: string }) {
     return (
       <div
         style={{
-          backgroundColor: "#F0FDF4",
-          border: "0.5px solid #BBF7D0",
+          backgroundColor: "#E8F1FB",
+          border: "0.5px solid #BFD6F0",
           borderRadius: 10,
           padding: "24px 18px",
           textAlign: "center",
         }}
       >
         <div style={{ fontSize: 22, marginBottom: 8 }}>✓</div>
-        <p style={{ fontSize: 14, fontWeight: 600, color: "#028090", margin: "0 0 6px 0" }}>
+        <p style={{ fontSize: 14, fontWeight: 600, color: "#085040", margin: "0 0 6px 0" }}>
           Review submitted
         </p>
-        <p style={{ fontSize: 12, color: "#000000", margin: "0 0 12px 0" }}>
+        <p style={{ fontSize: 12, color: "#212B32", margin: "0 0 12px 0" }}>
           Appended to Reasoning Ledger for {incidentId}.
         </p>
-        <p style={{ fontSize: 11, color: "#000000", margin: 0 }}>
-          Check the Audit Log page — your entry is now live.
+        <p style={{ fontSize: 11, color: "#212B32", margin: 0 }}>
+          Check the Audit Log page - your entry is now live.
         </p>
       </div>
     );
@@ -101,7 +101,7 @@ export default function ReviewPanel({ incidentId }: { incidentId: string }) {
         {/* Reviewer */}
         <div>
           <span style={labelStyle}>Reviewer</span>
-          <div style={{ ...inputStyle, color: "#000000", backgroundColor: "#F8FAFC" }}>
+          <div style={{ ...inputStyle, color: "#212B32", backgroundColor: "#F8FAFC" }}>
             Sarah Mitchell · s.mitchell@arvion.com
           </div>
         </div>
@@ -117,7 +117,7 @@ export default function ReviewPanel({ incidentId }: { incidentId: string }) {
             <option value="">Select decision…</option>
             <option value="approve">Approve automated action</option>
             <option value="escalate">Escalate to clinical team</option>
-            <option value="override">Override — manual action taken</option>
+            <option value="override">Override - manual action taken</option>
           </select>
         </div>
 
@@ -129,8 +129,8 @@ export default function ReviewPanel({ incidentId }: { incidentId: string }) {
             onChange={(e) => setRootCause(e.target.value)}
             style={{ ...inputStyle, cursor: "pointer" }}
           >
-            <option value="Accept">Accept — Courier / Traffic</option>
-            <option value="Override">Override — different root cause</option>
+            <option value="Accept">Accept - Courier / Traffic</option>
+            <option value="Override">Override - different root cause</option>
           </select>
         </div>
 
@@ -142,7 +142,7 @@ export default function ReviewPanel({ incidentId }: { incidentId: string }) {
             onChange={(e) => setEvidence(e.target.value)}
             style={{ ...inputStyle, cursor: "pointer" }}
           >
-            <option value="Accept">Accept — Confirmed</option>
+            <option value="Accept">Accept - Confirmed</option>
             <option value="Downgrade">Downgrade to Probable</option>
           </select>
         </div>
@@ -173,8 +173,8 @@ export default function ReviewPanel({ incidentId }: { incidentId: string }) {
             borderRadius: 6,
           }}
         >
-          <span style={{ fontSize: 11, color: "#000000" }}>
-            Human involvement — post-action only. The automated action has already executed. This review is for governance and audit purposes only.
+          <span style={{ fontSize: 11, color: "#212B32" }}>
+            Human involvement - post-action only. The automated action has already executed. This review is for governance and audit purposes only.
           </span>
         </div>
 
@@ -183,7 +183,7 @@ export default function ReviewPanel({ incidentId }: { incidentId: string }) {
           onClick={handleSubmit}
           disabled={loading}
           style={{
-            backgroundColor: loading ? "#000000" : "#005EB8",
+            backgroundColor: loading ? "#212B32" : "#005EB8",
             color: "#FFFFFF",
             fontSize: 13,
             fontWeight: 500,

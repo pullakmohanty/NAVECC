@@ -14,7 +14,7 @@ import StaffHoursChart from "@/components/charts/StaffHoursChart";
 
 
 const SEV_COLOR: Record<string, string> = {
-  CRITICAL: "#005EB8", HIGH: "#028090", MEDIUM: "#005EB8", LOW: "#028090",
+  CRITICAL: "#005EB8", HIGH: "#085040", MEDIUM: "#005EB8", LOW: "#085040",
 };
 
 function fmtDetected(iso: string) {
@@ -33,7 +33,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <span style={{
       fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em",
-      color: "#000000", display: "block", marginBottom: 10,
+      color: "#212B32", display: "block", marginBottom: 10,
     }}>
       {children}
     </span>
@@ -47,10 +47,10 @@ function fmtTime(iso: string) {
 function Field({ label, value, redValue }: { label: string; value: string; redValue?: boolean }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <span style={{ fontSize: 10, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em", color: "#000000" }}>
+      <span style={{ fontSize: 10, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em", color: "#212B32" }}>
         {label}
       </span>
-      <span style={{ fontSize: 12, fontWeight: redValue ? 700 : 400, color: "#000000" }}>
+      <span style={{ fontSize: 12, fontWeight: redValue ? 700 : 400, color: "#212B32" }}>
         {value}
       </span>
     </div>
@@ -69,6 +69,7 @@ export default function IncidentDetailPage() {
   const [auditEntries,  setAuditEntries]  = useState<AuditEntry[]>([]);
   const [hoveredId,     setHoveredId]     = useState<string | null>(null);
   const [severityFilter, setSeverityFilter] = useState("All");
+  const [viewMode,       setViewMode]       = useState<"open" | "resolved">("open");
 
   // Review panel state
   const [reviewDecision,   setReviewDecision]   = useState("");
@@ -112,6 +113,9 @@ export default function IncidentDetailPage() {
         if (data.incident) {
           setIncident(data.incident);
           setAuditEntries(data.auditEntries ?? []);
+          // Keep the list in the same context as the incident being viewed,
+          // so opening a resolved incident shows the Resolved list (not Open).
+          setViewMode(data.incident.status === "RESOLVED" ? "resolved" : "open");
         }
       });
   }, [id]);
@@ -119,11 +123,21 @@ export default function IncidentDetailPage() {
   if (!incident) return null;
 
   const hasPendingApproval = pendingApprovals.some(a => a.incidentId === id);
+  const isResolved = incident.status === "RESOLVED";
+  // An automated action was taken on this incident (so it needs human review/ack).
+  const hasAction = auditEntries.some(e => e.category === "ACTION_TAKEN");
+  const needsReview = !isResolved && (hasPendingApproval || hasAction);
+  // Open incident, detected/classified, but no action yet - passive monitoring.
+  const isMonitoring = !isResolved && !needsReview;
 
   const severityFilters = ["All", "CRITICAL", "HIGH", "MEDIUM"];
+  const statusFiltered = allIncidents.filter(inc =>
+    viewMode === "resolved" ? inc.status === "RESOLVED" : inc.status !== "RESOLVED"
+  );
+  const resolvedCount = allIncidents.filter(inc => inc.status === "RESOLVED").length;
   const filteredIncidents = severityFilter === "All"
-    ? allIncidents
-    : allIncidents.filter(inc => inc.severity === severityFilter);
+    ? statusFiltered
+    : statusFiltered.filter(inc => inc.severity === severityFilter);
 
   return (
     <div style={{
@@ -132,7 +146,7 @@ export default function IncidentDetailPage() {
       overflow: "hidden",
     }}>
 
-      {/* ══ LEFT — Incident list ══════════════════════════════════════════════ */}
+      {/* ══ LEFT - Incident list ══════════════════════════════════════════════ */}
       <div style={{
         width: 236, flexShrink: 0,
         backgroundColor: "#FFFFFF",
@@ -144,17 +158,28 @@ export default function IncidentDetailPage() {
         <div style={{
           padding: "10px 14px", borderBottom: "1px solid #F0F4F5",
           backgroundColor: "#F8FAFC", flexShrink: 0,
+          display: "flex", alignItems: "center",
         }}>
-          <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#000000" }}>
-            Open Incidents
+          <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#212B32" }}>
+            {viewMode === "resolved" ? "Resolved Incidents" : "Open Incidents"}
           </span>
           <span style={{
-            fontSize: 10, fontWeight: 600, color: "#028090",
-            backgroundColor: "rgba(2,128,144,0.08)", padding: "1px 6px",
+            fontSize: 10, fontWeight: 600, color: "#085040",
+            backgroundColor: "rgba(8,80,64,0.08)", padding: "1px 6px",
             borderRadius: 8, marginLeft: 8,
           }}>
             {filteredIncidents.length}
           </span>
+          <button
+            onClick={() => setViewMode(viewMode === "resolved" ? "open" : "resolved")}
+            style={{
+              marginLeft: "auto", background: "none", border: "none",
+              padding: 0, cursor: "pointer",
+              fontSize: 10, fontWeight: 500, color: "#085040",
+            }}
+          >
+            {viewMode === "resolved" ? "← Open" : `Resolved (${resolvedCount})`}
+          </button>
         </div>
 
         {/* Severity filter */}
@@ -167,9 +192,9 @@ export default function IncidentDetailPage() {
             return (
               <button key={sev} onClick={() => setSeverityFilter(sev)} style={{
                 fontSize: 10, fontWeight: active ? 500 : 400,
-                color: active ? "#028090" : "#000000",
-                backgroundColor: active ? "rgba(2,128,144,0.07)" : "#FFFFFF",
-                border: active ? "1px solid #028090" : "1px solid #F0F4F5",
+                color: active ? "#085040" : "#212B32",
+                backgroundColor: active ? "rgba(8,80,64,0.07)" : "#FFFFFF",
+                border: active ? "1px solid #085040" : "1px solid #F0F4F5",
                 borderRadius: 6, padding: "3px 9px", cursor: "pointer",
                 textTransform: "capitalize" as const,
               }}>
@@ -182,7 +207,7 @@ export default function IncidentDetailPage() {
         {/* Incident rows */}
         <div style={{ overflowY: "auto", flex: 1 }}>
           {filteredIncidents.map(inc => {
-            const sc       = SEV_COLOR[inc.severity] ?? "#000000";
+            const sc       = SEV_COLOR[inc.severity] ?? "#212B32";
             const isActive = inc.id === id;
             const isHover  = hoveredId === inc.id && !isActive;
             return (
@@ -195,12 +220,12 @@ export default function IncidentDetailPage() {
                   padding: "9px 12px 9px 0",
                   paddingLeft: 0,
                   cursor: "pointer",
-                  backgroundColor: isActive ? "#F0FFFE" : isHover ? "#FAFEFF" : "transparent",
+                  backgroundColor: isActive ? "#E8F1FB" : isHover ? "#F4F8FC" : "transparent",
                   borderBottom: "1px solid #F4F7FA",
                   display: "flex", gap: 0,
                 }}
               >
-                <div style={{ width: 12, flexShrink: 0 }} />
+                <div style={{ width: 12, flexShrink: 0, borderLeft: isActive ? "3px solid #005EB8" : "3px solid transparent" }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   {/* ID + severity */}
                   <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 3 }}>
@@ -208,7 +233,7 @@ export default function IncidentDetailPage() {
                       width: 6, height: 6, borderRadius: "50%",
                       backgroundColor: sc, display: "inline-block", flexShrink: 0,
                     }} />
-                    <span style={{ fontSize: 10, fontFamily: "var(--font-geist-mono), monospace", color: "#028090", fontWeight: 500 }}>
+                    <span style={{ fontSize: 10, fontFamily: "var(--font-geist-mono), monospace", color: "#425563", fontWeight: 500 }}>
                       {inc.id}
                     </span>
                     <span style={{ marginLeft: "auto" }}>
@@ -227,7 +252,7 @@ export default function IncidentDetailPage() {
                   <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                     <span style={{ fontSize: 10, color: sc, fontWeight: 600 }}>{inc.delayHours}h delay</span>
                     <span style={{ fontSize: 9, color: "#F0F4F5" }}>·</span>
-                    <span style={{ fontSize: 11, fontWeight: 500, color: "#000000" }}>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: "#212B32" }}>
                       {inc.status}
                     </span>
                   </div>
@@ -239,7 +264,7 @@ export default function IncidentDetailPage() {
         </div>
       </div>
 
-      {/* ══ CENTER — Main workspace ═══════════════════════════════════════════ */}
+      {/* ══ CENTER - Main workspace ═══════════════════════════════════════════ */}
       <div style={{ flex: 1, minWidth: 0, overflowY: "auto", display: "flex", flexDirection: "column", gap: 12 }}>
 
         {/* ── INCIDENT HEADER ── */}
@@ -248,11 +273,11 @@ export default function IncidentDetailPage() {
           borderRadius: 10, padding: "14px 18px",
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}>
-            <span style={{ fontSize: 11, fontFamily: "var(--font-geist-mono), monospace", color: "#028090", fontWeight: 500 }}>
+            <span style={{ fontSize: 11, fontFamily: "var(--font-geist-mono), monospace", color: "#425563", fontWeight: 500 }}>
               {incident.id}
             </span>
             <UrgencyDot urgency={incident.severity} />
-            <span style={{ fontSize: 11, fontWeight: 500, color: "#000000" }}>
+            <span style={{ fontSize: 11, fontWeight: 500, color: "#212B32" }}>
               {incident.status}
             </span>
           </div>
@@ -268,8 +293,8 @@ export default function IncidentDetailPage() {
               { label: "Evidence",    value: incident.evidenceLevel },
             ].map(({ label, value }) => (
               <div key={label} style={{ display: "flex", gap: 4, alignItems: "baseline" }}>
-                <span style={{ fontSize: 10, color: "#000000" }}>{label}</span>
-                <span style={{ fontSize: 11, color: "#000000", fontWeight: 500 }}>{value}</span>
+                <span style={{ fontSize: 10, color: "#212B32" }}>{label}</span>
+                <span style={{ fontSize: 11, color: "#212B32", fontWeight: 500 }}>{value}</span>
               </div>
             ))}
           </div>
@@ -281,12 +306,12 @@ export default function IncidentDetailPage() {
           borderRadius: 8, padding: "14px 18px",
         }}>
           <SectionLabel>Event summary</SectionLabel>
-          <p style={{ fontSize: 13, fontStyle: "italic", color: "#000000", margin: 0, lineHeight: 1.65 }}>
+          <p style={{ fontSize: 13, fontStyle: "italic", color: "#212B32", margin: 0, lineHeight: 1.65 }}>
             &ldquo;{incident.eventSummary}&rdquo;
           </p>
         </div>
 
-        {/* ── SIGNAL CARDS — 3 columns ── */}
+        {/* ── SIGNAL CARDS - 3 columns ── */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
           {incident.dataSources.includes("COURIER") && (
             <DataSourceCard
@@ -335,20 +360,20 @@ export default function IncidentDetailPage() {
 
         {/* ── NHS STAFF HOURS ── */}
         <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 10, padding: "14px 18px" }}>
-          <SectionLabel>NHS staff hours lost — breakdown</SectionLabel>
-          <StaffHoursChart />
+          <SectionLabel>NHS staff hours lost - breakdown</SectionLabel>
+          <StaffHoursChart data={incident.staffHoursBreakdown} />
         </div>
 
-        {/* ── TIMELINE — first-class card ── */}
+        {/* ── TIMELINE - first-class card ── */}
         <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 10, overflow: "hidden" }}>
           <div style={{
             padding: "10px 16px", borderBottom: "1px solid #F0F4F5",
             backgroundColor: "#FAFBFC", display: "flex", alignItems: "center", justifyContent: "space-between",
           }}>
             <span style={{ fontSize: 13, fontWeight: 500, color: "#005EB8" }}>
-              Timeline — Reasoning Ledger
+              Timeline - Reasoning Ledger
             </span>
-            <span style={{ fontSize: 9, fontWeight: 600, color: "#000000", backgroundColor: "#F4F7FA", padding: "2px 8px", borderRadius: 4, letterSpacing: "0.05em" }}>
+            <span style={{ fontSize: 9, fontWeight: 600, color: "#212B32", backgroundColor: "#F4F7FA", padding: "2px 8px", borderRadius: 4, letterSpacing: "0.05em" }}>
               APPEND-ONLY · TAMPER-PROOF
             </span>
           </div>
@@ -359,8 +384,8 @@ export default function IncidentDetailPage() {
 
       </div>
 
-      {/* ══ RIGHT — Case review panel (only for incidents with pending approval) */}
-      {hasPendingApproval && <div style={{
+      {/* ══ RIGHT - Case review panel (always shown: review / monitoring / closed) */}
+      {<div style={{
         width: 272, flexShrink: 0,
         backgroundColor: "#FFFFFF",
         border: "1px solid #F0F4F5",
@@ -372,7 +397,7 @@ export default function IncidentDetailPage() {
           padding: "10px 14px", borderBottom: "1px solid #F0F4F5",
           backgroundColor: "#F8FAFC", flexShrink: 0,
         }}>
-          <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#000000" }}>
+          <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#212B32" }}>
             Case review
           </span>
         </div>
@@ -381,55 +406,59 @@ export default function IncidentDetailPage() {
 
           {/* Human governance note */}
           <div style={{ borderTop: "1.5px dashed #E2E8F0", paddingTop: 10, marginBottom: 14 }}>
-            <span style={{ fontSize: 10, color: "#000000", lineHeight: 1.5 }}>
-              Human involvement — post-action only. Actions have already executed.
+            <span style={{ fontSize: 10, color: "#212B32", lineHeight: 1.5 }}>
+              {isResolved
+                ? "Incident resolved and closed. Governance review complete - record is read-only."
+                : isMonitoring
+                ? "Detected and classified. No automated action taken yet - under active monitoring, within SLA."
+                : "Human involvement - post-action only. Actions have already executed."}
             </span>
           </div>
 
           {/* Process stepper */}
           <div style={{ marginBottom: 14 }}>
-            <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 10 }}>
+            <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32", display: "block", marginBottom: 10 }}>
               Process status
             </span>
             <div style={{ display: "flex", alignItems: "flex-start", width: "100%" }}>
               {[
                 { label: "Detected",  done: true  },
                 { label: "Classified", done: true  },
-                { label: "Actioned",  done: true  },
-                { label: "Review",    done: false, active: !reviewDone },
-                { label: "Closed",    done: reviewDone },
+                { label: "Actioned",  done: needsReview || isResolved || reviewDone },
+                { label: "Review",    done: reviewDone || isResolved, active: incident.status === "IN REVIEW" && !reviewDone && !isResolved },
+                { label: "Closed",    done: reviewDone || isResolved },
               ].map((step, i, arr) => (
                 <React.Fragment key={i}>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 3, flexShrink: 0 }}>
                     <div style={{
                       width: 22, height: 22, borderRadius: "50%",
-                      backgroundColor: step.done || step.active ? "#028090" : "#F4F7FA",
+                      backgroundColor: step.done || step.active ? "#085040" : "#F4F7FA",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: 10, fontWeight: 700,
-                      color: step.done || step.active ? "#FFFFFF" : "#94A3B8",
+                      color: step.done || step.active ? "#FFFFFF" : "#768692",
                       flexShrink: 0,
                     }}>
                       {step.done ? "✓" : i + 1}
                     </div>
-                    <span style={{ fontSize: 8, fontWeight: step.active ? 600 : 400, color: step.active ? "#028090" : step.done ? "#000000" : "#94A3B8", whiteSpace: "nowrap", textAlign: "center" }}>
+                    <span style={{ fontSize: 8, fontWeight: step.active ? 600 : 400, color: step.active ? "#085040" : step.done ? "#212B32" : "#768692", whiteSpace: "nowrap", textAlign: "center" }}>
                       {step.label}
                     </span>
                   </div>
                   {i < arr.length - 1 && (
-                    <span style={{ flex: 1, minWidth: 4, height: 1, backgroundColor: step.done ? "#028090" : "#E2E8F0", margin: "10px 2px 0" }} />
+                    <span style={{ flex: 1, minWidth: 4, height: 1, backgroundColor: step.done ? "#085040" : "#E2E8F0", margin: "10px 2px 0" }} />
                   )}
                 </React.Fragment>
               ))}
             </div>
           </div>
 
-          {/* Reasoning Ledger — compact, fixed-height scrollable */}
+          {/* Reasoning Ledger - compact, fixed-height scrollable */}
           <div style={{ marginBottom: 14 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
-              <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000" }}>
+              <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32" }}>
                 Reasoning ledger
               </span>
-              <span style={{ fontSize: 8, fontWeight: 600, color: "#000000", backgroundColor: "#F4F7FA", padding: "1px 6px", borderRadius: 4, letterSpacing: "0.04em" }}>
+              <span style={{ fontSize: 8, fontWeight: 600, color: "#212B32", backgroundColor: "#F4F7FA", padding: "1px 6px", borderRadius: 4, letterSpacing: "0.04em" }}>
                 APPEND-ONLY
               </span>
             </div>
@@ -439,7 +468,7 @@ export default function IncidentDetailPage() {
               display: "flex", flexDirection: "column", gap: 8,
             }}>
               {auditEntries.length === 0 ? (
-                <span style={{ fontSize: 10, color: "#94A3B8" }}>No ledger entries yet.</span>
+                <span style={{ fontSize: 10, color: "#768692" }}>No ledger entries yet.</span>
               ) : auditEntries.map(entry => (
                 <div
                   key={entry.id}
@@ -449,10 +478,10 @@ export default function IncidentDetailPage() {
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 1 }}>
-                    <span style={{ fontSize: 9, fontFamily: "var(--font-geist-mono), monospace", color: "#000000" }}>
+                    <span style={{ fontSize: 9, fontFamily: "var(--font-geist-mono), monospace", color: "#212B32" }}>
                       {fmtTime(entry.timestamp)}
                     </span>
-                    <span style={{ fontSize: 9, fontWeight: 500, color: "#000000" }}>
+                    <span style={{ fontSize: 9, fontWeight: 500, color: "#212B32" }}>
                       {entry.actor}
                     </span>
                   </div>
@@ -464,12 +493,34 @@ export default function IncidentDetailPage() {
             </div>
           </div>
 
-          {/* Decision form or success */}
-          {reviewDone ? (
+          {/* Decision form / monitoring / closed */}
+          {isMonitoring && !reviewDone ? (
+            <div style={{ backgroundColor: "#F8FAFC", border: "0.5px solid #E2E8F0", borderRadius: 8, padding: "14px" }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#005EB8", display: "block", marginBottom: 6 }}>
+                No action awaiting approval
+              </span>
+              <p style={{ fontSize: 11, color: "#212B32", margin: "0 0 12px 0", lineHeight: 1.5 }}>
+                Incident detected and classified. No automated action has been taken - the delay is within SLA and under active monitoring. Escalate if human intervention is required.
+              </p>
+              <button
+                onClick={() => handleReviewSubmit("escalate")}
+                disabled={reviewSubmitting}
+                style={{ width: "100%", fontSize: 12, fontWeight: 500, color: "#005EB8", backgroundColor: "#FFFFFF", border: "1px solid #005EB8", borderRadius: 6, padding: "8px", cursor: "pointer" }}
+              >
+                {reviewSubmitting ? "Submitting…" : "Escalate for review"}
+              </button>
+            </div>
+          ) : reviewDone || isResolved ? (
             <div style={{ backgroundColor: "#F0FDF4", border: "0.5px solid #BBF7D0", borderRadius: 8, padding: "16px 14px", textAlign: "center" }}>
               <div style={{ fontSize: 18, marginBottom: 6 }}>✓</div>
-              <p style={{ fontSize: 13, fontWeight: 600, color: "#028090", margin: "0 0 4px 0" }}>Review submitted</p>
-              <p style={{ fontSize: 11, color: "#000000", margin: 0, lineHeight: 1.5 }}>Appended to Reasoning Ledger for {incident?.id}.</p>
+              <p style={{ fontSize: 13, fontWeight: 600, color: "#085040", margin: "0 0 4px 0" }}>
+                {isResolved && !reviewDone ? "Incident closed" : "Review submitted"}
+              </p>
+              <p style={{ fontSize: 11, color: "#212B32", margin: 0, lineHeight: 1.5 }}>
+                {isResolved && !reviewDone
+                  ? `Resolved and closed. Full audit trail in the Reasoning Ledger for ${incident?.id}.`
+                  : `Appended to Reasoning Ledger for ${incident?.id}.`}
+              </p>
             </div>
           ) : (
             <>
@@ -479,7 +530,7 @@ export default function IncidentDetailPage() {
 
               {/* Your decision */}
               <div style={{ marginBottom: 10 }}>
-                <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 5 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32", display: "block", marginBottom: 5 }}>
                   Your decision
                 </span>
                 <select
@@ -490,13 +541,13 @@ export default function IncidentDetailPage() {
                   <option value="">Select decision…</option>
                   <option value="approve">Approve automated action</option>
                   <option value="escalate">Escalate to clinical team</option>
-                  <option value="override">Override — manual action taken</option>
+                  <option value="override">Override - manual action taken</option>
                 </select>
               </div>
 
               {/* Root cause classification */}
               <div style={{ marginBottom: 10 }}>
-                <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 5 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32", display: "block", marginBottom: 5 }}>
                   Root cause classification
                 </span>
                 <select
@@ -504,14 +555,14 @@ export default function IncidentDetailPage() {
                   onChange={e => setReviewRootCause(e.target.value)}
                   style={{ width: "100%", fontSize: 12, color: "#005EB8", backgroundColor: "#FAFBFC", border: "1px solid #F0F4F5", borderRadius: 6, padding: "6px 8px", outline: "none", cursor: "pointer" }}
                 >
-                  <option value="accept">Accept — {incident?.rootCause}</option>
-                  <option value="override">Override — different root cause</option>
+                  <option value="accept">Accept - {incident?.rootCause}</option>
+                  <option value="override">Override - different root cause</option>
                 </select>
               </div>
 
               {/* Review notes */}
               <div style={{ marginBottom: 12 }}>
-                <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 5 }}>
+                <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32", display: "block", marginBottom: 5 }}>
                   Review notes
                 </span>
                 <textarea
@@ -519,7 +570,7 @@ export default function IncidentDetailPage() {
                   onChange={e => setReviewNotes(e.target.value)}
                   placeholder="Add governance notes, context, or follow-up actions…"
                   rows={3}
-                  style={{ width: "100%", fontSize: 12, color: "#000000", backgroundColor: "#FAFBFC", border: "1px solid #F0F4F5", borderRadius: 6, padding: "7px 8px", outline: "none", resize: "vertical", fontFamily: "inherit", lineHeight: 1.5, boxSizing: "border-box" }}
+                  style={{ width: "100%", fontSize: 12, color: "#212B32", backgroundColor: "#FAFBFC", border: "1px solid #F0F4F5", borderRadius: 6, padding: "7px 8px", outline: "none", resize: "vertical", fontFamily: "inherit", lineHeight: 1.5, boxSizing: "border-box" }}
                 />
               </div>
 
@@ -528,7 +579,7 @@ export default function IncidentDetailPage() {
                 <button
                   onClick={() => handleReviewSubmit()}
                   disabled={!reviewDecision || reviewSubmitting}
-                  style={{ width: "100%", fontSize: 12, fontWeight: 600, color: !reviewDecision || reviewSubmitting ? "#94A3B8" : "#FFFFFF", backgroundColor: !reviewDecision || reviewSubmitting ? "#F0F4F5" : "#005EB8", border: "none", borderRadius: 6, padding: "8px 12px", cursor: !reviewDecision || reviewSubmitting ? "not-allowed" : "pointer" }}
+                  style={{ width: "100%", fontSize: 12, fontWeight: 600, color: !reviewDecision || reviewSubmitting ? "#768692" : "#FFFFFF", backgroundColor: !reviewDecision || reviewSubmitting ? "#F0F4F5" : "#005EB8", border: "none", borderRadius: 6, padding: "8px 12px", cursor: !reviewDecision || reviewSubmitting ? "not-allowed" : "pointer" }}
                 >
                   {reviewSubmitting ? "Submitting…" : "Acknowledge action"}
                 </button>
@@ -536,13 +587,13 @@ export default function IncidentDetailPage() {
                   <button
                     onClick={() => { setReviewDecision("escalate"); handleReviewSubmit("escalate"); }}
                     disabled={reviewSubmitting}
-                    style={{ flex: 1, fontSize: 11, fontWeight: 500, color: "#028090", backgroundColor: "transparent", border: "1px solid #028090", borderRadius: 6, padding: "7px 8px", cursor: "pointer" }}
+                    style={{ flex: 1, fontSize: 11, fontWeight: 500, color: "#085040", backgroundColor: "transparent", border: "1px solid #085040", borderRadius: 6, padding: "7px 8px", cursor: "pointer" }}
                   >
                     Escalate
                   </button>
                   <button
                     onClick={() => {}}
-                    style={{ flex: 1, fontSize: 11, fontWeight: 400, color: "#000000", backgroundColor: "transparent", border: "1px solid #F0F4F5", borderRadius: 6, padding: "7px 8px", cursor: "pointer" }}
+                    style={{ flex: 1, fontSize: 11, fontWeight: 400, color: "#212B32", backgroundColor: "transparent", border: "1px solid #F0F4F5", borderRadius: 6, padding: "7px 8px", cursor: "pointer" }}
                   >
                     Save Draft
                   </button>

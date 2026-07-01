@@ -6,6 +6,8 @@ import { agentProfiles as initialProfiles, type AgentProfile } from "@/data/agen
 interface ContextType {
   profiles: Record<string, AgentProfile>;
   updateProfile: (agentId: string, updates: Partial<AgentProfile>) => void;
+  addProfile: (profile: AgentProfile) => void;
+  removeProfile: (agentId: string) => void;
 }
 
 const AgentProfilesContext = createContext<ContextType | null>(null);
@@ -20,8 +22,20 @@ export function AgentProfilesProvider({ children }: { children: ReactNode }) {
     }));
   }
 
+  function addProfile(profile: AgentProfile) {
+    setProfiles(prev => ({ ...prev, [profile.id]: profile }));
+  }
+
+  function removeProfile(agentId: string) {
+    setProfiles(prev => {
+      const next = { ...prev };
+      delete next[agentId];
+      return next;
+    });
+  }
+
   return (
-    <AgentProfilesContext.Provider value={{ profiles, updateProfile }}>
+    <AgentProfilesContext.Provider value={{ profiles, updateProfile, addProfile, removeProfile }}>
       {children}
     </AgentProfilesContext.Provider>
   );

@@ -3,11 +3,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  Brain, Truck, HeartPulse, Shield, Bell,
+  Network, Truck, HeartPulse, Shield, Bell,
   Radar, Package, RefreshCw,
   Check, Plus, Bot, X,
 } from "lucide-react";
 import { AgentPanel } from "@/components/ui/AgentPanel";
+import { useAgentProfiles } from "@/lib/AgentProfilesContext";
+import type { AgentProfile } from "@/data/agentProfiles";
 
 // ── CSS ───────────────────────────────────────────────────────────────────────
 
@@ -16,16 +18,16 @@ const CSS = `
   @keyframes cpulse  { 0%,100% { opacity:1 } 50% { opacity:0.45 } }
   * { outline: none !important; }
 
-  /* Text color overrides — needed because globals.css forces * { color:#000 !important } */
+  /* Text color overrides - needed because globals.css forces * { color:#000 !important } */
   .s2-head  { color: #0D1B3E !important; }
   .s2-body  { color: #334155 !important; }
   .s2-muted { color: #64748B !important; }
-  .s2-gray  { color: #94A3B8 !important; }
-  .s2-teal  { color: #028090 !important; }
+  .s2-gray  { color: #768692 !important; }
+  .s2-teal  { color: #085040 !important; }
   .s2-green { color: #15803D !important; }
   .s2-amber-t { color: #92400E !important; }
   .s2-white { color: #FFFFFF !important; }
-  .s2-disabled-text { color: #94A3B8 !important; }
+  .s2-disabled-text { color: #768692 !important; }
   .s2-it    { font-style: italic; }
   .s2-mono  { font-family: var(--font-geist-mono), monospace; }
   .s2-up    { text-transform: uppercase; letter-spacing: 0.06em; }
@@ -39,16 +41,16 @@ const USE_CASES = [
     name: "Silent delivery delay detection",
     desc: "Detect silent delivery delays that NHS staff absorb and never report. Surfaces the invisible 1.3%.",
     agents: ["CPXO", "Delivery Ops", "Clinical Risk", "Compliance", "Engagement"],
-    badge: { label: "● Live", color: "#028090", bg: "#F0FDF4" },
-    Icon: Radar, iconColor: "#028090", disabled: false,
+    badge: { label: "● Live", color: "#FFFFFF", bg: "#005EB8" },
+    Icon: Radar, iconColor: "#085040", disabled: false,
   },
   {
     id: "nhs-workaround",
     name: "NHS Workaround Quantification",
-    desc: "Measure and attribute the hidden hours NHS staff absorb when deliveries fail — quantify the true cost of silent disruption.",
+    desc: "Measure and attribute the hidden hours NHS staff absorb when deliveries fail - quantify the true cost of silent disruption.",
     agents: [],
     badge: { label: "Coming soon", color: "#64748B", bg: "#F4F7FA" },
-    Icon: Package, iconColor: "#94A3B8", disabled: true,
+    Icon: Package, iconColor: "#768692", disabled: true,
   },
   {
     id: "proactive-intervention",
@@ -56,15 +58,15 @@ const USE_CASES = [
     desc: "Predict delivery risk before failure occurs and trigger proactive actions before the NHS supply chain absorbs the disruption.",
     agents: [],
     badge: { label: "Coming soon", color: "#64748B", bg: "#F4F7FA" },
-    Icon: RefreshCw, iconColor: "#94A3B8", disabled: true,
+    Icon: RefreshCw, iconColor: "#768692", disabled: true,
   },
   {
     id: "attribution-model",
     name: "Attribution Model",
-    desc: "Attribute intervention outcomes back to specific supply chain decisions — measure what worked, what didn't, and why.",
+    desc: "Attribute intervention outcomes back to specific supply chain decisions - measure what worked, what didn't, and why.",
     agents: [],
     badge: { label: "Coming soon", color: "#64748B", bg: "#F4F7FA" },
-    Icon: RefreshCw, iconColor: "#94A3B8", disabled: true,
+    Icon: RefreshCw, iconColor: "#768692", disabled: true,
   },
 ];
 
@@ -83,16 +85,16 @@ interface SubAgentDef {
 }
 
 const SUB_AGENTS: SubAgentDef[] = [
-  { id: "delivery",   Icon: Truck,      color: "#028090", chipBg: "#E6F4F5", label: "Delivery Ops Agent",  role: "Logistics & courier tracking" },
-  { id: "clinical",   Icon: HeartPulse, color: "#E05C5C", chipBg: "#FDECEA", label: "Clinical Risk Agent", role: "Patient safety & severity"    },
+  { id: "delivery",   Icon: Truck,      color: "#085040", chipBg: "#E8F1FB", label: "Delivery Ops Agent",  role: "Logistics & courier tracking" },
+  { id: "clinical",   Icon: HeartPulse, color: "#DA291C", chipBg: "#FDECEA", label: "Clinical Risk Agent", role: "Patient safety & severity"    },
   { id: "compliance", Icon: Shield,     color: "#E8A838", chipBg: "#FEF9EC", label: "Compliance Agent",    role: "GDPR & pharma audit"          },
   { id: "engagement", Icon: Bell,       color: "#185FA5", chipBg: "#EBF2FB", label: "Engagement Agent",    role: "Alerts & comms" },
 ];
 
 const BADGE_META = [
   { id: "cpxo",       label: "CPXO Agent",    color: "#3B3486" },
-  { id: "delivery",   label: "Delivery Ops",  color: "#028090" },
-  { id: "clinical",   label: "Clinical Risk", color: "#E05C5C" },
+  { id: "delivery",   label: "Delivery Ops",  color: "#085040" },
+  { id: "clinical",   label: "Clinical Risk", color: "#DA291C" },
   { id: "compliance", label: "Compliance",    color: "#E8A838" },
   { id: "engagement", label: "Engagement",    color: "#185FA5" },
 ];
@@ -101,7 +103,7 @@ const BADGE_META = [
 
 type AgentId     = "delivery" | "clinical" | "compliance" | "engagement";
 type AgentStatus = "locked" | "calling" | "active";
-type CPXOPhase   = "Configuring" | "Reading instructions" | "Planning pipeline" | "Active — orchestrating";
+type CPXOPhase   = "Configuring" | "Reading instructions" | "Planning pipeline" | "Active - orchestrating";
 type SeqState    = "idle" | "running" | "done";
 
 interface LogEntry {
@@ -113,8 +115,8 @@ interface LogEntry {
 const DOT_COLOR: Record<LogEntry["dot"], string> = {
   amber: "#E8A838",
   blue:  "#185FA5",
-  teal:  "#028090",
-  gray:  "#94A3B8",
+  teal:  "#085040",
+  gray:  "#768692",
 };
 
 function nowTs() {
@@ -138,7 +140,7 @@ function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
       <div key={`s${s.n}`} style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
         <div style={{
           width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
-          backgroundColor: done ? "#1d9e75" : active ? "#0D1B3E" : "#E2E8F0",
+          backgroundColor: done ? "#005EB8" : active ? "#005EB8" : "#E2E8F0",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           {done
@@ -184,7 +186,7 @@ function StepFooter({ onBack, nextLabel, onNext, nextDisabled }: {
         className={nextDisabled ? "s2-disabled-text" : "s2-white"}
         style={{
           fontSize: 13, fontWeight: 500,
-          backgroundColor: nextDisabled ? "#E2E8F0" : "#0D1B3E",
+          backgroundColor: nextDisabled ? "#E2E8F0" : "#005EB8",
           border: "none", borderRadius: 8, padding: "9px 18px",
           cursor: nextDisabled ? "not-allowed" : "pointer",
           opacity: nextDisabled ? 0.6 : 1,
@@ -202,7 +204,7 @@ function Toggle({ on }: { on: boolean }) {
   return (
     <div style={{
       width: 34, height: 20, borderRadius: 10, flexShrink: 0,
-      backgroundColor: on ? "#1d9e75" : "#E2E8F0",
+      backgroundColor: on ? "#005EB8" : "#E2E8F0",
       position: "relative",
       transition: "background-color 0.25s",
     }}>
@@ -224,7 +226,7 @@ function SubAgentCard({ agent, status, enabled, onToggleEnabled, onEdit }: {
   const calling = status === "calling";
   const active  = status === "active";
 
-  const pillBg  = !enabled ? "#F4F7FA" : active ? "#EAF3DE" : calling ? "#FEF9C3" : "#F4F7FA";
+  const pillBg  = !enabled ? "#F4F7FA" : active ? "#E8F1FB" : calling ? "#FEF9C3" : "#F4F7FA";
   const pillCls = !enabled ? "s2-muted" : active ? "s2-green" : calling ? "s2-amber-t" : "s2-gray";
   const pillTxt = !enabled ? "Inactive" : active ? "Active" : calling ? "Calling…" : "Waiting for CPXO";
 
@@ -244,7 +246,7 @@ function SubAgentCard({ agent, status, enabled, onToggleEnabled, onEdit }: {
           <agent.Icon size={16} color={agent.color} />
         </div>
 
-        {/* Name + role — clickable */}
+        {/* Name + role - clickable */}
         <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={onEdit}>
           <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>{agent.label}</div>
           {enabled ? (
@@ -305,7 +307,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
 
   const [seq,        setSeq]        = useState<SeqState>(wasActivated ? "done" : "idle");
   const [toggleOn,   setToggleOn]   = useState(wasActivated);
-  const [cpxoPhase,  setCpxoPhase]  = useState<CPXOPhase>(wasActivated ? "Active — orchestrating" : "Configuring");
+  const [cpxoPhase,  setCpxoPhase]  = useState<CPXOPhase>(wasActivated ? "Active - orchestrating" : "Configuring");
   const [instruction,setInstruction]= useState("Monitor all active UK homecare deliveries for Ultomiris, Soliris, and Strensiq. Detect silent delivery delays before NHS staff absorb them. Flag exceptions at 4-hour SLA breach. Trigger MHRA pharmacovigilance flag at 6 hours for PNH patients.");
   const [instrSrc,   setInstrSrc]   = useState(wasActivated ? "activated" : "Awaiting human input…");
   const [statuses,   setStatuses]   = useState<Record<AgentId, AgentStatus>>(
@@ -329,13 +331,14 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
   }
   const [logs, setLogs] = useState<LogEntry[]>([
     wasActivated
-      ? { time: nowTs(), dot: "teal", text: "All agents online. Pipeline active — ready to launch." }
+      ? { time: nowTs(), dot: "teal", text: "All agents online. Pipeline active - ready to launch." }
       : { time: nowTs(), dot: "gray", text: "Waiting for human instruction…" },
   ]);
   const logRef = useRef<HTMLDivElement>(null);
 
-  // Custom agents
-  const [customAgents, setCustomAgents] = useState<{ name: string; role: string }[]>([]);
+  // Custom agents - registered as real agent profiles so Edit opens the full panel
+  const { profiles, addProfile, removeProfile } = useAgentProfiles();
+  const customAgents = Object.values(profiles).filter(p => p.id.startsWith("custom-"));
   const [showAddForm,  setShowAddForm]  = useState(false);
   const [newName,      setNewName]      = useState("");
   const [newRole,      setNewRole]      = useState("");
@@ -344,7 +347,15 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
     const n = newName.trim();
     const r = newRole.trim();
     if (!n) return;
-    setCustomAgents(p => [...p, { name: n, role: r || "Custom agent" }]);
+    const slug = n.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    const id = `custom-${customAgents.length}-${slug || "agent"}`;
+    const profile: AgentProfile = {
+      id, name: n, role: r || "Custom agent", status: "ACTIVE", color: "#005EB8",
+      overview: `${n} is a custom agent added to this workspace. Configure its data sources, actions, and outputs in the editor.`,
+      inputs: [], actions: [], outputs: [],
+      configuration: [], currentTask: "Awaiting configuration", useCases: [], relatedAgents: [],
+    };
+    addProfile(profile);
     setNewName("");
     setNewRole("");
     setShowAddForm(false);
@@ -364,7 +375,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
     if (seq !== "idle") return;
     setToggleOn(true);
     setSeq("running");
-    const src = instruction.trim() || "Silent delivery delay — Arvion UK";
+    const src = instruction.trim() || "Silent delivery delay - Arvion UK";
     const t   = (ms: number, fn: () => void) => setTimeout(fn, ms);
 
     // CPXO phase
@@ -372,32 +383,32 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
     t(600,  () => { setCpxoPhase("Reading instructions"); addLog("amber", "CPXO reading human instruction…"); });
     t(1500, () => { setCpxoPhase("Planning pipeline");   addLog("amber", "CPXO planning agent pipeline…"); });
     t(2400, () => {
-      setCpxoPhase("Active — orchestrating");
+      setCpxoPhase("Active - orchestrating");
       setInstrSrc(src);
       addLog("amber", "Pipeline planned. Initiating agent activation…");
     });
 
     // Delivery Ops
     t(3000, () => { setS("delivery", "calling"); addLog("blue", "CPXO → Calling Delivery Ops agent…"); });
-    t(4400, () => { setS("delivery", "active");  setT("delivery", true);  addLog("teal", "Delivery Ops confirmed online — logistics signal active"); });
+    t(4400, () => { setS("delivery", "active");  setT("delivery", true);  addLog("teal", "Delivery Ops confirmed online - logistics signal active"); });
 
     // Clinical Risk
     t(5200, () => { setS("clinical", "calling"); addLog("blue", "CPXO → Calling Clinical Risk agent…"); });
-    t(6600, () => { setS("clinical", "active");  setT("clinical", true);  addLog("teal", "Clinical Risk confirmed online — severity scoring ready"); });
+    t(6600, () => { setS("clinical", "active");  setT("clinical", true);  addLog("teal", "Clinical Risk confirmed online - severity scoring ready"); });
 
     // Compliance
     t(7400, () => { setS("compliance", "calling"); addLog("blue", "CPXO → Calling Compliance agent…"); });
-    t(8800, () => { setS("compliance", "active");  setT("compliance", true); addLog("teal", "Compliance confirmed online — audit trail active"); });
+    t(8800, () => { setS("compliance", "active");  setT("compliance", true); addLog("teal", "Compliance confirmed online - audit trail active"); });
 
     // Engagement
     t(9600,  () => { setS("engagement", "calling"); addLog("blue", "CPXO → Calling Engagement agent…"); });
-    t(11000, () => { setS("engagement", "active");  setT("engagement", true); addLog("teal", "Engagement confirmed online — patient comms ready"); });
+    t(11000, () => { setS("engagement", "active");  setT("engagement", true); addLog("teal", "Engagement confirmed online - patient comms ready"); });
 
     // Done
     t(11800, () => {
       setSeq("done");
       try { localStorage.setItem("navecc_seq_done", "1"); } catch {}
-      addLog("gray", "All agents online. Pipeline active — ready to launch.");
+      addLog("gray", "All agents online. Pipeline active - ready to launch.");
     });
   }
 
@@ -419,8 +430,8 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
 
   const activating = seq === "running";
 
-  const cpxoPillBg  = cpxoPhase === "Active — orchestrating" ? "#DCFCE7" : "#F4F7FA";
-  const cpxoPillCls = cpxoPhase === "Active — orchestrating" ? "s2-green" : "s2-gray";
+  const cpxoPillBg  = cpxoPhase === "Active - orchestrating" ? "#E8F1FB" : "#F4F7FA";
+  const cpxoPillCls = cpxoPhase === "Active - orchestrating" ? "s2-green" : "s2-gray";
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14, animation: "fadeIn 0.25s ease" }}>
@@ -453,7 +464,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
         {/* Header row */}
         <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 16px" }}>
           <div style={{ width: 32, height: 32, borderRadius: 7, backgroundColor: "#EEEAF8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <Brain size={16} color="#3B3486" />
+            <Network size={16} color="#3B3486" />
           </div>
           <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={() => setActivePanel("cpxo")}>
             <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>CPXO Agent</div>
@@ -467,7 +478,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
           </span>
         </div>
 
-        {/* Human instruction — prominent input block */}
+        {/* Human instruction - prominent input block */}
         <div style={{ borderTop: "0.5px solid #F0F4F5", padding: "14px 16px", backgroundColor: "#FFFFFF" }}>
           <div style={{ marginBottom: 6, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span className="s2-muted s2-up" style={{ fontSize: 10, fontWeight: 600 }}>Your instruction to CPXO</span>
@@ -484,7 +495,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
             className="s2-body"
             style={{
               width: "100%", fontSize: 13, lineHeight: 1.6,
-              border: seq !== "idle" ? "1px solid #E2E8F0" : "1px solid #028090",
+              border: seq !== "idle" ? "1px solid #E2E8F0" : "1px solid #085040",
               borderRadius: 7, padding: "9px 12px",
               backgroundColor: seq !== "idle" ? "#F8FAFC" : "#FFFFFF",
               resize: "none", boxSizing: "border-box",
@@ -493,7 +504,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
           />
         </div>
 
-        {/* Config panel — read-only fields */}
+        {/* Config panel - read-only fields */}
         <div style={{ borderTop: "0.5px solid #F0F4F5", padding: "14px 16px", backgroundColor: "#F8FAFC" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 14 }}>
 
@@ -562,23 +573,30 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
         ))}
 
         {/* Custom agents */}
-        {customAgents.map((ca, i) => (
-          <div key={`custom-${i}`} style={{ gridColumn: "1 / -1", backgroundColor: "#FFFFFF" }}>
+        {customAgents.map((ca) => (
+          <div key={ca.id} style={{ gridColumn: "1 / -1", backgroundColor: "#FFFFFF" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "13px 14px" }}>
-              <div style={{ width: 32, height: 32, borderRadius: 7, backgroundColor: "#F4F7FA", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <Bot size={16} color="#64748B" />
+              <div style={{ width: 32, height: 32, borderRadius: 7, backgroundColor: "#E8F1FB", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <Bot size={16} color="#005EB8" />
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ flex: 1, minWidth: 0, cursor: "pointer" }} onClick={() => setActivePanel(ca.id)}>
                 <div className="s2-head" style={{ fontSize: 13.5, fontWeight: 500 }}>{ca.name}</div>
                 <div className="s2-muted" style={{ fontSize: 11.5 }}>{ca.role}</div>
               </div>
               <span className="s2-muted" style={{ fontSize: 10, padding: "2px 8px", borderRadius: 10, backgroundColor: "#F4F7FA" }}>Custom</span>
-              <Toggle on={false} />
               <button
-                onClick={() => setCustomAgents(p => p.filter((_, j) => j !== i))}
+                onClick={() => setActivePanel(ca.id)}
+                className="s2-teal"
+                style={{ background: "none", border: "0.5px solid #005EB8", color: "#005EB8", borderRadius: 6, fontSize: 11, fontWeight: 500, padding: "4px 10px", cursor: "pointer" }}
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => removeProfile(ca.id)}
+                aria-label="Remove custom agent"
                 style={{ background: "none", border: "none", cursor: "pointer", padding: "4px 6px", display: "flex", alignItems: "center" }}
               >
-                <X size={13} color="#94A3B8" />
+                <X size={13} color="#768692" />
               </button>
             </div>
           </div>
@@ -597,7 +615,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
               }}
             >
               <div style={{ width: 32, height: 32, borderRadius: 7, border: "1.5px dashed #CBD5E1", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <Plus size={15} color="#94A3B8" />
+                <Plus size={15} color="#768692" />
               </div>
               <span className="s2-muted" style={{ fontSize: 13 }}>Add custom agent</span>
             </button>
@@ -615,7 +633,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
                     onKeyDown={e => { if (e.key === "Enter") addCustomAgent(); if (e.key === "Escape") setShowAddForm(false); }}
                     placeholder="e.g. Inventory Agent"
                     className="s2-body"
-                    style={{ fontSize: 13, border: "1px solid #028090", borderRadius: 6, padding: "7px 10px", backgroundColor: "#FFFFFF", width: "100%" }}
+                    style={{ fontSize: 13, border: "1px solid #005EB8", borderRadius: 6, padding: "7px 10px", backgroundColor: "#FFFFFF", width: "100%" }}
                   />
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1 }}>
@@ -633,7 +651,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
                 <button
                   onClick={addCustomAgent}
                   className="s2-white"
-                  style={{ fontSize: 12, fontWeight: 500, backgroundColor: "#0D1B3E", border: "none", borderRadius: 6, padding: "8px 14px", cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}
+                  style={{ fontSize: 12, fontWeight: 500, backgroundColor: "#005EB8", border: "none", borderRadius: 6, padding: "8px 14px", cursor: "pointer", whiteSpace: "nowrap", flexShrink: 0 }}
                 >
                   Add agent
                 </button>
@@ -641,7 +659,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
                   onClick={() => { setShowAddForm(false); setNewName(""); setNewRole(""); }}
                   style={{ background: "none", border: "none", cursor: "pointer", padding: "8px 4px", flexShrink: 0 }}
                 >
-                  <X size={15} color="#94A3B8" />
+                  <X size={15} color="#768692" />
                 </button>
               </div>
             </div>
@@ -673,7 +691,7 @@ function Step2({ onBack, onNext }: { onBack: () => void; onNext: () => void }) {
         </div>
       </div>
 
-      <StepFooter onBack={onBack} nextLabel="Next — review and launch" onNext={onNext} nextDisabled={seq !== "done"} />
+      <StepFooter onBack={onBack} nextLabel="Next - review and launch" onNext={onNext} nextDisabled={seq !== "done"} />
 
       <AgentPanel key={activePanel ?? "closed"} agentId={activePanel} onClose={() => setActivePanel(null)} />
 
@@ -691,7 +709,7 @@ function Step1({ selected, onSelect, onNext }: {
       <ProgressBar step={1} />
       <div style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 20, fontWeight: 600, margin: "0 0 6px 0" }}>Set up your intelligence workspace</h2>
-        <p style={{ fontSize: 13, margin: 0 }}>Choose a use case and customise your agents — takes 2 minutes</p>
+        <p style={{ fontSize: 13, margin: 0 }}>Choose a use case and customise your agents - takes 2 minutes</p>
       </div>
       <div style={{ display: "flex", gap: 16, marginBottom: 16 }}>
         {USE_CASES.map(card => {
@@ -700,18 +718,18 @@ function Step1({ selected, onSelect, onNext }: {
             <div key={card.id} onClick={() => !card.disabled && onSelect(card.id)}
               style={{
                 flex: 1, position: "relative",
-                backgroundColor: isSel ? "#F0FBF8" : "#FFFFFF",
-                border: card.disabled ? "1.5px dashed #F0F4F5" : isSel ? "1.5px solid #028090" : "1.5px solid #F0F4F5",
+                backgroundColor: isSel ? "#E8F1FB" : "#FFFFFF",
+                border: card.disabled ? "1.5px dashed #F0F4F5" : isSel ? "1.5px solid #085040" : "1.5px solid #F0F4F5",
                 borderRadius: 12, padding: isSel ? "36px 20px 20px" : "20px",
                 cursor: card.disabled ? "default" : "pointer", opacity: card.disabled ? 0.5 : 1,
                 transition: "border-color 0.15s,background-color 0.15s",
               }}>
               {isSel && (
-                <div style={{ position: "absolute", top: 12, left: 12, width: 20, height: 20, borderRadius: "50%", backgroundColor: "#028090", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <div style={{ position: "absolute", top: 12, left: 12, width: 20, height: 20, borderRadius: "50%", backgroundColor: "#005EB8", display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <Check size={11} color="#FFFFFF" strokeWidth={2.5} />
                 </div>
               )}
-              <div style={{ position: "absolute", top: 12, right: 12, fontSize: 10, fontWeight: 600, color: card.badge.color, backgroundColor: card.badge.bg, padding: "3px 8px", borderRadius: 4 }}>
+              <div className={card.badge.color === "#FFFFFF" ? "text-white" : undefined} style={{ position: "absolute", top: 12, right: 12, fontSize: 10, fontWeight: 600, color: card.badge.color, backgroundColor: card.badge.bg, padding: "3px 8px", borderRadius: 4 }}>
                 {card.badge.label}
               </div>
               <div style={{ marginBottom: 12 }}><card.Icon size={24} color={card.iconColor} /></div>
@@ -720,7 +738,7 @@ function Step1({ selected, onSelect, onNext }: {
               {!card.disabled && (
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
                   {card.agents.map(a => (
-                    <span key={a} style={{ fontSize: 10, fontWeight: 500, color: "#028090", backgroundColor: "#E6F4F5", padding: "2px 7px", borderRadius: 4 }}>{a}</span>
+                    <span key={a} style={{ fontSize: 10, fontWeight: 500, color: "#085040", backgroundColor: "#E8F1FB", padding: "2px 7px", borderRadius: 4 }}>{a}</span>
                   ))}
                 </div>
               )}
@@ -729,12 +747,12 @@ function Step1({ selected, onSelect, onNext }: {
         })}
       </div>
       {selected && (
-        <div style={{ display: "flex", alignItems: "center", gap: 8, backgroundColor: "#F0FBF8", border: "1px solid #028090", borderRadius: 8, padding: "10px 14px", marginBottom: 20, animation: "fadeIn 0.2s ease" }}>
-          <Check size={14} color="#028090" />
+        <div style={{ display: "flex", alignItems: "center", gap: 8, backgroundColor: "#E8F1FB", border: "1px solid #085040", borderRadius: 8, padding: "10px 14px", marginBottom: 20, animation: "fadeIn 0.2s ease" }}>
+          <Check size={14} color="#085040" />
           <span style={{ fontSize: 13 }}>Silent delivery delay detection selected · <strong>5 agents will activate</strong></span>
         </div>
       )}
-      <StepFooter nextLabel="Next — customise agents" onNext={onNext} nextDisabled={!selected} />
+      <StepFooter nextLabel="Next - customise agents" onNext={onNext} nextDisabled={!selected} />
     </div>
   );
 }
@@ -756,7 +774,7 @@ function Step3({ onBack, onLaunch }: { onBack: () => void; onLaunch: () => void 
     <div style={{ display: "flex", flexDirection: "column", animation: "fadeIn 0.25s ease" }}>
       <ProgressBar step={3} />
       <div style={{ backgroundColor: "#F8FAFC", border: "1px solid #F0F4F5", borderRadius: 12, padding: "22px 26px", marginBottom: 16 }}>
-        <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 18 }}>Your configuration — ready to launch</div>
+        <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 18 }}>Your configuration - ready to launch</div>
         {SUMMARY.map((row, i) => (
           <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "9px 0", borderBottom: i < SUMMARY.length - 1 ? "0.5px solid #F0F4F5" : "none" }}>
             <span style={{ fontSize: 13 }}>{row.label}</span>
@@ -772,7 +790,7 @@ function Step3({ onBack, onLaunch }: { onBack: () => void; onLaunch: () => void 
           </div>
         ))}
       </div>
-      <div style={{ backgroundColor: "#F0FDF4", border: "1px solid #BBF7D0", borderRadius: 10, padding: "14px 16px", marginBottom: 20 }}>
+      <div style={{ backgroundColor: "#E8F1FB", border: "1px solid #BFD6F0", borderRadius: 10, padding: "14px 16px", marginBottom: 20 }}>
         <p style={{ fontSize: 13, margin: 0, lineHeight: 1.65 }}>
           <strong>Ready to launch.</strong> Your agent stack will activate immediately. The CPXO agent will begin heartbeat scans every 30 seconds.
         </p>
@@ -804,9 +822,9 @@ export default function SetupPage() {
       <style>{CSS}</style>
       <div style={{ minHeight: "100vh", backgroundColor: "#F4F7FA", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px" }}>
         {launching ? (
-          <div style={{ display: "flex", alignItems: "center", gap: 14, backgroundColor: "#EAF3DE", border: "0.5px solid #C0DD97", borderRadius: 14, padding: "22px 36px", animation: "fadeIn 0.3s ease" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, backgroundColor: "#F0FDF4", border: "0.5px solid #BBF7D0", borderRadius: 14, padding: "22px 36px", animation: "fadeIn 0.3s ease" }}>
             <Check size={22} color="#2D9E6A" strokeWidth={2.5} />
-            <span style={{ fontSize: 16, fontWeight: 500, color: "#000000" }}>✓ Agent stack launched · CPXO agent active · 9 exceptions now being monitored</span>
+            <span style={{ fontSize: 16, fontWeight: 500, color: "#212B32" }}>Agent stack launched · CPXO agent active · 9 exceptions now being monitored</span>
           </div>
         ) : (
           <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 12, padding: 28, width: "100%", maxWidth: 820 }}>

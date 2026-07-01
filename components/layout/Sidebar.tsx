@@ -46,7 +46,7 @@ export default function Sidebar() {
               style={{
                 display: "flex", alignItems: "center", justifyContent: "center",
                 height: 40, textDecoration: "none",
-                color: active ? "#005EB8" : "#000000",
+                color: active ? "#005EB8" : "#212B32",
                 backgroundColor: active ? "#F0F4F5" : "transparent",
                 borderLeft: active ? "3px solid #005EB8" : "3px solid transparent",
               }}

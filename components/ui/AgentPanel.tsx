@@ -104,7 +104,7 @@ export function AgentPanel({ agentId, onClose }: AgentPanelProps) {
       >
         {/* Header */}
         <div style={{
-          height: 60, backgroundColor: isAlert ? "#FEF2F2" : "#F0FDF4",
+          height: 60, backgroundColor: isAlert ? "#FEF2F2" : "#E8F1FB",
           borderBottom: "0.5px solid #E2E8F0", display: "flex", alignItems: "center",
           justifyContent: "space-between", padding: "0 20px", position: "sticky", top: 0, flexShrink: 0, zIndex: 1,
         }}>

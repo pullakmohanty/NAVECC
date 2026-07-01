@@ -2,7 +2,7 @@
 ## Claude Code Session Context
 
 **Project:** NavECC — Navedas Intelligence Platform  
-**Client:** Arvion Biosciences · UK Homecare Operations  
+**Client:** Arvion Biosciences 
 **Logged-in user:** Sarah Mitchell (supply chain lead)  
 **Demo date:** Monday 29 June 2026  
 **Demo audience:** Olga Potaptseva (ECC consultant) representing Alexion / AstraZeneca rare disease division  

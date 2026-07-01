@@ -17,7 +17,7 @@ export default function Navbar() {
         borderBottom: "1px solid #F0F4F5",
       }}
     >
-      {/* Left — brand */}
+      {/* Left - brand */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {/* Company logo */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -28,7 +28,7 @@ export default function Navbar() {
         />
         <span
           style={{
-            color: "#000000",
+            color: "#212B32",
             fontSize: 15,
             fontWeight: 700,
             letterSpacing: "-0.01em",
@@ -39,7 +39,7 @@ export default function Navbar() {
         <span style={{ color: "#F0F4F5", fontSize: 14 }}>|</span>
         <span
           style={{
-            color: "#000000",
+            color: "#212B32",
             fontSize: 12,
             fontWeight: 400,
           }}

@@ -71,7 +71,7 @@ function runCPXOScan() {
       timestamp:   ts2,
       actor:       "SYSTEM",
       category:    "EVENT_CREATED",
-      title:       `Reasoning Ledger updated — scan cycle ${scanCount} appended`,
+      title:       `Reasoning Ledger updated - scan cycle ${scanCount} appended`,
       description: `Compliance agent appended clean heartbeat entry to the Reasoning Ledger. Append-only write confirmed. No anomalies detected in scan cycle ${scanCount}.`,
     },
     {
@@ -79,7 +79,7 @@ function runCPXOScan() {
       timestamp:   ts,
       actor:       "SYSTEM",
       category:    "EVENT_CREATED",
-      title:       `CPXO heartbeat scan #${scanCount} — 9 exceptions active`,
+      title:       `CPXO heartbeat scan #${scanCount} - 9 exceptions active`,
       description: `CPXO agent completed scheduled scan cycle ${scanCount}. Monitored 9 active exceptions across UK homecare. All 5 signal sources responding. No new threshold breaches detected this cycle.`,
     }
   );
@@ -165,7 +165,7 @@ export function submitReview(payload: {
   const decisionLabel =
     payload.decision === "approve"   ? "Approved automated action" :
     payload.decision === "escalate"  ? "Escalated to clinical team" :
-    payload.decision === "override"  ? "Override — manual action taken" :
+    payload.decision === "override"  ? "Override - manual action taken" :
                                        payload.decision;
 
   dynamicEntries.unshift({
@@ -173,7 +173,7 @@ export function submitReview(payload: {
     timestamp:   now,
     actor:       "USER",
     category:    "REVIEW_ASSIGNED",
-    title:       `Governance review submitted — ${decisionLabel} — ${payload.incidentId}`,
+    title:       `Governance review submitted - ${decisionLabel} - ${payload.incidentId}`,
     description: `Sarah Mitchell (Supply Chain Lead) completed post-action governance review. Decision: ${decisionLabel}. Root cause classification: ${payload.rootCause}. Evidence level: ${payload.evidence}.${payload.notes ? " Notes: " + payload.notes : ""}`,
     incidentId:  payload.incidentId,
   });

@@ -38,18 +38,27 @@ type CardData = {
 
 // ── Static data ──────────────────────────────────────────────────────────────
 
+// One fixed color per root cause - same color identifies the same cause in
+// every chart (dashboard bar + donut + bar). Distinct, NHS-aligned hues.
+const CAUSE_COLOR: Record<string, string> = {
+  "Courier / Traffic":   "#005EB8", // NHS Blue
+  "Cold Chain":          "#41B6E6", // NHS Light Blue
+  "Hospital Receiving":  "#E8A838", // Amber
+  "Homecare Scheduling": "#768692", // NHS Mid Grey
+};
+
 const DONUT_DATA = [
-  { name: "Courier / Traffic",   value: 61.5, color: "#005EB8", pct: "0.8%" },
-  { name: "Cold Chain",          value: 15.4, color: "#005EB8", pct: "0.2%" },
-  { name: "Hospital Receiving",  value: 15.4, color: "#028090", pct: "0.2%" },
-  { name: "Homecare Scheduling", value: 7.7,  color: "#028090", pct: "0.1%" },
+  { name: "Courier / Traffic",   value: 61.5, color: CAUSE_COLOR["Courier / Traffic"],   pct: "0.8%" },
+  { name: "Cold Chain",          value: 15.4, color: CAUSE_COLOR["Cold Chain"],          pct: "0.2%" },
+  { name: "Hospital Receiving",  value: 15.4, color: CAUSE_COLOR["Hospital Receiving"],  pct: "0.2%" },
+  { name: "Homecare Scheduling", value: 7.7,  color: CAUSE_COLOR["Homecare Scheduling"], pct: "0.1%" },
 ];
 
 const BAR_DATA = [
-  { name: "Cold Chain",          value: 8.7, color: "#005EB8" },
-  { name: "Courier / Traffic",   value: 5.8, color: "#005EB8" },
-  { name: "Hospital Receiving",  value: 4.1, color: "#028090" },
-  { name: "Homecare Scheduling", value: 2.7, color: "#028090" },
+  { name: "Cold Chain",          value: 8.7, color: CAUSE_COLOR["Cold Chain"]          },
+  { name: "Courier / Traffic",   value: 5.8, color: CAUSE_COLOR["Courier / Traffic"]   },
+  { name: "Hospital Receiving",  value: 4.1, color: CAUSE_COLOR["Hospital Receiving"]  },
+  { name: "Homecare Scheduling", value: 2.7, color: CAUSE_COLOR["Homecare Scheduling"] },
 ];
 
 const CARDS: CardData[] = [
@@ -62,7 +71,7 @@ const CARDS: CardData[] = [
     flag: { text: "Highest frequency", bg: "#FDECEA", color: "#005EB8" },
     badges: ["9 events", "avg 5.8h delay"],
     description:
-      "Courier arrived outside delivery window — M6 and M25 congestion, road closures, handover delays between depots.",
+      "Courier arrived outside delivery window - M6 and M25 congestion, road closures, handover delays between depots.",
     incidents: [
       { id: "INC-00934", drug: "Ultomiris 500mg", delay: "7.2h", severity: "CRITICAL" },
       { id: "INC-00915", drug: "Ultomiris 500mg", delay: "3.8h", severity: "MEDIUM" },
@@ -81,7 +90,7 @@ const CARDS: CardData[] = [
     rate: "0.2%",
     rateColor: "#005EB8",
     borderColor: "#005EB8",
-    flag: { text: "Longest delay", bg: "#FFF3E0", color: "#028090" },
+    flag: { text: "Longest delay", bg: "#FFF3E0", color: "#085040" },
     badges: ["2 events", "avg 8.7h delay"],
     description:
       "Temperature excursion during transit triggers mandatory pharmacist verification hold before dispensing.",
@@ -93,7 +102,7 @@ const CARDS: CardData[] = [
       label: "WHY IT TAKES LONGEST",
       text: "Cold chain breach triggers a mandatory pharmacist hold. Drug cannot be dispensed until integrity is confirmed. Avg hold: 4.2h additional delay.",
       bg: "#FFFBEB",
-      labelColor: "#028090",
+      labelColor: "#085040",
     },
     signals: ["TEMP TAG", "PORTAL STALE", "COURIER GPS"],
     fix: "Real-time temperature threshold alerts before dispatch. Cold chain validation at hub. Automated pharmacist pre-notification.",
@@ -104,12 +113,12 @@ const CARDS: CardData[] = [
     id: "hospital",
     label: "Hospital Receiving",
     rate: "0.2%",
-    rateColor: "#028090",
-    borderColor: "#028090",
+    rateColor: "#085040",
+    borderColor: "#085040",
     flag: { text: "NHS site issue", bg: "#E6F1FB", color: "#005EB8" },
     badges: ["2 events", "avg 4.1h delay"],
     description:
-      "Pharmacy receiving desk unavailable at delivery — shift change, short staffing, or documentation gap at NHS hospital sites.",
+      "Pharmacy receiving desk unavailable at delivery - shift change, short staffing, or documentation gap at NHS hospital sites.",
     incidents: [
       { id: "INC-00921", drug: "Strensiq 80mg", delay: "4.1h", severity: "HIGH" },
       { id: "INC-00807", drug: "Strensiq 80mg", delay: "4.6h", severity: "HIGH" },
@@ -129,20 +138,20 @@ const CARDS: CardData[] = [
     id: "homecare",
     label: "Homecare Scheduling",
     rate: "0.1%",
-    rateColor: "#028090",
-    borderColor: "#028090",
-    flag: { text: "Lowest impact", bg: "#EAF3DE", color: "#000000" },
+    rateColor: "#085040",
+    borderColor: "#085040",
+    flag: { text: "Lowest impact", bg: "#E8F1FB", color: "#212B32" },
     badges: ["1 event", "avg 2.7h delay"],
     description:
-      "Nurse unavailable to match revised delivery time — coordination gap between logistics ETA and homecare scheduling.",
+      "Nurse unavailable to match revised delivery time - coordination gap between logistics ETA and homecare scheduling.",
     incidents: [
       { id: "INC-00909", drug: "Soliris 300mg", delay: "2.7h", severity: "RESOLVED" },
     ],
     infoBox: {
       label: "WHY IT IS LOWEST RISK",
       text: "Homecare scheduling gaps are self-correcting. Nurse reschedules within 2-3h. Lowest patient risk of all causes.",
-      bg: "#EAF3DE",
-      labelColor: "#000000",
+      bg: "#E8F1FB",
+      labelColor: "#212B32",
     },
     signals: ["NURSE PING", "EMAIL SIGNAL", "PORTAL STALE"],
     fix: "Share logistics ETA with homecare portal in real time. Automated nurse availability check before dispatch.",
@@ -153,7 +162,7 @@ const CARDS: CardData[] = [
 
 
 const PRIORITIES = [
-  { badge: "PRIORITY 1", text: "Enforce backup courier SLA — M6 / M25 corridor" },
+  { badge: "PRIORITY 1", text: "Enforce backup courier SLA - M6 / M25 corridor" },
   { badge: "PRIORITY 2", text: "Deploy cold chain hub validation before dispatch" },
   { badge: "PRIORITY 3", text: "Integrate homecare ETA portal sync in real time" },
 ];
@@ -170,13 +179,13 @@ function KpiCard({ label, value, valueColor, sub, subColor, barColor }: {
       padding: "14px 16px 0 16px", overflow: "hidden",
       display: "flex", flexDirection: "column",
     }}>
-      <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#000000", display: "block", marginBottom: 8 }}>
+      <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#212B32", display: "block", marginBottom: 8 }}>
         {label}
       </span>
       <span style={{ fontSize: 26, fontWeight: 700, color: valueColor, lineHeight: 1, display: "block", marginBottom: 5 }}>
         {value}
       </span>
-      <span style={{ fontSize: 11, color: subColor ?? "#000000", display: "block", marginBottom: 14 }}>
+      <span style={{ fontSize: 11, color: subColor ?? "#212B32", display: "block", marginBottom: 14 }}>
         {sub}
       </span>
       <div style={{ height: 3, backgroundColor: `${barColor}22` }}>
@@ -197,7 +206,7 @@ function DonutCenter(props: any) {
       <text x={cx} y={cy - 5} textAnchor="middle" fill="#005EB8" fontSize={20} fontWeight={700}>
         1.3%
       </text>
-      <text x={cx} y={cy + 13} textAnchor="middle" fill="#000000" fontSize={11}>
+      <text x={cx} y={cy + 13} textAnchor="middle" fill="#212B32" fontSize={11}>
         silent rate
       </text>
     </g>
@@ -223,10 +232,10 @@ function RcCard({ card, onNavigate }: { card: CardData; onNavigate: (id: string)
         <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap", marginBottom: 7 }}>
           <span style={{ fontSize: 13, fontWeight: 600, color: "#005EB8" }}>{card.label}</span>
           {card.badges.map(b => (
-            <span key={b} style={{ fontSize: 10, color: "#000000", backgroundColor: "#F4F7FA", padding: "2px 7px", borderRadius: 4 }}>{b}</span>
+            <span key={b} style={{ fontSize: 10, color: "#212B32", backgroundColor: "#F4F7FA", padding: "2px 7px", borderRadius: 4 }}>{b}</span>
           ))}
         </div>
-        <p style={{ fontSize: 12, color: "#000000", margin: 0, lineHeight: 1.55 }}>{card.description}</p>
+        <p style={{ fontSize: 12, color: "#212B32", margin: 0, lineHeight: 1.55 }}>{card.description}</p>
       </div>
 
       {/* Body */}
@@ -234,7 +243,7 @@ function RcCard({ card, onNavigate }: { card: CardData; onNavigate: (id: string)
 
         {/* Affected incidents */}
         <div>
-          <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 6 }}>
+          <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32", display: "block", marginBottom: 6 }}>
             Affected Incidents
           </span>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -243,12 +252,12 @@ function RcCard({ card, onNavigate }: { card: CardData; onNavigate: (id: string)
                 <div key={inc.id} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 11 }}>
                   <span
                     onClick={() => onNavigate(inc.id)}
-                    style={{ color: "#028090", fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-geist-mono), monospace", flexShrink: 0 }}
+                    style={{ color: "#425563", fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-geist-mono), monospace", flexShrink: 0 }}
                   >
                     {inc.id}
                   </span>
-                  <span style={{ color: "#000000", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{inc.drug}</span>
-                  <span style={{ color: "#000000", fontWeight: 600, flexShrink: 0 }}>{inc.delay}</span>
+                  <span style={{ color: "#212B32", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{inc.drug}</span>
+                  <span style={{ color: "#212B32", fontWeight: 600, flexShrink: 0 }}>{inc.delay}</span>
                   <span style={{ flexShrink: 0 }}>
                     <UrgencyDot urgency={inc.severity as "CRITICAL" | "HIGH" | "MEDIUM" | "LOW"} />
                   </span>
@@ -256,7 +265,7 @@ function RcCard({ card, onNavigate }: { card: CardData; onNavigate: (id: string)
               );
             })}
             {card.moreCount && (
-              <span style={{ fontSize: 11, color: "#028090", cursor: "pointer", marginTop: 1 }}>
+              <span style={{ fontSize: 11, color: "#085040", cursor: "pointer", marginTop: 1 }}>
                 +{card.moreCount} more incidents
               </span>
             )}
@@ -269,18 +278,18 @@ function RcCard({ card, onNavigate }: { card: CardData; onNavigate: (id: string)
             <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: card.infoBox.labelColor, display: "block", marginBottom: 4 }}>
               {card.infoBox.label}
             </span>
-            <p style={{ fontSize: 11, color: "#000000", margin: 0, lineHeight: 1.55 }}>{card.infoBox.text}</p>
+            <p style={{ fontSize: 11, color: "#212B32", margin: 0, lineHeight: 1.55 }}>{card.infoBox.text}</p>
           </div>
         )}
 
         {/* Signal sources */}
         <div>
-          <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 6 }}>
+          <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32", display: "block", marginBottom: 6 }}>
             Detected Via
           </span>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
             {card.signals.map(s => (
-              <span key={s} style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.04em", color: "#028090", backgroundColor: "rgba(2,128,144,0.07)", border: "0.5px solid rgba(2,128,144,0.2)", padding: "2px 7px", borderRadius: 4 }}>
+              <span key={s} style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.04em", color: "#085040", backgroundColor: "rgba(8,80,64,0.07)", border: "0.5px solid rgba(8,80,64,0.2)", padding: "2px 7px", borderRadius: 4 }}>
                 {s}
               </span>
             ))}
@@ -289,17 +298,17 @@ function RcCard({ card, onNavigate }: { card: CardData; onNavigate: (id: string)
 
         {/* Fix */}
         <div style={{ backgroundColor: "#F8FAFC", border: "1px solid #F0F4F5", borderRadius: 6, padding: "8px 10px" }}>
-          <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#028090", display: "block", marginBottom: 4 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.06em", color: "#085040", display: "block", marginBottom: 4 }}>
             Fix
           </span>
-          <p style={{ fontSize: 11, color: "#000000", margin: 0, lineHeight: 1.55 }}>{card.fix}</p>
+          <p style={{ fontSize: 11, color: "#212B32", margin: 0, lineHeight: 1.55 }}>{card.fix}</p>
         </div>
 
         {/* NHS impact */}
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-            <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000" }}>NHS Impact</span>
-            <span style={{ fontSize: 11, fontWeight: 600, color: "#000000" }}>{card.nhsHours}h absorbed</span>
+            <span style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32" }}>NHS Impact</span>
+            <span style={{ fontSize: 11, fontWeight: 600, color: "#212B32" }}>{card.nhsHours}h absorbed</span>
           </div>
           <div style={{ height: 4, backgroundColor: "#F4F7FA", borderRadius: 2 }}>
             <div style={{ height: "100%", width: `${card.nhsPct}%`, backgroundColor: card.borderColor, borderRadius: 2 }} />
@@ -316,9 +325,9 @@ function Pill({ label, active, onClick }: { label: string; active: boolean; onCl
   return (
     <button onClick={onClick} style={{
       fontSize: 12, fontWeight: active ? 500 : 400,
-      color: active ? "#028090" : "#000000",
-      backgroundColor: active ? "rgba(2,128,144,0.07)" : "#FFFFFF",
-      border: active ? "1px solid #028090" : "1px solid #F0F4F5",
+      color: active ? "#085040" : "#212B32",
+      backgroundColor: active ? "rgba(8,80,64,0.07)" : "#FFFFFF",
+      border: active ? "1px solid #085040" : "1px solid #F0F4F5",
       borderRadius: 6, padding: "5px 12px", cursor: "pointer", whiteSpace: "nowrap" as const,
     }}>
       {label}
@@ -343,7 +352,7 @@ function RootCausePageInner() {
       {/* PAGE HEADER */}
       <div>
         <h1 style={{ fontSize: 18, fontWeight: 500, color: "#005EB8", margin: 0 }}>Root Cause Analysis</h1>
-        <p style={{ fontSize: 12, color: "#000000", margin: "4px 0 0 0" }}>
+        <p style={{ fontSize: 12, color: "#212B32", margin: "4px 0 0 0" }}>
           Last 30 days · 17 delay events · Homecare pathway · Ultomiris, Soliris, Strensiq
         </p>
       </div>
@@ -353,34 +362,34 @@ function RootCausePageInner() {
           {/* FILTER ROW */}
           <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 8, padding: "12px 16px", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em", color: "#000000", whiteSpace: "nowrap" }}>Drug</span>
+              <span style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em", color: "#212B32", whiteSpace: "nowrap" }}>Drug</span>
               <div style={{ display: "flex", gap: 6 }}>
                 {drugs.map(d => <Pill key={d} label={d} active={activeDrug === d} onClick={() => setActiveDrug(d)} />)}
               </div>
             </div>
             <div style={{ width: 1, height: 24, backgroundColor: "#F0F4F5", flexShrink: 0 }} />
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em", color: "#000000", whiteSpace: "nowrap" }}>Pathway</span>
+              <span style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.05em", color: "#212B32", whiteSpace: "nowrap" }}>Pathway</span>
               <div style={{ display: "flex", gap: 6 }}>
                 {pathways.map(p => <Pill key={p} label={p} active={activePathway === p} onClick={() => setActivePathway(p)} />)}
               </div>
             </div>
           </div>
 
-          {/* SECTION 1 — KPI CARDS */}
+          {/* SECTION 1 - KPI CARDS */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
             <KpiCard label="Silent delay rate"   value="1.3%" valueColor="#005EB8" sub="17 of 1,307 deliveries"  barColor="#005EB8" />
-            <KpiCard label="Avg delay duration"  value="4.8h" valueColor="#028090" sub="across all root causes"  barColor="#028090" />
+            <KpiCard label="Avg delay duration"  value="4.8h" valueColor="#085040" sub="across all root causes"  barColor="#085040" />
             <KpiCard label="NHS hours absorbed"  value="42.5h" valueColor="#005EB8" sub="staff time lost silently" barColor="#005EB8" />
             <KpiCard label="Complaints filed"    value="0"    valueColor="#005EB8" sub="patients never reported" subColor="#005EB8" barColor="#005EB8" />
           </div>
 
-          {/* SECTION 2 — CHARTS */}
+          {/* SECTION 2 - CHARTS */}
           <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 10, display: "flex", overflow: "hidden" }}>
 
-            {/* LEFT — Donut */}
+            {/* LEFT - Donut */}
             <div style={{ flex: 1, padding: "18px 20px", minWidth: 0 }}>
-              <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#000000", display: "block", marginBottom: 14 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#212B32", display: "block", marginBottom: 14 }}>
                 Delay attribution
               </span>
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -404,7 +413,7 @@ function RootCausePageInner() {
                   {DONUT_DATA.map(d => (
                     <div key={d.name} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <span style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: d.color, display: "inline-block", flexShrink: 0 }} />
-                      <span style={{ fontSize: 11, color: "#000000", flex: 1 }}>{d.name}</span>
+                      <span style={{ fontSize: 11, color: "#212B32", flex: 1 }}>{d.name}</span>
                       <span style={{ fontSize: 11, fontWeight: 700, color: d.color }}>{d.pct}</span>
                     </div>
                   ))}
@@ -415,28 +424,28 @@ function RootCausePageInner() {
             {/* Divider */}
             <div style={{ width: 1, backgroundColor: "#F4F7FA", flexShrink: 0 }} />
 
-            {/* RIGHT — Horizontal bar */}
+            {/* RIGHT - Horizontal bar */}
             <div style={{ flex: 1, padding: "18px 20px", minWidth: 0 }}>
-              <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#000000", display: "block", marginBottom: 14 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: "#212B32", display: "block", marginBottom: 14 }}>
                 Avg delay by root cause (hours)
               </span>
               <ResponsiveContainer width="100%" height={160}>
                 <BarChart layout="vertical" data={BAR_DATA} margin={{ top: 0, right: 44, bottom: 0, left: 0 }}>
                   <XAxis type="number" domain={[0, 10]} axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#F0F4F5" }} tickCount={6} />
-                  <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#000000" }} width={132} />
+                  <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#212B32" }} width={132} />
                   <Tooltip formatter={(v: unknown) => [`${v}h`, "Avg delay"] as [string, string]} cursor={{ fill: "#F8FAFC" }} contentStyle={chartDefaults.tooltipStyle} labelStyle={chartDefaults.tooltipLabelStyle} itemStyle={chartDefaults.tooltipItemStyle} />
                   <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={16}>
                     {BAR_DATA.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                    <LabelList dataKey="value" position="right" formatter={(v: unknown) => `${v}h`} style={{ fontSize: 11, fill: "#000000", fontWeight: 600 }} />
+                    <LabelList dataKey="value" position="right" formatter={(v: unknown) => `${v}h`} style={{ fontSize: 11, fill: "#212B32", fontWeight: 600 }} />
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          {/* SECTION 3 — ROOT CAUSE CARDS */}
+          {/* SECTION 3 - ROOT CAUSE CARDS */}
           <div>
-            <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 12 }}>
+            <span style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32", display: "block", marginBottom: 12 }}>
               Root cause breakdown
             </span>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
@@ -446,23 +455,23 @@ function RootCausePageInner() {
             </div>
           </div>
 
-          {/* SECTION 4 — INSIGHT BANNER */}
+          {/* SECTION 4 - INSIGHT BANNER */}
           <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 10, padding: "16px 18px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
             <div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: "#000000", display: "block", marginBottom: 8 }}>Key insight</span>
-              <p style={{ fontSize: 12, color: "#000000", margin: 0, lineHeight: 1.65 }}>
-                Courier / Traffic alone accounts for 61% of all delay events. Fixing the M6 and M25 SLA closes the majority of the 1.3% gap immediately. Cold Chain causes the longest individual delays despite its low frequency — a single breach costs 8.7h on average.
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#212B32", display: "block", marginBottom: 8 }}>Key insight</span>
+              <p style={{ fontSize: 12, color: "#212B32", margin: 0, lineHeight: 1.65 }}>
+                Courier / Traffic alone accounts for 61% of all delay events. Fixing the M6 and M25 SLA closes the majority of the 1.3% gap immediately. Cold Chain causes the longest individual delays despite its low frequency - a single breach costs 8.7h on average.
               </p>
             </div>
             <div>
-              <span style={{ fontSize: 12, fontWeight: 700, color: "#000000", display: "block", marginBottom: 8 }}>Priority actions</span>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#212B32", display: "block", marginBottom: 8 }}>Priority actions</span>
               <div style={{ display: "flex", flexDirection: "column" }}>
                 {PRIORITIES.map((item, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "9px 0", borderBottom: i < 2 ? "0.5px solid #F0F4F5" : "none" }}>
-                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.04em", color: "#000000", flexShrink: 0, marginTop: 1 }}>
+                    <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.04em", color: "#212B32", flexShrink: 0, marginTop: 1 }}>
                       {item.badge}
                     </span>
-                    <span style={{ fontSize: 12, color: "#000000", lineHeight: 1.45 }}>{item.text}</span>
+                    <span style={{ fontSize: 12, color: "#212B32", lineHeight: 1.45 }}>{item.text}</span>
                   </div>
                 ))}
               </div>

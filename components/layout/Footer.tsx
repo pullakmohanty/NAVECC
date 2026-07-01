@@ -16,8 +16,30 @@ export default function Footer() {
         paddingRight: 24,
       }}
     >
-      <span style={{ fontSize: 11, color: "#000000" }}>
-        Arvion Biosciences UK · Data as of 25 Jun 2026 · 09:14
+      <span
+        style={{
+          position: "absolute",
+          left: "50%",
+          transform: "translateX(-50%)",
+          fontSize: 11,
+          color: "#64748B",
+        }}
+      >
+        © 2026 Navedas Intelligence. All rights reserved.
+      </span>
+      <span style={{ marginLeft: "auto", display: "flex", gap: 16 }}>
+        <a
+          href="/terms"
+          style={{ fontSize: 11, color: "#64748B", textDecoration: "none" }}
+        >
+          Terms
+        </a>
+        <a
+          href="/privacy"
+          style={{ fontSize: 11, color: "#64748B", textDecoration: "none" }}
+        >
+          Privacy Policy
+        </a>
       </span>
     </footer>
   );

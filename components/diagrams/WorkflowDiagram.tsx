@@ -84,23 +84,23 @@ export default function WorkflowDiagram() {
   return (
     <svg viewBox={`0 0 640 ${totalH}`} width="100%" style={{ fontFamily: "system-ui, sans-serif" }}>
 
-      {/* STEP 1 — Heartbeat */}
+      {/* STEP 1 - Heartbeat */}
       <g style={{ cursor: "pointer" }}>
-        <title>Step 1: CPXO agent wakes on heartbeat — new scan cycle begins</title>
+        <title>Step 1: CPXO agent wakes on heartbeat - new scan cycle begins</title>
         <rect x={160} y={S1y} width={310} height={S1h} rx={8} fill="#F4F7FA" stroke="#F0F4F5" strokeWidth={0.75} />
-        <text x={CX} y={S1y + S1h / 2 - 6} textAnchor="middle" fontSize={13} fontWeight={500} fill="#000000">Heartbeat fires</text>
-        <text x={CX} y={S1y + S1h / 2 + 10} textAnchor="middle" fontSize={10} fill="#000000">CPXO agent wakes · new scan cycle begins</text>
+        <text x={CX} y={S1y + S1h / 2 - 6} textAnchor="middle" fontSize={13} fontWeight={500} fill="#212B32">Heartbeat fires</text>
+        <text x={CX} y={S1y + S1h / 2 + 10} textAnchor="middle" fontSize={10} fill="#212B32">CPXO agent wakes · new scan cycle begins</text>
       </g>
 
       <Arrow x={CX} y1={S1b} y2={S2y} />
 
-      {/* STEP 2 — Three signal types */}
-      <text x={CX} y={S2y - 6} textAnchor="middle" fontSize={9} fill="#000000" letterSpacing={1} fontWeight={500}>THREE SIGNAL TYPES READ</text>
+      {/* STEP 2 - Three signal types */}
+      <text x={CX} y={S2y - 6} textAnchor="middle" fontSize={9} fill="#212B32" letterSpacing={1} fontWeight={500}>THREE SIGNAL TYPES READ</text>
       <g style={{ cursor: "pointer" }}>
         <title>Real-time logistics: GPS tag · temp sensor · courier position</title>
-        <rect x={xs3[0]} y={S2y} width={bw3} height={S2h} rx={6} fill="#E6F4F5" stroke="#028090" strokeWidth={0.75} />
+        <rect x={xs3[0]} y={S2y} width={bw3} height={S2h} rx={6} fill="#E8F1FB" stroke="#085040" strokeWidth={0.75} />
         <text x={xs3[0] + bw3 / 2} y={S2y + S2h / 2 - 6} textAnchor="middle" fontSize={12} fontWeight={500} fill="#085040">Real-time logistics</text>
-        <text x={xs3[0] + bw3 / 2} y={S2y + S2h / 2 + 10} textAnchor="middle" fontSize={10} fill="#028090">GPS · temp sensor</text>
+        <text x={xs3[0] + bw3 / 2} y={S2y + S2h / 2 + 10} textAnchor="middle" fontSize={10} fill="#085040">GPS · temp sensor</text>
       </g>
       <g style={{ cursor: "pointer" }}>
         <title>Treatment scheduling: infusion window · clinical urgency score</title>
@@ -117,7 +117,7 @@ export default function WorkflowDiagram() {
 
       <FanIn xs={cx3} yFrom={S2b} yMid={S2b + 10} yTo={S3y} />
 
-      {/* STEP 3 — CPXO detects + loop arrow */}
+      {/* STEP 3 - CPXO detects + loop arrow */}
       <g style={{ cursor: "pointer" }}>
         <title>CPXO correlates all three signal types · cross-references treatment schedule · detects NHS absorption before it silences the signal · scores severity</title>
         <rect x={20} y={S3y} width={580} height={S3h} rx={8} fill="#EEEDFB" stroke="#005EB8" strokeWidth={0.75} />
@@ -130,28 +130,28 @@ export default function WorkflowDiagram() {
         fill="none" stroke="#F0F4F5" strokeWidth={0.75} strokeDasharray="4 3"
       />
       <polygon points={`471,${S1y + S1h / 2 - 4} 471,${S1y + S1h / 2 + 4} 463,${S1y + S1h / 2}`} fill="#F0F4F5" />
-      <text x={636} y={S3y + S3h / 2 - 16} textAnchor="middle" fontSize={9} fill="#000000">No issue</text>
-      <text x={636} y={S3y + S3h / 2}      textAnchor="middle" fontSize={9} fill="#000000">→ sleep</text>
+      <text x={636} y={S3y + S3h / 2 - 16} textAnchor="middle" fontSize={9} fill="#212B32">No issue</text>
+      <text x={636} y={S3y + S3h / 2}      textAnchor="middle" fontSize={9} fill="#212B32">→ sleep</text>
 
       <Arrow x={CX} y1={S3b} y2={S4y} />
-      <text x={CX + 10} y={(S3b + S4y) / 2 + 4} fontSize={9} fill="#000000">Exception confirmed</text>
+      <text x={CX + 10} y={(S3b + S4y) / 2 + 4} fontSize={9} fill="#212B32">Exception confirmed</text>
 
-      {/* STEP 4 — Severity tiers */}
-      <text x={CX} y={S4y - 6} textAnchor="middle" fontSize={9} fill="#000000" letterSpacing={1} fontWeight={500}>CLASSIFIED BY SEVERITY</text>
+      {/* STEP 4 - Severity tiers */}
+      <text x={CX} y={S4y - 6} textAnchor="middle" fontSize={9} fill="#212B32" letterSpacing={1} fontWeight={500}>CLASSIFIED BY SEVERITY</text>
       <g style={{ cursor: "pointer" }}>
         <title>Low severity: monitor and log only</title>
-        <rect x={xs3[0]} y={S4y} width={bw3} height={S4h} rx={6} fill="#E6F4F5" stroke="#028090" strokeWidth={0.75} />
+        <rect x={xs3[0]} y={S4y} width={bw3} height={S4h} rx={6} fill="#E8F1FB" stroke="#085040" strokeWidth={0.75} />
         <text x={xs3[0] + bw3 / 2} y={S4y + S4h / 2 - 6} textAnchor="middle" fontSize={12} fontWeight={500} fill="#085040">Low</text>
-        <text x={xs3[0] + bw3 / 2} y={S4y + S4h / 2 + 10} textAnchor="middle" fontSize={10} fill="#028090">Monitor · log only</text>
+        <text x={xs3[0] + bw3 / 2} y={S4y + S4h / 2 + 10} textAnchor="middle" fontSize={10} fill="#085040">Monitor · log only</text>
       </g>
       <g style={{ cursor: "pointer" }}>
         <title>Medium severity: expedite existing courier + alert homecare team</title>
-        <rect x={xs3[1]} y={S4y} width={bw3} height={S4h} rx={6} fill="#FEF9E7" stroke="#028090" strokeWidth={0.75} />
+        <rect x={xs3[1]} y={S4y} width={bw3} height={S4h} rx={6} fill="#FEF9E7" stroke="#085040" strokeWidth={0.75} />
         <text x={xs3[1] + bw3 / 2} y={S4y + S4h / 2 - 6} textAnchor="middle" fontSize={12} fontWeight={500} fill="#633806">Medium</text>
-        <text x={xs3[1] + bw3 / 2} y={S4y + S4h / 2 + 10} textAnchor="middle" fontSize={10} fill="#028090">Expedite courier · alert</text>
+        <text x={xs3[1] + bw3 / 2} y={S4y + S4h / 2 + 10} textAnchor="middle" fontSize={10} fill="#085040">Expedite courier · alert</text>
       </g>
       <g style={{ cursor: "pointer" }}>
-        <title>Life-critical: emergency dispatch fires automatically — policy-matched — no approval required</title>
+        <title>Life-critical: emergency dispatch fires automatically - policy-matched - no approval required</title>
         <rect x={xs3[2]} y={S4y} width={600 - xs3[2]} height={S4h} rx={6} fill="#FDECEA" stroke="#005EB8" strokeWidth={0.75} />
         <text x={xs3[2] + (600 - xs3[2]) / 2} y={S4y + S4h / 2 - 6} textAnchor="middle" fontSize={12} fontWeight={500} fill="#712B13">Life-critical</text>
         <text x={xs3[2] + (600 - xs3[2]) / 2} y={S4y + S4h / 2 + 10} textAnchor="middle" fontSize={10} fill="#005EB8">Emergency dispatch · auto</text>
@@ -159,13 +159,13 @@ export default function WorkflowDiagram() {
 
       <FanIn xs={cx3} yFrom={S4b} yMid={S4b + 10} yTo={S5y} />
 
-      {/* STEP 5 — Four agents parallel */}
-      <text x={CX} y={S5y - 6} textAnchor="middle" fontSize={9} fill="#000000" letterSpacing={1} fontWeight={500}>FOUR AGENTS RUN IN PARALLEL</text>
+      {/* STEP 5 - Four agents parallel */}
+      <text x={CX} y={S5y - 6} textAnchor="middle" fontSize={9} fill="#212B32" letterSpacing={1} fontWeight={500}>FOUR AGENTS RUN IN PARALLEL</text>
       <g style={{ cursor: "pointer" }}>
         <title>Delivery Ops: confirms delay, maps courier live position</title>
-        <rect x={xs4[0]} y={S5y} width={bw4} height={S5h} rx={6} fill="#E6F4F5" stroke="#028090" strokeWidth={0.75} />
+        <rect x={xs4[0]} y={S5y} width={bw4} height={S5h} rx={6} fill="#E8F1FB" stroke="#085040" strokeWidth={0.75} />
         <text x={xs4[0] + bw4 / 2} y={S5y + S5h / 2 - 6} textAnchor="middle" fontSize={11} fontWeight={500} fill="#085040">Delivery Ops</text>
-        <text x={xs4[0] + bw4 / 2} y={S5y + S5h / 2 + 10} textAnchor="middle" fontSize={10} fill="#028090">Maps courier</text>
+        <text x={xs4[0] + bw4 / 2} y={S5y + S5h / 2 + 10} textAnchor="middle" fontSize={10} fill="#085040">Maps courier</text>
       </g>
       <g style={{ cursor: "pointer" }}>
         <title>Clinical Risk: scores patient safety severity, flags PNH/aHUS/HPP threshold breaches</title>
@@ -175,9 +175,9 @@ export default function WorkflowDiagram() {
       </g>
       <g style={{ cursor: "pointer" }}>
         <title>Compliance: appends exception to Reasoning Ledger, generates MHRA PV flag</title>
-        <rect x={xs4[2]} y={S5y} width={bw4} height={S5h} rx={6} fill="#FEF9E7" stroke="#028090" strokeWidth={0.75} />
+        <rect x={xs4[2]} y={S5y} width={bw4} height={S5h} rx={6} fill="#FEF9E7" stroke="#085040" strokeWidth={0.75} />
         <text x={xs4[2] + bw4 / 2} y={S5y + S5h / 2 - 6} textAnchor="middle" fontSize={11} fontWeight={500} fill="#633806">Compliance</text>
-        <text x={xs4[2] + bw4 / 2} y={S5y + S5h / 2 + 10} textAnchor="middle" fontSize={10} fill="#028090">Logs exception</text>
+        <text x={xs4[2] + bw4 / 2} y={S5y + S5h / 2 + 10} textAnchor="middle" fontSize={10} fill="#085040">Logs exception</text>
       </g>
       <g style={{ cursor: "pointer" }}>
         <title>Engagement: drafts homecare nurse alerts, notifies Alexion ops team</title>
@@ -188,42 +188,42 @@ export default function WorkflowDiagram() {
 
       <FanIn xs={cx4} yFrom={S5b} yMid={S5b + 10} yTo={S6y} />
 
-      {/* STEP 6 — Automated action */}
+      {/* STEP 6 - Automated action */}
       <g style={{ cursor: "pointer" }}>
-        <title>Automated Action: policy-matched · expedite courier or emergency dispatch · fires immediately — no human gate</title>
+        <title>Automated Action: policy-matched · expedite courier or emergency dispatch · fires immediately - no human gate</title>
         <rect x={20} y={S6y} width={580} height={S6h} rx={8} fill="#FDECEA" stroke="#005EB8" strokeWidth={0.75} />
-        <text x={CX} y={S6y + S6h / 2 - 7} textAnchor="middle" fontSize={13} fontWeight={600} fill="#712B13">Automated action executes — no human gate</text>
+        <text x={CX} y={S6y + S6h / 2 - 7} textAnchor="middle" fontSize={13} fontWeight={600} fill="#712B13">Automated action executes - no human gate</text>
         <text x={CX} y={S6y + S6h / 2 + 11} textAnchor="middle" fontSize={10} fill="#005EB8">Policy-matched · expedite or emergency dispatch · action fires immediately</text>
       </g>
 
       <Arrow x={CX} y1={S6b} y2={cylTopY + cylRY} />
 
-      {/* STEP 7 — Reasoning Ledger (DATABASE CYLINDER) */}
-      <text x={CX} y={cylTopY - 6} textAnchor="middle" fontSize={9} fill="#000000" letterSpacing={1} fontWeight={500}>REASONING LEDGER</text>
+      {/* STEP 7 - Reasoning Ledger (DATABASE CYLINDER) */}
+      <text x={CX} y={cylTopY - 6} textAnchor="middle" fontSize={9} fill="#212B32" letterSpacing={1} fontWeight={500}>REASONING LEDGER</text>
       <DatabaseCylinder cx={CX} topY={cylTopY} r={128} ry={cylRY} bodyH={cylBodyH} />
       <text x={CX} y={cylTopY + cylRY + cylBodyH / 2 - 6} textAnchor="middle" fontSize={13} fontWeight={600} fill="#FFFFFF">Reasoning ledger</text>
       <text x={CX} y={cylTopY + cylRY + cylBodyH / 2 + 12} textAnchor="middle" fontSize={10} fill="rgba(255,255,255,0.7)">Append-only · tamper-proof · GDPR-ready</text>
 
       <Arrow x={CX} y1={cylBotEY + cylRY} y2={S8y} />
 
-      {/* STEP 8 — Resolution */}
+      {/* STEP 8 - Resolution */}
       <g style={{ cursor: "pointer" }}>
-        <title>Exception resolved — treatment continuity restored — patient safe — OTD updated — hidden disruption eliminated — audit trail complete</title>
-        <rect x={20} y={S8y} width={580} height={S8h} rx={8} fill="#E6F4F5" stroke="#028090" strokeWidth={0.75} />
+        <title>Exception resolved - treatment continuity restored - patient safe - OTD updated - hidden disruption eliminated - audit trail complete</title>
+        <rect x={20} y={S8y} width={580} height={S8h} rx={8} fill="#E8F1FB" stroke="#085040" strokeWidth={0.75} />
         <text x={CX} y={S8y + S8h / 2 - 7} textAnchor="middle" fontSize={13} fontWeight={600} fill="#085040">Exception resolved · treatment continuity restored</text>
-        <text x={CX} y={S8y + S8h / 2 + 11} textAnchor="middle" fontSize={10} fill="#028090">Patient safe · OTD updated · hidden disruption eliminated · audit trail complete</text>
+        <text x={CX} y={S8y + S8h / 2 + 11} textAnchor="middle" fontSize={10} fill="#085040">Patient safe · OTD updated · hidden disruption eliminated · audit trail complete</text>
       </g>
 
       {/* DASHED SEPARATOR */}
       <line x1={20} y1={dashY} x2={600} y2={dashY} stroke="#F0F4F5" strokeWidth={0.75} strokeDasharray="6 4" />
-      <text x={CX} y={dashY + 12} textAnchor="middle" fontSize={9} fill="#000000">Human involvement — post-action only</text>
+      <text x={CX} y={dashY + 12} textAnchor="middle" fontSize={9} fill="#212B32">Human involvement - post-action only</text>
 
-      {/* STEP 9 — Human post-action review */}
+      {/* STEP 9 - Human post-action review */}
       <g style={{ cursor: "pointer" }}>
-        <title>Human Board: reviews ledger · updates detection thresholds · signs off exception reports — post-action only</title>
+        <title>Human Board: reviews ledger · updates detection thresholds · signs off exception reports - post-action only</title>
         <rect x={20} y={S9y} width={580} height={S9h} rx={8} fill="#F8FAFC" stroke="#F0F4F5" strokeWidth={0.75} strokeDasharray="5 3" />
-        <text x={CX} y={S9y + S9h / 2 - 6} textAnchor="middle" fontSize={12} fontWeight={500} fill="#000000">Human board — review · audit · governance · policy updates</text>
-        <text x={CX} y={S9y + S9h / 2 + 11} textAnchor="middle" fontSize={10} fill="#000000">Reviews ledger · updates detection thresholds · signs off exception reports</text>
+        <text x={CX} y={S9y + S9h / 2 - 6} textAnchor="middle" fontSize={12} fontWeight={500} fill="#212B32">Human board - review · audit · governance · policy updates</text>
+        <text x={CX} y={S9y + S9h / 2 + 11} textAnchor="middle" fontSize={10} fill="#212B32">Reviews ledger · updates detection thresholds · signs off exception reports</text>
       </g>
     </svg>
   );

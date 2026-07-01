@@ -28,7 +28,7 @@ export default function UserProfile({ compact = false }: { compact?: boolean }) 
     <div ref={ref} style={{ position: "relative" }}>
       <button
         onClick={() => setOpen(o => !o)}
-        title={compact ? "Sarah Mitchell — Supply Chain Lead" : undefined}
+        title={compact ? "Sarah Mitchell - Supply Chain Lead" : undefined}
         style={{
           display: "flex",
           alignItems: "center",
@@ -66,7 +66,7 @@ export default function UserProfile({ compact = false }: { compact?: boolean }) 
           <>
             {/* Text stack */}
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-              <span style={{ fontSize: 12, fontWeight: 500, color: "#000000", lineHeight: 1.3 }}>
+              <span style={{ fontSize: 12, fontWeight: 500, color: "#212B32", lineHeight: 1.3 }}>
                 Sarah Mitchell
               </span>
               <span style={{ fontSize: 10, color: "#64748B", lineHeight: 1.3 }}>
@@ -111,7 +111,7 @@ export default function UserProfile({ compact = false }: { compact?: boolean }) 
               cursor: "pointer",
               textAlign: "left",
               fontSize: 12,
-              color: "#000000",
+              color: "#212B32",
             }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#F4F7FA")}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}
@@ -133,7 +133,7 @@ export default function UserProfile({ compact = false }: { compact?: boolean }) 
               cursor: "pointer",
               textAlign: "left",
               fontSize: 12,
-              color: "#000000",
+              color: "#212B32",
             }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = "#F4F7FA")}
             onMouseLeave={e => (e.currentTarget.style.backgroundColor = "transparent")}

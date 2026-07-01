@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Brain, Truck, HeartPulse, Shield, Bell } from "lucide-react";
+import { Network, Truck, HeartPulse, Shield, Bell } from "lucide-react";
 import type { Agent } from "@/data/mockData";
 import type { ElementType } from "react";
 import { AgentPanel } from "@/components/ui/AgentPanel";
@@ -19,7 +19,7 @@ const INJECTED_CSS = `
   }
   @keyframes agentFlash {
     0%   { background-color: #FFFFFF; }
-    30%  { background-color: #000000; }
+    30%  { background-color: #212B32; }
     100% { background-color: #FFFFFF; }
   }
   @keyframes pulseDot {
@@ -39,32 +39,32 @@ type LedgerEntry = { id: number; time: string; msg: string; type: LogEntry["type
 
 const TOOL_CALLS: Record<string, ToolCall[]> = {
   "delivery-ops": [
-    { badge: "READ",  color: '#000000', bg: "#E6F1FB", label: "Courier GPS · DPD-7741882" },
-    { badge: "READ",  color: '#000000', bg: "#E6F1FB", label: "Supply chain portal · INC-00934" },
-    { badge: "WRITE", color: '#000000', bg: "#FFF8E1", label: "Exception log · delay +7.2h" },
-    { badge: "READ",  color: '#000000', bg: "#E6F1FB", label: "M6 traffic data · J7–J8" },
-    { badge: "WRITE", color: '#000000', bg: "#FFF8E1", label: "Route risk score · updated" },
+    { badge: "READ",  color: '#212B32', bg: "#E6F1FB", label: "Courier GPS · DPD-7741882" },
+    { badge: "READ",  color: '#212B32', bg: "#E6F1FB", label: "Supply chain portal · INC-00934" },
+    { badge: "WRITE", color: '#212B32', bg: "#FFF8E1", label: "Exception log · delay +7.2h" },
+    { badge: "READ",  color: '#212B32', bg: "#E6F1FB", label: "M6 traffic data · J7-J8" },
+    { badge: "WRITE", color: '#212B32', bg: "#FFF8E1", label: "Route risk score · updated" },
   ],
   "clinical-risk": [
-    { badge: "READ",        color: '#000000', bg: "#E6F1FB", label: "Patient record · ARV-05934" },
+    { badge: "READ",        color: '#212B32', bg: "#E6F1FB", label: "Patient record · ARV-05934" },
     { badge: "ALERT WRITE", color: "#005EB8", bg: "#FDECEA", label: "PNH threshold breach · 7h SLA" },
-    { badge: "READ",        color: '#000000', bg: "#E6F1FB", label: "Clinical urgency score" },
-    { badge: "WRITE",       color: '#000000', bg: "#FFF8E1", label: "Risk assessment · CRITICAL" },
+    { badge: "READ",        color: '#212B32', bg: "#E6F1FB", label: "Clinical urgency score" },
+    { badge: "WRITE",       color: '#212B32', bg: "#FFF8E1", label: "Risk assessment · CRITICAL" },
     { badge: "ALERT WRITE", color: "#005EB8", bg: "#FDECEA", label: "MHRA severity flag · raised" },
   ],
   "compliance": [
-    { badge: "READ",  color: '#000000', bg: "#E6F1FB", label: "MHRA threshold · 6h limit" },
-    { badge: "WRITE", color: '#000000', bg: "#FFF8E1", label: "Reasoning Ledger · append" },
-    { badge: "WRITE", color: '#000000', bg: "#FFF8E1", label: "PV Flag · INC-00934" },
-    { badge: "READ",  color: '#000000', bg: "#E6F1FB", label: "GDPR audit trail" },
-    { badge: "WRITE", color: '#000000', bg: "#FFF8E1", label: "SOC 2 log entry · sealed" },
+    { badge: "READ",  color: '#212B32', bg: "#E6F1FB", label: "MHRA threshold · 6h limit" },
+    { badge: "WRITE", color: '#212B32', bg: "#FFF8E1", label: "Reasoning Ledger · append" },
+    { badge: "WRITE", color: '#212B32', bg: "#FFF8E1", label: "PV Flag · INC-00934" },
+    { badge: "READ",  color: '#212B32', bg: "#E6F1FB", label: "GDPR audit trail" },
+    { badge: "WRITE", color: '#212B32', bg: "#FFF8E1", label: "SOC 2 log entry · sealed" },
   ],
   "engagement": [
-    { badge: "SEND",   color: "#000000", bg: "#EAF3DE", label: "Homecare nurse · St Thomas'" },
-    { badge: "NOTIFY", color: "#000000", bg: "#EAF3DE", label: "Alexion ops · delay alert" },
-    { badge: "SEND",   color: "#000000", bg: "#EAF3DE", label: "Pharmacist · INC-00928" },
-    { badge: "NOTIFY", color: "#000000", bg: "#EAF3DE", label: "DPD escalation · INC-00934" },
-    { badge: "SEND",   color: "#000000", bg: "#EAF3DE", label: "Ward coordinator · alert sent" },
+    { badge: "SEND",   color: "#212B32", bg: "#E8F1FB", label: "Homecare nurse · St Thomas'" },
+    { badge: "NOTIFY", color: "#212B32", bg: "#E8F1FB", label: "Alexion ops · delay alert" },
+    { badge: "SEND",   color: "#212B32", bg: "#E8F1FB", label: "Pharmacist · INC-00928" },
+    { badge: "NOTIFY", color: "#212B32", bg: "#E8F1FB", label: "DPD escalation · INC-00934" },
+    { badge: "SEND",   color: "#212B32", bg: "#E8F1FB", label: "Ward coordinator · alert sent" },
   ],
 };
 
@@ -92,7 +92,7 @@ const LOG_CYCLE: { msg: string; type: LogEntry["type"] }[] = [
 ];
 
 const LEDGER_CYCLE: { msg: string; type: LogEntry["type"]; category: string }[] = [
-  { msg: "INC-00934 courier · M6 J7–J8 still stationary",         type: "warning",  category: "EVENT"    },
+  { msg: "INC-00934 courier · M6 J7-J8 still stationary",         type: "warning",  category: "EVENT"    },
   { msg: "MHRA threshold · Ultomiris exceeds 6h limit",            type: "warning",  category: "PV CHECK" },
   { msg: "Reasoning Ledger append confirmed · entry locked",       type: "normal",   category: "LEDGER"   },
   { msg: "Clinical Risk · PNH severity score 9.2 / 10",           type: "critical", category: "CLINICAL" },
@@ -104,13 +104,13 @@ const LEDGER_CYCLE: { msg: string; type: LogEntry["type"]; category: string }[] 
 
 const CAT_STYLE: Record<string, { color: string; bg: string }> = {
   EVENT:    { color: "#005EB8", bg: "#EEEDFE" },
-  "PV CHECK":{ color: '#000000', bg: "#FFF8E1" },
-  LEDGER:   { color: '#000000', bg: "#E6F1FB" },
+  "PV CHECK":{ color: '#212B32', bg: "#FFF8E1" },
+  LEDGER:   { color: '#212B32', bg: "#E6F1FB" },
   CLINICAL: { color: "#005EB8", bg: "#FDECEA" },
-  SIGNAL:   { color: "#028090", bg: "#E1F3F5" },
-  COURIER:  { color: '#000000', bg: "#E6F1FB" },
-  AUDIT:    { color: "#000000", bg: "#EAF3DE" },
-  NOTIFY:   { color: "#000000", bg: "#EAF3DE" },
+  SIGNAL:   { color: "#085040", bg: "#E1F3F5" },
+  COURIER:  { color: '#212B32', bg: "#E6F1FB" },
+  AUDIT:    { color: "#212B32", bg: "#E8F1FB" },
+  NOTIFY:   { color: "#212B32", bg: "#E8F1FB" },
 };
 
 const INITIAL_AGES: Record<string, number> = {
@@ -132,7 +132,7 @@ function fmtAge(sec: number): string {
 function fmtTime(d: Date): string { return d.toTimeString().slice(0, 8); }
 
 const logColor: Record<LogEntry["type"], string> = {
-  normal: "#028090", warning: "#028090", critical: "#005EB8",
+  normal: "#085040", warning: "#085040", critical: "#005EB8",
 };
 
 // ── Enable/disable toggle switch ────────────────────────────────────────────
@@ -141,7 +141,7 @@ function Toggle({ on }: { on: boolean }) {
   return (
     <div style={{
       width: 34, height: 20, borderRadius: 10, flexShrink: 0,
-      backgroundColor: on ? "#1d9e75" : "#E2E8F0",
+      backgroundColor: on ? "#005EB8" : "#E2E8F0",
       position: "relative",
       transition: "background-color 0.25s",
     }}>
@@ -165,7 +165,7 @@ function AgentCard({
   enabled: boolean; onToggleEnabled: () => void;
 }) {
   const isAlert  = agent.status === "ALERT";
-  const dotColor = isAlert ? "#005EB8" : "#028090";
+  const dotColor = isAlert ? "#005EB8" : "#085040";
   const Icon       = AGENT_ICONS[agent.id] ?? Shield;
 
   const visible = [0, 1, 2].map(
@@ -194,7 +194,7 @@ function AgentCard({
             <Icon size={18} color={agent.color} style={{ flexShrink: 0 }} />
             <div>
               <span style={{ fontSize: 14, fontWeight: 600, color: "#005EB8", display: "block", lineHeight: 1.2 }}>{agent.name}</span>
-              <span style={{ fontSize: 11, color: "#000000" }}>{agent.role}</span>
+              <span style={{ fontSize: 11, color: "#212B32" }}>{agent.role}</span>
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 5, flexShrink: 0, marginTop: 2 }}>
@@ -210,8 +210,8 @@ function AgentCard({
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <span style={{
             fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 10,
-            backgroundColor: enabled ? "#EAF3DE" : "#F4F7FA",
-            color: enabled ? "#000000" : "#64748B",
+            backgroundColor: enabled ? "#E8F1FB" : "#F4F7FA",
+            color: enabled ? "#212B32" : "#64748B",
           }}>
             {enabled ? "Active" : "Inactive"}
           </span>
@@ -225,18 +225,18 @@ function AgentCard({
 
         {/* Row 2: heartbeat */}
         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-          <span style={{ fontSize: 11, color: "#000000" }}>Last heartbeat</span>
-          <span style={{ fontSize: 11, color: "#000000", fontFamily: "var(--font-geist-mono), monospace" }}>{agent.lastHeartbeat}</span>
+          <span style={{ fontSize: 11, color: "#212B32" }}>Last heartbeat</span>
+          <span style={{ fontSize: 11, color: "#212B32", fontFamily: "var(--font-geist-mono), monospace" }}>{agent.lastHeartbeat}</span>
         </div>
 
         {/* Row 3: current task */}
-        <p style={{ fontSize: enabled ? 12 : 11, fontStyle: "italic", color: enabled ? "#000000" : "#64748B", margin: 0, lineHeight: 1.5 }}>
+        <p style={{ fontSize: enabled ? 12 : 11, fontStyle: "italic", color: enabled ? "#212B32" : "#64748B", margin: 0, lineHeight: 1.5 }}>
           {enabled ? agent.currentTask : "Waiting for activation"}
         </p>
 
         {/* Row 4: tool calls */}
         <div>
-          <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#000000", display: "block", marginBottom: 6 }}>
+          <span style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#212B32", display: "block", marginBottom: 6 }}>
             Tool calls
           </span>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
@@ -248,7 +248,7 @@ function AgentCard({
                 <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: "0.04em", color: call.color, backgroundColor: call.bg, padding: "1px 6px", borderRadius: 4, flexShrink: 0, whiteSpace: "nowrap" }}>
                   {call.badge}
                 </span>
-                <span style={{ fontSize: 11, color: "#000000", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: 11, color: "#212B32", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {call.label}
                 </span>
               </div>
@@ -389,13 +389,13 @@ export default function AgentsPage() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <h1 style={{ fontSize: 18, fontWeight: 500, color: "#005EB8", margin: 0 }}>Agent Monitor</h1>
-            <p style={{ fontSize: 12, color: "#000000", margin: "4px 0 0 0" }}>
+            <p style={{ fontSize: 12, color: "#212B32", margin: "4px 0 0 0" }}>
               CPXO orchestration · Silent Delivery Delay Detection · real-time status
             </p>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, backgroundColor: "#F0FDF4", border: "0.5px solid #BBF7D0", borderRadius: 6, padding: "6px 12px" }}>
-            <span className="pulse-dot" style={{ width: 7, height: 7, borderRadius: "50%", backgroundColor: "#028090", display: "inline-block" }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#028090", letterSpacing: "0.06em" }}>LIVE</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, backgroundColor: "#E8F1FB", border: "0.5px solid #BFD6F0", borderRadius: 6, padding: "6px 12px" }}>
+            <span className="pulse-dot" style={{ width: 7, height: 7, borderRadius: "50%", backgroundColor: "#085040", display: "inline-block" }} />
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#085040", letterSpacing: "0.06em" }}>LIVE</span>
           </div>
         </div>
 
@@ -415,21 +415,21 @@ export default function AgentsPage() {
           {/* Left */}
           <div style={{ flex: 1 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-              <Brain size={20} color="#005EB8" style={{ flexShrink: 0 }} />
+              <Network size={20} color="#005EB8" style={{ flexShrink: 0 }} />
               <div style={{ cursor: "pointer" }} onClick={() => setActivePanel("cpxo")}>
-                <h2 style={{ fontSize: 18, fontWeight: 700, color: "#000000", margin: 0, lineHeight: 1.2 }}>{cpxo.name}</h2>
-                <span style={{ fontSize: 11, color: "#000000" }}>{cpxo.role} · never executes directly</span>
+                <h2 style={{ fontSize: 18, fontWeight: 700, color: "#212B32", margin: 0, lineHeight: 1.2 }}>{cpxo.name}</h2>
+                <span style={{ fontSize: 11, color: "#212B32" }}>{cpxo.role} · never executes directly</span>
               </div>
               <div style={{ marginLeft: 12, display: "flex", alignItems: "center", gap: 5 }}>
-                <span className="pulse-dot" style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#028090", display: "inline-block" }} />
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#028090", letterSpacing: "0.04em" }}>ACTIVE</span>
+                <span className="pulse-dot" style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#085040", display: "inline-block" }} />
+                <span style={{ fontSize: 11, fontWeight: 700, color: "#085040", letterSpacing: "0.04em" }}>ACTIVE</span>
               </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 10 }}>
-              <span style={{ fontSize: 11, color: "#000000" }}>Last heartbeat</span>
-              <span style={{ fontSize: 11, color: "#000000", fontFamily: "var(--font-geist-mono), monospace" }}>{heartbeatLabel}</span>
+              <span style={{ fontSize: 11, color: "#212B32" }}>Last heartbeat</span>
+              <span style={{ fontSize: 11, color: "#212B32", fontFamily: "var(--font-geist-mono), monospace" }}>{heartbeatLabel}</span>
             </div>
-            <p style={{ fontSize: 13, fontStyle: "italic", color: "#000000", margin: 0, lineHeight: 1.5 }}>
+            <p style={{ fontSize: 13, fontStyle: "italic", color: "#212B32", margin: 0, lineHeight: 1.5 }}>
               &ldquo;{cpxo.currentTask}&rdquo;
             </p>
           </div>
@@ -438,7 +438,7 @@ export default function AgentsPage() {
 
         {/* ── 2×2 SPECIALIST AGENT GRID ── */}
         <div>
-          <span style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", color: "#000000", display: "block", marginBottom: 12 }}>
+          <span style={{ fontSize: 11, fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.06em", color: "#212B32", display: "block", marginBottom: 12 }}>
             Specialist agents
           </span>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
@@ -464,15 +464,15 @@ export default function AgentsPage() {
           <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 10, overflow: "hidden" }}>
             <div style={{ padding: "12px 16px", borderBottom: "1px solid #F0F4F5", backgroundColor: "#FAFBFC", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ fontSize: 13, fontWeight: 500, color: "#005EB8" }}>Active data signals</span>
-              <span style={{ fontSize: 9, fontWeight: 700, color: "#028090", backgroundColor: "#EAF3DE", padding: "1px 7px", borderRadius: 4 }}>LIVE</span>
+              <span style={{ fontSize: 9, fontWeight: 700, color: "#085040", backgroundColor: "#E8F1FB", padding: "1px 7px", borderRadius: 4 }}>LIVE</span>
             </div>
             {liveSignals.map((src, i) => (
               <div key={src.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 16px", borderBottom: i < liveSignals.length - 1 ? "0.5px solid #F4F7FA" : "none" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#028090", display: "inline-block", flexShrink: 0 }} />
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#085040", display: "inline-block", flexShrink: 0 }} />
                   <span style={{ fontSize: 12, color: "#005EB8" }}>{src.name}</span>
                 </div>
-                <span style={{ fontSize: 11, color: "#000000", fontFamily: "var(--font-geist-mono), monospace", flexShrink: 0 }}>
+                <span style={{ fontSize: 11, color: "#212B32", fontFamily: "var(--font-geist-mono), monospace", flexShrink: 0 }}>
                   {fmtAge(signalAges[src.id] ?? 0)}
                 </span>
               </div>
@@ -483,14 +483,14 @@ export default function AgentsPage() {
           <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 10, overflow: "hidden" }}>
             <div style={{ padding: "12px 16px", borderBottom: "1px solid #F0F4F5", backgroundColor: "#FAFBFC", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ fontSize: 13, fontWeight: 500, color: "#005EB8" }}>Heartbeat log</span>
-              <span style={{ fontSize: 11, color: "#000000" }}>Every 30s</span>
+              <span style={{ fontSize: 11, color: "#212B32" }}>Every 30s</span>
             </div>
             {liveLog.map((entry, i) => (
               <div key={entry.id} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 16px", borderBottom: i < liveLog.length - 1 ? "0.5px solid #F4F7FA" : "none", animation: i === 0 ? "slideIn 0.4s ease" : undefined }}>
                 <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: logColor[entry.type], flexShrink: 0, marginTop: 4 }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: 12, color: "#005EB8", margin: "0 0 2px 0", lineHeight: 1.4 }}>{entry.msg}</p>
-                  <span style={{ fontSize: 10, color: "#000000", fontFamily: "var(--font-geist-mono), monospace" }}>{entry.time}</span>
+                  <span style={{ fontSize: 10, color: "#212B32", fontFamily: "var(--font-geist-mono), monospace" }}>{entry.time}</span>
                 </div>
               </div>
             ))}
@@ -500,17 +500,17 @@ export default function AgentsPage() {
           <div style={{ backgroundColor: "#FFFFFF", border: "1px solid #F0F4F5", borderRadius: 10, overflow: "hidden" }}>
             <div style={{ padding: "12px 16px", borderBottom: "1px solid #F0F4F5", backgroundColor: "#FAFBFC", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <span style={{ fontSize: 13, fontWeight: 500, color: "#005EB8" }}>Reasoning Ledger</span>
-              <span style={{ fontSize: 9, fontWeight: 600, color: "#000000", backgroundColor: "#F4F7FA", padding: "1px 7px", borderRadius: 4, letterSpacing: "0.05em" }}>APPEND-ONLY</span>
+              <span style={{ fontSize: 9, fontWeight: 600, color: "#212B32", backgroundColor: "#F4F7FA", padding: "1px 7px", borderRadius: 4, letterSpacing: "0.05em" }}>APPEND-ONLY</span>
             </div>
 
             {ledgerEntries.length === 0 ? (
               <div style={{ padding: "20px 16px", display: "flex", alignItems: "center", gap: 8 }}>
-                <span className="pulse-dot" style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#028090", display: "inline-block", flexShrink: 0 }} />
-                <span style={{ fontSize: 12, color: "#000000", fontStyle: "italic" }}>Waiting for next entry…</span>
+                <span className="pulse-dot" style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#085040", display: "inline-block", flexShrink: 0 }} />
+                <span style={{ fontSize: 12, color: "#212B32", fontStyle: "italic" }}>Waiting for next entry…</span>
               </div>
             ) : (
               ledgerEntries.map((entry, i) => {
-                const cat = CAT_STYLE[entry.category] ?? { color: "#000000", bg: "#F4F7FA" };
+                const cat = CAT_STYLE[entry.category] ?? { color: "#212B32", bg: "#F4F7FA" };
                 return (
                   <div
                     key={entry.id}
@@ -522,8 +522,8 @@ export default function AgentsPage() {
                       </span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: 11, color: "#000000", margin: "0 0 2px 0", lineHeight: 1.45 }}>{entry.msg}</p>
-                      <span style={{ fontSize: 10, color: "#000000", fontFamily: "var(--font-geist-mono), monospace" }}>{entry.time}</span>
+                      <p style={{ fontSize: 11, color: "#212B32", margin: "0 0 2px 0", lineHeight: 1.45 }}>{entry.msg}</p>
+                      <span style={{ fontSize: 10, color: "#212B32", fontFamily: "var(--font-geist-mono), monospace" }}>{entry.time}</span>
                     </div>
                   </div>
                 );
@@ -532,8 +532,8 @@ export default function AgentsPage() {
 
             {/* Footer pulse */}
             <div style={{ padding: "8px 16px", borderTop: "0.5px solid #F4F7FA", display: "flex", alignItems: "center", gap: 6 }}>
-              <span className="pulse-dot" style={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "#028090", display: "inline-block" }} />
-              <span style={{ fontSize: 10, color: "#000000" }}>CPXO monitoring · {heartbeatLabel}</span>
+              <span className="pulse-dot" style={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "#085040", display: "inline-block" }} />
+              <span style={{ fontSize: 10, color: "#212B32" }}>CPXO monitoring · {heartbeatLabel}</span>
             </div>
           </div>
 
@@ -541,9 +541,9 @@ export default function AgentsPage() {
 
         {/* ── ARCHITECTURE NOTE ── */}
         <div style={{ padding: "10px 16px", backgroundColor: "#F8FAFC", border: "0.5px dashed #F0F4F5", borderRadius: 8 }}>
-          <span style={{ fontSize: 11, color: "#000000" }}>
+          <span style={{ fontSize: 11, color: "#212B32" }}>
             All actions are fully automated and policy-matched. Human involvement is post-action only. Review exceptions in the{" "}
-            <span style={{ color: "#028090" }}>Audit Log</span>.
+            <span style={{ color: "#085040" }}>Audit Log</span>.
           </span>
         </div>
 

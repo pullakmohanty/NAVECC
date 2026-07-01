@@ -49,13 +49,13 @@ function groupByDate(entries: AuditEntry[]) {
 // ─── Stat card ─────────────────────────────────────────────────────────────
 
 function StatCard({ label, value, accent, progress }: { label: string; value: string; accent?: string; progress?: number }) {
-  const bar = accent ?? "#028090";
+  const bar = accent ?? "#085040";
   return (
     <div style={{ flex:1, backgroundColor:"#FFFFFF", border:"1px solid #F0F4F5", borderRadius:10, padding:"12px 18px" }}>
       <span style={{ fontSize:9, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.6px", color:"#bbb", display:"block", marginBottom:4 }}>
         {label}
       </span>
-      <span style={{ fontSize:20, fontWeight:700, color: '#000000', lineHeight:1 }}>
+      <span style={{ fontSize:26, fontWeight:700, color: '#212B32', lineHeight:1 }}>
         {value}
       </span>
       <div style={{ height:2, marginTop:8, borderRadius:1, backgroundColor: bar+"22" }}>
@@ -122,7 +122,7 @@ export default function AuditLogPage() {
           <h1 style={{ fontSize: 18, fontWeight: 500, color: "#005EB8", margin: 0 }}>
             Clinical Audit Log
           </h1>
-          <p style={{ fontSize: 12, color: "#000000", margin: "4px 0 0 0" }}>
+          <p style={{ fontSize: 12, color: "#212B32", margin: "4px 0 0 0" }}>
             Reasoning Ledger · append-only · tamper-proof
           </p>
         </div>
@@ -143,7 +143,7 @@ export default function AuditLogPage() {
               width: 7,
               height: 7,
               borderRadius: "50%",
-              backgroundColor: "#028090",
+              backgroundColor: "#085040",
               display: "inline-block",
             }}
           />
@@ -151,7 +151,7 @@ export default function AuditLogPage() {
             style={{
               fontSize: 11,
               fontWeight: 600,
-              color: "#000000",
+              color: "#212B32",
               letterSpacing: "0.06em",
             }}
           >
@@ -162,9 +162,9 @@ export default function AuditLogPage() {
 
       {/* 2. KPI CARDS */}
       <div style={{ display: "flex", gap: 14 }}>
-        <StatCard label="Total entries"           value={totalLabel}                    accent="#028090"  progress={74} />
-        <StatCard label="Approved decisions"      value={String(approvedCount || 31)}   accent="#028090"  progress={31} />
-        <StatCard label="System analysis entries" value={String(systemCount || 94)}     accent="#028090"  progress={63} />
+        <StatCard label="Total entries"           value={totalLabel}                    accent="#085040"  progress={74} />
+        <StatCard label="Approved decisions"      value={String(approvedCount || 31)}   accent="#085040"  progress={31} />
+        <StatCard label="System analysis entries" value={String(systemCount || 94)}     accent="#085040"  progress={63} />
         <StatCard label="Delay events covered"    value={String(incidentIds.size || 17)} accent="#dc2626" progress={50} />
       </div>
 
@@ -195,11 +195,11 @@ export default function AuditLogPage() {
                 style={{
                   fontSize: 13,
                   fontWeight: activeFilter === key ? 500 : 400,
-                  color: activeFilter === key ? "#005EB8" : "#000000",
+                  color: activeFilter === key ? "#005EB8" : "#212B32",
                   backgroundColor: "transparent",
                   border: "none",
                   borderBottom:
-                    activeFilter === key ? "2px solid #028090" : "2px solid transparent",
+                    activeFilter === key ? "2px solid #085040" : "2px solid transparent",
                   padding: "10px 16px",
                   cursor: "pointer",
                   whiteSpace: "nowrap",
@@ -219,7 +219,7 @@ export default function AuditLogPage() {
               onChange={(e) => setSearch(e.target.value)}
               style={{
                 fontSize: 12,
-                color: "#000000",
+                color: "#212B32",
                 backgroundColor: "#F8FAFC",
                 border: "1px solid #F0F4F5",
                 borderRadius: 6,
@@ -234,7 +234,7 @@ export default function AuditLogPage() {
         {/* 4. CHRONOLOGICAL ENTRIES grouped by date */}
         {groups.length === 0 ? (
           <div style={{ padding: "32px 16px", textAlign: "center" }}>
-            <span style={{ fontSize: 13, color: "#000000" }}>
+            <span style={{ fontSize: 13, color: "#212B32" }}>
               {allEntries.length === 0 ? "Loading entries…" : "No entries match this filter."}
             </span>
           </div>
@@ -257,7 +257,7 @@ export default function AuditLogPage() {
                   style={{
                     fontSize: 11,
                     fontWeight: 600,
-                    color: "#000000",
+                    color: "#212B32",
                     textTransform: "uppercase",
                     letterSpacing: "0.06em",
                   }}
@@ -267,7 +267,7 @@ export default function AuditLogPage() {
                 <span
                   style={{
                     fontSize: 10,
-                    color: "#000000",
+                    color: "#212B32",
                     backgroundColor: "#F4F7FA",
                     padding: "1px 7px",
                     borderRadius: 10,
@@ -295,7 +295,7 @@ export default function AuditLogPage() {
             gap: 8,
           }}
         >
-          <span style={{ fontSize: 11, color: "#000000" }}>
+          <span style={{ fontSize: 11, color: "#212B32" }}>
             Showing {filtered.length} of {totalLabel} total ledger entries · No edit or delete operations
             permitted · SOC 2 · ISO 27001 · HIPAA · GDPR
           </span>

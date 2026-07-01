@@ -2,8 +2,13 @@
 
 /* ─── Universal text color override ─────────────────────────────────────── */
 
-* {
-  color: #000000 !important;
+/* Default text color (NHS Black). No !important so authored inline/utility
+   colors win — white text on dark buttons, accents, etc. render correctly. */
+:root {
+  color: #212B32;
+}
+body {
+  color: #212B32;
 }
 
 a, .link,

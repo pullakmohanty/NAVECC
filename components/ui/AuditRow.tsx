@@ -28,17 +28,17 @@ export default function AuditRow({ entry }: { entry: AuditEntry }) {
       }}
     >
       {/* Timestamp */}
-      <span style={{ fontSize: 11, fontFamily: "var(--font-geist-mono), monospace", color: "#000000", whiteSpace: "nowrap", flexShrink: 0, paddingTop: 2, minWidth: 64 }}>
+      <span style={{ fontSize: 11, fontFamily: "var(--font-geist-mono), monospace", color: "#212B32", whiteSpace: "nowrap", flexShrink: 0, paddingTop: 2, minWidth: 64 }}>
         {formatTime(entry.timestamp)}
       </span>
 
       {/* Actor */}
-      <span style={{ fontSize: 11, fontWeight: 500, color: "#000000", whiteSpace: "nowrap", flexShrink: 0 }}>
+      <span style={{ fontSize: 11, fontWeight: 500, color: "#212B32", whiteSpace: "nowrap", flexShrink: 0 }}>
         {entry.actor}
       </span>
 
       {/* Category */}
-      <span style={{ fontSize: 11, fontWeight: 500, color: "#000000", whiteSpace: "nowrap", flexShrink: 0 }}>
+      <span style={{ fontSize: 11, fontWeight: 500, color: "#212B32", whiteSpace: "nowrap", flexShrink: 0 }}>
         {catLabel}
       </span>
 
@@ -47,7 +47,7 @@ export default function AuditRow({ entry }: { entry: AuditEntry }) {
         <p style={{ fontSize: 13, fontWeight: 500, color: "#005EB8", margin: "0 0 4px 0" }}>
           {entry.title}
         </p>
-        <p style={{ fontSize: 12, color: "#000000", margin: 0, lineHeight: 1.55 }}>
+        <p style={{ fontSize: 12, color: "#212B32", margin: 0, lineHeight: 1.55 }}>
           {entry.description}
         </p>
 
@@ -64,7 +64,7 @@ export default function AuditRow({ entry }: { entry: AuditEntry }) {
 
         {/* Incident link tag */}
         {entry.incidentId && (
-          <span style={{ display: "inline-block", marginTop: 6, fontSize: 10, fontFamily: "var(--font-geist-mono), monospace", color: "#028090", backgroundColor: "#E1F3F5", padding: "1px 6px", borderRadius: 4 }}>
+          <span style={{ display: "inline-block", marginTop: 6, fontSize: 10, fontFamily: "var(--font-geist-mono), monospace", color: "#085040", backgroundColor: "#E1F3F5", padding: "1px 6px", borderRadius: 4 }}>
             {entry.incidentId}
           </span>
         )}

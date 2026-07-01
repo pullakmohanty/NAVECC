@@ -29,16 +29,16 @@ export default function LoginPage() {
       }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 24 }}>
-<div style={{ fontSize: 24, fontWeight: 500, color: "#000000", marginBottom: 4 }}>
+<div style={{ fontSize: 24, fontWeight: 500, color: "#212B32", marginBottom: 4 }}>
             NavECC
           </div>
-          <div style={{ fontSize: 13, color: "#000000" }}>
+          <div style={{ fontSize: 13, color: "#212B32" }}>
             Navedas Intelligence Platform
           </div>
         </div>
 
         {/* Password label */}
-        <div style={{ fontSize: 12, color: "#000000", marginBottom: 4 }}>
+        <div style={{ fontSize: 12, color: "#212B32", marginBottom: 4 }}>
           Password
         </div>
 
@@ -67,6 +67,7 @@ export default function LoginPage() {
         {/* Login button */}
         <button
           onClick={handleLogin}
+          className="text-white"
           style={{
             width: "100%", padding: 10, fontSize: 13, fontWeight: 500,
             backgroundColor: "#005EB8", color: "#ffffff",
@@ -77,7 +78,7 @@ export default function LoginPage() {
         </button>
 
         {/* Footer */}
-        <div style={{ fontSize: 11, color: "#000000", textAlign: "center", marginTop: 20 }}>
+        <div style={{ fontSize: 11, color: "#212B32", textAlign: "center", marginTop: 20 }}>
           Arvion Biosciences UK
         </div>
       </div>

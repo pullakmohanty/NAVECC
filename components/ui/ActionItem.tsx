@@ -16,9 +16,9 @@ interface ActionItemProps {
 
 const barColor: Record<Severity, string> = {
   CRITICAL: "#005EB8",
-  HIGH:     "#028090",
+  HIGH:     "#085040",
   MEDIUM:   "#005EB8",
-  LOW:      "#028090",
+  LOW:      "#085040",
 };
 
 export default function ActionItem({
@@ -71,7 +71,7 @@ export default function ActionItem({
               fontWeight: 500,
               textTransform: "uppercase",
               letterSpacing: "0.05em",
-              color: "#000000",
+              color: "#212B32",
             }}
           >
             {category}
@@ -97,7 +97,7 @@ export default function ActionItem({
         <span
           style={{
             fontSize: 12,
-            color: "#000000",
+            color: "#212B32",
             whiteSpace: "nowrap",
             overflow: "hidden",
             textOverflow: "ellipsis",
@@ -118,7 +118,7 @@ export default function ActionItem({
           <span
             style={{
               fontSize: 11,
-              color: "#000000",
+              color: "#212B32",
               backgroundColor: "#F8FAFC",
               border: "1px solid #ebebeb",
               borderRadius: 4,
@@ -132,8 +132,8 @@ export default function ActionItem({
             style={{
               fontSize: 12,
               fontWeight: 500,
-              color: "#028090",
-              border: "1px solid #028090",
+              color: "#085040",
+              border: "1px solid #085040",
               borderRadius: 5,
               padding: "3px 12px",
               backgroundColor: "transparent",

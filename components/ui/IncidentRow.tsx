@@ -7,9 +7,9 @@ import { UrgencyDot } from "@/components/ui/UrgencyDot";
 
 const severityDotHex: Record<Severity, string> = {
   CRITICAL: "#005EB8",
-  HIGH:     "#028090",
+  HIGH:     "#085040",
   MEDIUM:   "#005EB8",
-  LOW:      "#028090",
+  LOW:      "#085040",
 };
 
 export default function IncidentRow({ incident }: { incident: Incident }) {
@@ -35,7 +35,7 @@ export default function IncidentRow({ incident }: { incident: Incident }) {
       </td>
 
       {/* ID */}
-      <td style={{ fontSize: 12, fontFamily: "var(--font-geist-mono), monospace", color: "#028090", fontWeight: 500, paddingRight: 16, whiteSpace: "nowrap" }}>
+      <td style={{ fontSize: 12, fontFamily: "var(--font-geist-mono), monospace", color: "#425563", fontWeight: 500, paddingRight: 16, whiteSpace: "nowrap" }}>
         {incident.id}
       </td>
 
@@ -43,7 +43,7 @@ export default function IncidentRow({ incident }: { incident: Incident }) {
       <td style={{ paddingRight: 16 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <span style={{ fontSize: 13, fontWeight: 500, color: "#005EB8" }}>{incident.drug}</span>
-          <span style={{ fontSize: 12, color: "#000000" }}>{incident.location}</span>
+          <span style={{ fontSize: 12, color: "#212B32" }}>{incident.location}</span>
         </div>
       </td>
 
@@ -56,7 +56,7 @@ export default function IncidentRow({ incident }: { incident: Incident }) {
       <td style={{ paddingRight: 16 }}>
         <div style={{ display: "flex", gap: 4 }}>
           {incident.dataSources.map((src) => (
-            <span key={src} style={{ fontSize: 11, fontWeight: 500, color: "#000000" }}>
+            <span key={src} style={{ fontSize: 11, fontWeight: 500, color: "#212B32" }}>
               {src}
             </span>
           ))}
@@ -65,12 +65,12 @@ export default function IncidentRow({ incident }: { incident: Incident }) {
 
       {/* Evidence */}
       <td style={{ paddingRight: 16 }}>
-        <span style={{ fontSize: 12, color: "#000000" }}>{incident.evidenceLevel}</span>
+        <span style={{ fontSize: 12, color: "#212B32" }}>{incident.evidenceLevel}</span>
       </td>
 
       {/* Date */}
       <td style={{ paddingRight: 16, whiteSpace: "nowrap" }}>
-        <span style={{ fontSize: 12, color: "#000000" }}>{incident.date}</span>
+        <span style={{ fontSize: 12, color: "#212B32" }}>{incident.date}</span>
       </td>
 
       {/* Severity */}
@@ -80,7 +80,7 @@ export default function IncidentRow({ incident }: { incident: Incident }) {
 
       {/* Status */}
       <td style={{ paddingRight: 16, whiteSpace: "nowrap" }}>
-        <span style={{ fontSize: 11, fontWeight: 500, color: "#000000" }}>
+        <span style={{ fontSize: 11, fontWeight: 500, color: "#212B32" }}>
           {incident.status}
         </span>
       </td>

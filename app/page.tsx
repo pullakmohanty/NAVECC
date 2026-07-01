@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Brain,
   Pill, Folder,
   Paperclip, AtSign, ArrowUp, MessageCircle, Minus,
 } from "lucide-react";
@@ -11,7 +10,7 @@ import type { AuditEntry, Incident, Agent } from "@/data/mockData";
 import { pendingApprovals } from "@/data/mockData";
 
 // ─── Brand ─────────────────────────────────────────────────────────────────
-const PUR = "#028090";
+const PUR = "#085040";
 
 const REGIONS = [
   {c:"M", n:"Midlands"  },{c:"L",  n:"London"    },
@@ -50,12 +49,12 @@ const AGENT_CONFIG: Record<string, AgentCfg> = {
       { label: "Monitoring",      value: "9 open exceptions"    },
     ],
     responsibilities: [
-      { label: "Wakes on heartbeat",               detail: "Scans all 5 active data signals every cycle — logistics, scheduling, delivery status" },
-      { label: "Correlates 3 signal types",        detail: "Real-time logistics · Treatment scheduling · Delivery status — all five sources read simultaneously" },
-      { label: "Detects silent exceptions",        detail: "Identifies delay before NHS staff absorb it — bypasses the silence that hides the 1.3% failure rate" },
+      { label: "Wakes on heartbeat",               detail: "Scans all 5 active data signals every cycle - logistics, scheduling, delivery status" },
+      { label: "Correlates 3 signal types",        detail: "Real-time logistics · Treatment scheduling · Delivery status - all five sources read simultaneously" },
+      { label: "Detects silent exceptions",        detail: "Identifies delay before NHS staff absorb it - bypasses the silence that hides the 1.3% failure rate" },
       { label: "Scores severity",                  detail: "Classifies every exception as LOW · MEDIUM · LIFE-CRITICAL against clinical urgency thresholds" },
-      { label: "Delegates to 4 specialist agents", detail: "Packages full goal ancestry and assigns Delivery Ops, Clinical Risk, Compliance, Engagement — all in parallel" },
-      { label: "Never executes directly",          detail: "CPXO is the orchestrator only — every action is taken by a specialist agent or the automated action engine" },
+      { label: "Delegates to 4 specialist agents", detail: "Packages full goal ancestry and assigns Delivery Ops, Clinical Risk, Compliance, Engagement - all in parallel" },
+      { label: "Never executes directly",          detail: "CPXO is the orchestrator only - every action is taken by a specialist agent or the automated action engine" },
     ],
     workFilter: (e) => e.description.toLowerCase().includes("cpxo"),
   },
@@ -64,13 +63,13 @@ const AGENT_CONFIG: Record<string, AgentCfg> = {
     stripBg:  "#E6F7F9",
     stats: [
       { label: "Active courier",   value: "DPD-7741882"         },
-      { label: "Route",            value: "M6 · J7–J8 Birmingham" },
+      { label: "Route",            value: "M6 · J7-J8 Birmingham" },
       { label: "ETA delta",        value: "+7.2h vs window"     },
     ],
     responsibilities: [
       { label: "Reads cell-signal GPS tags",        detail: "Polls live courier position and drug temperature every few minutes via cell-signal tag data" },
       { label: "Detects courier delay",             detail: "Identifies stationary couriers, route deviations, and missed checkpoint scans against expected delivery windows" },
-      { label: "Confirms exception from logistics", detail: "Cross-references DPD/DHL live feed with delivery event logs — position freeze + missed scan = confirmed delay" },
+      { label: "Confirms exception from logistics", detail: "Cross-references DPD/DHL live feed with delivery event logs - position freeze + missed scan = confirmed delay" },
       { label: "Calculates ETA delta",             detail: "Computes delay duration against the scheduled infusion window and reports to CPXO for severity scoring" },
       { label: "Maps live courier position",        detail: "Tracks route segment, last known location, and nearest depot for emergency re-dispatch decisions" },
     ],
@@ -88,11 +87,11 @@ const AGENT_CONFIG: Record<string, AgentCfg> = {
       { label: "Drug / condition", value: "Ultomiris · PNH"     },
     ],
     responsibilities: [
-      { label: "Assesses patient safety severity",  detail: "Scores each exception against the clinical urgency of the patient's condition — PNH, aHUS, HPP have different thresholds" },
+      { label: "Assesses patient safety severity",  detail: "Scores each exception against the clinical urgency of the patient's condition - PNH, aHUS, HPP have different thresholds" },
       { label: "Flags life-critical breaches",      detail: "Raises LIFE-CRITICAL when delay exceeds the MHRA 6h reporting threshold for PNH or treatment postponement risk is high" },
-      { label: "Scores clinical urgency",           detail: "Generates a numeric urgency score that drives the automated action tier — LOW, MEDIUM, or LIFE-CRITICAL" },
-      { label: "Monitors treatment postponement",   detail: "Tracks hours postponed against infusion window — determines whether rescheduling is safe or patient is at immediate risk" },
-      { label: "Reports to CPXO for action tier",  detail: "Sends severity classification back to CPXO to select the correct automated response — expedite, dispatch, or monitor" },
+      { label: "Scores clinical urgency",           detail: "Generates a numeric urgency score that drives the automated action tier - LOW, MEDIUM, or LIFE-CRITICAL" },
+      { label: "Monitors treatment postponement",   detail: "Tracks hours postponed against infusion window - determines whether rescheduling is safe or patient is at immediate risk" },
+      { label: "Reports to CPXO for action tier",  detail: "Sends severity classification back to CPXO to select the correct automated response - expedite, dispatch, or monitor" },
     ],
     workFilter: (e) =>
       e.category === "PV_FLAG" ||
@@ -110,11 +109,11 @@ const AGENT_CONFIG: Record<string, AgentCfg> = {
       { label: "Standards",        value: "SOC 2 · ISO 27001 · GDPR" },
     ],
     responsibilities: [
-      { label: "Logs every exception to the Reasoning Ledger", detail: "Append-only write — every signal, decision, action, and outcome recorded automatically with timestamp" },
-      { label: "Generates MHRA pharmacovigilance flags",       detail: "Raises a regulator-facing PV flag when delay exceeds reporting threshold — no manual trigger needed" },
+      { label: "Logs every exception to the Reasoning Ledger", detail: "Append-only write - every signal, decision, action, and outcome recorded automatically with timestamp" },
+      { label: "Generates MHRA pharmacovigilance flags",       detail: "Raises a regulator-facing PV flag when delay exceeds reporting threshold - no manual trigger needed" },
       { label: "Prepares GDPR-compliant audit trail",          detail: "All entries are GDPR-ready, patient-ref anonymised for regulator-facing output, and tamper-proof" },
       { label: "Maintains SOC 2 / ISO 27001 / HIPAA records",  detail: "Ensures every action is logged with enough provenance for an external compliance audit or MHRA inspection" },
-      { label: "Zero manual logging",                          detail: "No NHS staff or supply chain team member needs to write anything — Compliance agent handles the full record automatically" },
+      { label: "Zero manual logging",                          detail: "No NHS staff or supply chain team member needs to write anything - Compliance agent handles the full record automatically" },
     ],
     workFilter: (e) =>
       e.isMHRAFlag === true ||
@@ -132,11 +131,11 @@ const AGENT_CONFIG: Record<string, AgentCfg> = {
       { label: "Notified",         value: "St Thomas pharmacist" },
     ],
     responsibilities: [
-      { label: "Drafts homecare nurse alerts",       detail: "Auto-generates a notification to the homecare nurse when a delivery exception is confirmed — includes drug, delay, and rescheduling options" },
+      { label: "Drafts homecare nurse alerts",       detail: "Auto-generates a notification to the homecare nurse when a delivery exception is confirmed - includes drug, delay, and rescheduling options" },
       { label: "Notifies Arvion / Alexion ops team", detail: "Sends a structured alert to the manufacturer ops team so they have visibility before any complaint is filed" },
-      { label: "Queues pharmacy notifications",      detail: "Schedules pharmacist sign-off request when drug integrity may be affected — cold chain or long delay triggers this path" },
+      { label: "Queues pharmacy notifications",      detail: "Schedules pharmacist sign-off request when drug integrity may be affected - cold chain or long delay triggers this path" },
       { label: "Manages treatment rescheduling",     detail: "Coordinates with homecare and hospital teams to find an alternative infusion window and confirms the updated slot" },
-      { label: "Sends post-resolution confirmation", detail: "Closes the loop with a final confirmation ping once treatment is completed — outcome written to Reasoning Ledger" },
+      { label: "Sends post-resolution confirmation", detail: "Closes the loop with a final confirmation ping once treatment is completed - outcome written to Reasoning Ledger" },
     ],
     workFilter: (e) =>
       e.description.toLowerCase().includes("pharmacist") ||
@@ -196,11 +195,11 @@ function AgentPopup({
         {/* Stats strip */}
         <div style={{background:cfg.stripBg,borderBottom:"1px solid #F0F4F5",padding:"8px 20px",display:"flex",gap:24,flexShrink:0,flexWrap:"wrap"}}>
           {cfg.stats.map(s => (
-            <div key={s.label} style={{fontSize:10,color:"#000000"}}>
+            <div key={s.label} style={{fontSize:10,color:"#212B32"}}>
               {s.label}: <strong style={{color:agent.color}}>{s.value}</strong>
             </div>
           ))}
-          <div style={{fontSize:10,color:"#000000"}}>
+          <div style={{fontSize:10,color:"#212B32"}}>
             Last heartbeat: <strong style={{color:agent.color}}>{agent.lastHeartbeat}</strong>
           </div>
         </div>
@@ -209,14 +208,14 @@ function AgentPopup({
         <div style={{flex:1,overflowY:"auto",padding:"18px 20px",display:"flex",flexDirection:"column",gap:20}}>
           {/* Responsibilities */}
           <div>
-            <div style={{fontSize:9,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.7px",color:"#000000",marginBottom:10}}>Responsibilities</div>
+            <div style={{fontSize:9,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.7px",color:"#212B32",marginBottom:10}}>Responsibilities</div>
             <div style={{display:"flex",flexDirection:"column",gap:5}}>
               {cfg.responsibilities.map(r => (
                 <div key={r.label} style={{display:"flex",gap:10,padding:"9px 12px",background:"#FAFBFC",border:"0.5px solid #F0F4F5",borderRadius:8,alignItems:"flex-start"}}>
                   <div style={{width:5,height:5,borderRadius:"50%",background:agent.color,flexShrink:0,marginTop:5}}/>
                   <div>
                     <div style={{fontSize:12,fontWeight:600,color:"#005EB8"}}>{r.label}</div>
-                    <div style={{fontSize:11,color:"#000000",marginTop:1,lineHeight:1.45}}>{r.detail}</div>
+                    <div style={{fontSize:11,color:"#212B32",marginTop:1,lineHeight:1.45}}>{r.detail}</div>
                   </div>
                 </div>
               ))}
@@ -225,11 +224,11 @@ function AgentPopup({
 
           {/* Recent work */}
           <div>
-            <div style={{fontSize:9,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.7px",color:"#000000",marginBottom:10}}>
-              Recent work <span style={{fontSize:9,color:"#F0F4F5",fontWeight:400,textTransform:"none",letterSpacing:0}}>— {work.length} events</span>
+            <div style={{fontSize:9,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.7px",color:"#212B32",marginBottom:10}}>
+              Recent work <span style={{fontSize:9,color:"#F0F4F5",fontWeight:400,textTransform:"none",letterSpacing:0}}>- {work.length} events</span>
             </div>
             {work.length === 0 ? (
-              <div style={{fontSize:11,color:"#000000",padding:"12px 0"}}>No recent log entries.</div>
+              <div style={{fontSize:11,color:"#212B32",padding:"12px 0"}}>No recent log entries.</div>
             ) : (
               <div style={{border:"0.5px solid #F0F4F5",borderRadius:8,overflow:"hidden"}}>
                 {work.map((entry, i) => {
@@ -242,17 +241,17 @@ function AgentPopup({
                       style={{display:"flex",gap:12,padding:"10px 14px",borderBottom:i < work.length - 1 ? "0.5px solid #F4F7FA" : "none",alignItems:"flex-start"}}
                     >
                       <div style={{flexShrink:0,textAlign:"right",minWidth:46}}>
-                        <div style={{fontSize:10,color:"#000000",fontFamily:"monospace",fontWeight:600}}>{time}</div>
-                        <div style={{fontSize:9,color:"#000000",marginTop:1}}>{date}</div>
+                        <div style={{fontSize:10,color:"#212B32",fontFamily:"monospace",fontWeight:600}}>{time}</div>
+                        <div style={{fontSize:9,color:"#212B32",marginTop:1}}>{date}</div>
                       </div>
                       <div style={{flex:1}}>
                         <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3,flexWrap:"wrap"}}>
                           {entry.incidentId && (
-                            <span style={{fontSize:9,fontWeight:700,background:"#F0FDF4",color:"#028090",padding:"1px 5px",borderRadius:4}}>{entry.incidentId}</span>
+                            <span style={{fontSize:9,fontWeight:700,background:"#E8F1FB",color:"#085040",padding:"1px 5px",borderRadius:4}}>{entry.incidentId}</span>
                           )}
                           <span style={{fontSize:11,fontWeight:600,color:"#005EB8"}}>{entry.title}</span>
                         </div>
-                        <div style={{fontSize:11,color:"#000000",lineHeight:1.5}}>{entry.description}</div>
+                        <div style={{fontSize:11,color:"#212B32",lineHeight:1.5}}>{entry.description}</div>
                       </div>
                     </div>
                   );
@@ -280,29 +279,29 @@ function ColHeader({ title }: { title: string }) {
 function cpxoReply(input: string): string {
   const q = input.toLowerCase();
   if (q.includes("934") || (q.includes("critical") && !q.includes("cold")) || q.includes("m6") || (q.includes("ultomiris") && q.includes("934")))
-    return "INC-00934 is LIFE-CRITICAL. Ultomiris 500mg courier stationary on M6 J7–J8 Birmingham — 7.2h delay. PNH patient infusion window missed. MHRA PV flag generated. Emergency dispatch already executed automatically. Awaiting your governance sign-off in the Review panel.";
+    return "INC-00934 is LIFE-CRITICAL. Ultomiris 500mg courier stationary on M6 J7-J8 Birmingham - 7.2h delay. PNH patient infusion window missed. MHRA PV flag generated. Emergency dispatch already executed automatically. Awaiting your governance sign-off in the Review panel.";
   if (q.includes("928") || q.includes("cold chain") || q.includes("leeds"))
-    return "INC-00928 — cold chain temperature excursion at Leeds hub. Soliris 300mg held pending pharmacist review. DHL courier DHL-3392041. Clinical Risk agent monitoring. Status: IN REVIEW. Pharmacist sign-off required.";
+    return "INC-00928 - cold chain temperature excursion at Leeds hub. Soliris 300mg held pending pharmacist review. DHL courier DHL-3392041. Clinical Risk agent monitoring. Status: IN REVIEW. Pharmacist sign-off required.";
   if (q.includes("921") || q.includes("ward") || q.includes("thomas") || q.includes("strensiq"))
-    return "INC-00921 — Strensiq 80mg delivered to St Thomas' receiving bay but unmanned. Drug held at security desk for 4.1h. Delivery system falsely showing 'Delivered'. Ward notification pending — this is a silent false positive that NavECC caught.";
+    return "INC-00921 - Strensiq 80mg delivered to St Thomas' receiving bay but unmanned. Drug held at security desk for 4.1h. Delivery system falsely showing 'Delivered'. Ward notification pending - this is a silent false positive that NavECC caught.";
   if (q.includes("mhra") || q.includes("pharmacovigilance") || q.includes("pv flag"))
-    return "MHRA PV flag auto-generated for INC-00934. Ultomiris delay exceeded the 6h MHRA reporting threshold for PNH patients. Entry appended to Reasoning Ledger — tamper-proof, regulator-facing. No manual action required.";
+    return "MHRA PV flag auto-generated for INC-00934. Ultomiris delay exceeded the 6h MHRA reporting threshold for PNH patients. Entry appended to Reasoning Ledger - tamper-proof, regulator-facing. No manual action required.";
   if (q.includes("agent") || q.includes("running") || (q.includes("status") && !q.includes("incident")))
-    return "All 4 specialist agents running. Delivery Ops: tracking M6 route. Clinical Risk: ALERT — PNH threshold breach. Compliance: MHRA flag appended. Engagement: St Thomas pharmacist notification queued. CPXO scan every 2 minutes.";
+    return "All 4 specialist agents running. Delivery Ops: tracking M6 route. Clinical Risk: ALERT - PNH threshold breach. Compliance: MHRA flag appended. Engagement: St Thomas pharmacist notification queued. CPXO scan every 2 minutes.";
   if (q.includes("dispatch") || q.includes("automat") || q.includes("action"))
-    return "Emergency dispatch for INC-00934 executed automatically — policy-matched, no human approval needed. That's the core principle: action fires first, human governance reviews after. The action already happened.";
+    return "Emergency dispatch for INC-00934 executed automatically - policy-matched, no human approval needed. That's the core principle: action fires first, human governance reviews after. The action already happened.";
   if (q.includes("how many") || q.includes("incidents") || q.includes("exceptions") || q.includes("open"))
     return "9 open exceptions monitored. 3 need immediate attention: INC-00934 (CRITICAL), INC-00928 (HIGH), INC-00921 (HIGH). 1 resolved: INC-00909. All 5 signal sources active. Next CPXO scan in under 2 minutes.";
   if (q.includes("ledger") || q.includes("audit") || q.includes("reasoning"))
     return "Reasoning Ledger is append-only and tamper-proof. Every exception, decision, signal and action is timestamped and locked. 148+ entries. SOC 2 · ISO 27001 · GDPR · MHRA-facing. No manual logging ever needed.";
   if (q.includes("nurse") || q.includes("homecare") || q.includes("check-in"))
-    return "Homecare nurse check-in for INC-00934 opened at 08:31 — no confirmation received. This silence was a key detection signal. NavECC caught it before the nurse even knew the delivery was late. That's the 'silent failure' we eliminate.";
+    return "Homecare nurse check-in for INC-00934 opened at 08:31 - no confirmation received. This silence was a key detection signal. NavECC caught it before the nurse even knew the delivery was late. That's the 'silent failure' we eliminate.";
   if (q.includes("signal") || q.includes("source") || q.includes("data"))
     return "5 active signal sources: cell-signal GPS tags (4 min ago), homecare check-ins (12 min ago), delivery event logs (1 min ago), supply chain portal (8 min ago), email and order data (22 min ago). All live.";
   if (q.includes("hi") || q.includes("hello") || q.includes("hey"))
-    return "hi! i'm your CPXO agent. i'm watching 9 active exceptions across UK homecare right now. ask me about any incident, agent, or signal — or just type 'status' for a summary.";
+    return "hi! i'm your CPXO agent. i'm watching 9 active exceptions across UK homecare right now. ask me about any incident, agent, or signal - or just type 'status' for a summary.";
   if (q.includes("review") || q.includes("sign") || q.includes("approve"))
-    return "3 governance reviews pending: INC-00934 dispatch confirm (12 min left), INC-00928 cold chain sign-off, INC-00921 ward notification. Open the incident and use the Review panel on the right — your sign-off goes straight into the Reasoning Ledger.";
+    return "3 governance reviews pending: INC-00934 dispatch confirm (12 min left), INC-00928 cold chain sign-off, INC-00921 ward notification. Open the incident and use the Review panel on the right - your sign-off goes straight into the Reasoning Ledger.";
   return "i'm monitoring 9 active exceptions right now. all agents running, actions executing automatically. ask me about a specific incident (e.g. 'tell me about INC-00934'), agent status, or signal sources.";
 }
 
@@ -343,7 +342,7 @@ function ChatPopup({ onClose }: { onClose: () => void }) {
   return (
     <div style={{position:"fixed",bottom:62,right:18,width:300,background:"#fff",border:"1px solid #e0e0e0",borderRadius:12,overflow:"hidden",display:"flex",flexDirection:"column",zIndex:1000,boxShadow:"0 8px 32px rgba(0,0,0,0.12)"}}>
       {/* Header */}
-      <div style={{background:PUR,padding:"11px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
+      <div style={{background:"#005EB8",padding:"11px 14px",display:"flex",alignItems:"center",justifyContent:"space-between",flexShrink:0}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:26,height:26,borderRadius:"50%",background:"rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:"#fff"}}>CX</div>
           <div>
@@ -371,7 +370,7 @@ function ChatPopup({ onClose }: { onClose: () => void }) {
               border: msg.role==="user" ? "none" : "1px solid #F0F4F5",
               borderRadius: msg.role==="user" ? "10px 10px 2px 10px" : "2px 10px 10px 10px",
               padding:"8px 11px", fontSize:11,
-              color: msg.role==="user" ? "#fff" : "#000000",
+              color: msg.role==="user" ? "#fff" : "#212B32",
               lineHeight:1.6, maxWidth:"88%", whiteSpace:"pre-wrap",
             }}>
               {msg.text}
@@ -402,7 +401,7 @@ function ChatPopup({ onClose }: { onClose: () => void }) {
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }}}
             placeholder="Ask me anything..."
-            style={{fontSize:11,color:"#000000",flex:1,border:"none",background:"transparent",outline:"none"}}
+            style={{fontSize:11,color:"#212B32",flex:1,border:"none",background:"transparent",outline:"none"}}
           />
           <div style={{display:"flex",gap:6,alignItems:"center"}}>
             <Paperclip size={13} color="#F0F4F5"/>
@@ -450,13 +449,13 @@ export default function DashboardPage() {
   const FILTER_KPI = {
     '7d':  { open: 3,  avg: 5.2, hours: 18.5, approvals: 3,
               sub0: "↑ +1 this period", sub1: "↑ +0.4h vs avg",    sub2: "↗ 5 events",
-              sc1: "#d97706", bp: [30, 55, 30, 30] },
+              sc1: "#8A6500", bc1: "#FFB81C", bb1: "#FFE9B8", bp: [30, 55, 30, 30] },
     '30d': { open: 9,  avg: 4.8, hours: 42.5, approvals: 3,
               sub0: "↑ +3 this week",   sub1: "↓ −0.9h improving", sub2: "↗ 17 events",
-              sc1: "#16a34a", bp: [65, 48, 75, 30] },
+              sc1: "#007F3B", bc1: "#007F3B", bb1: "#CDE7D6", bp: [65, 48, 75, 30] },
     '90d': { open: 17, avg: 4.2, hours: 89.5, approvals: 3,
               sub0: "↑ +8 this period", sub1: "↓ −0.6h improving", sub2: "↗ 31 events",
-              sc1: "#16a34a", bp: [90, 42, 100, 30] },
+              sc1: "#007F3B", bc1: "#007F3B", bb1: "#CDE7D6", bp: [90, 42, 100, 30] },
   };
 
   const fk = FILTER_KPI[filter];
@@ -478,15 +477,13 @@ export default function DashboardPage() {
   ];
 
   const METRICS = [
-    { label:"Open delay events",    value:`${fk.open}`,     sub:fk.sub0,          sc:"#dc2626", bc:"#dc2626", bb:"#fecaca", bp:fk.bp[0] },
-    { label:"Avg delivery delay",   value:`${fk.avg}h`,     sub:fk.sub1,          sc:fk.sc1,    bc:fk.sc1,    bb:"#bbf7d0", bp:fk.bp[1] },
-    { label:"NHS staff hours lost", value:`${fk.hours}h`,   sub:fk.sub2,          sc:"#d97706", bc:"#d97706", bb:"#fde68a", bp:fk.bp[2] },
-    { label:"Pending approvals",    value:`${fk.approvals}`,sub:"⏱ Action required",sc:"#dc2626",bc:"#dc2626", bb:"#fecaca", bp:fk.bp[3] },
+    { label:"Open delay events",    value:`${fk.open}`,     sub:fk.sub0,          sc:"#DA291C", bc:"#DA291C", bb:"#FCE0DE", bp:fk.bp[0] },
+    { label:"Avg delivery delay",   value:`${fk.avg}h`,     sub:fk.sub1,          sc:fk.sc1,    bc:fk.bc1,    bb:fk.bb1,    bp:fk.bp[1] },
+    { label:"NHS staff hours lost", value:`${fk.hours}h`,   sub:fk.sub2,          sc:"#8A6500", bc:"#FFB81C", bb:"#FFE9B8", bp:fk.bp[2] },
+    { label:"Pending approvals",    value:`${fk.approvals}`,sub:"⏱ Action required",sc:"#DA291C",bc:"#DA291C", bb:"#FCE0DE", bp:fk.bp[3] },
   ];
 
   const openCount    = filteredIncidents.filter(i => i.status !== "RESOLVED").length;
-  const courierWidth = filter === '90d' ? "0.9%" : "0.8%";
-  const onTimeWidth  = filter === '90d' ? "97.4%" : "97.5%";
 
   return (
     <>
@@ -494,11 +491,11 @@ export default function DashboardPage() {
 
         {/* ── Page header ──────────────────────────────────────── */}
         <div>
-          <h1 style={{fontSize:18,fontWeight:500,color:"#000000",margin:0}}>Dashboard</h1>
-          <p style={{fontSize:12,color:"#000000",margin:"4px 0 0 0"}}>{FILTER_LABEL[filter]}</p>
+          <h1 style={{fontSize:18,fontWeight:500,color:"#212B32",margin:0}}>Dashboard</h1>
+          <p style={{fontSize:12,color:"#212B32",margin:"4px 0 0 0"}}>{FILTER_LABEL[filter]}</p>
         </div>
 
-        {/* ── Filter pills — fixed in navbar space ─────────────── */}
+        {/* ── Filter pills - fixed in navbar space ─────────────── */}
         <div style={{
           position:"fixed", top:0, right:230, height:48,
           display:"flex", alignItems:"center", gap:4, zIndex:55,
@@ -512,7 +509,7 @@ export default function DashboardPage() {
                 padding:"4px 12px", borderRadius:6, cursor:"pointer",
                 border:`1px solid ${filter === f ? '#005EB8' : '#F0F4F5'}`,
                 backgroundColor: '#ffffff',
-                color: filter === f ? '#005EB8' : '#000000',
+                color: filter === f ? '#005EB8' : '#212B32',
               }}
             >
               {f}
@@ -528,7 +525,7 @@ export default function DashboardPage() {
             {METRICS.map((m, i) => (
               <div key={m.label} style={{padding:"12px 18px",borderRight:i<3?"1px solid #F0F4F5":"none"}}>
                 <div style={{fontSize:9,color:"#bbb",textTransform:"uppercase",letterSpacing:"0.6px",fontWeight:600,marginBottom:4}}>{m.label}</div>
-                <div style={{fontSize:20,fontWeight:700,color:'#000000',letterSpacing:"-0.5px",lineHeight:1}}>{m.value}</div>
+                <div style={{fontSize:26,fontWeight:700,color:'#212B32',letterSpacing:"-0.5px",lineHeight:1}}>{m.value}</div>
                 <div style={{fontSize:10,marginTop:4,color:m.sc}}>{m.sub}</div>
                 <div style={{height:2,marginTop:8,borderRadius:1,backgroundColor:m.bb}}>
                   <div style={{height:"100%",width:`${m.bp}%`,backgroundColor:m.bc,borderRadius:1}}/>
@@ -540,21 +537,21 @@ export default function DashboardPage() {
           {/* ── Three-column body ────────────────────────────────── */}
           <div style={{display:"flex",minHeight:480,overflow:"hidden"}}>
 
-            {/* LEFT — Operation */}
+            {/* LEFT - Operation */}
             <div style={{width:210,flexShrink:0,background:"#fff",borderRight:"1px solid #F0F4F5",display:"flex",flexDirection:"column",overflow:"hidden"}}>
               <ColHeader title="Operation"/>
               <div style={{flex:1,overflowY:"auto",padding:"12px 14px"}}>
-                <div style={{fontSize:13.5,fontWeight:700,color:'#000000',marginBottom:10,letterSpacing:"-0.2px"}}>Arvion Biosciences</div>
+                <div style={{fontSize:13.5,fontWeight:700,color:'#212B32',marginBottom:10,letterSpacing:"-0.2px"}}>Arvion Biosciences</div>
                 <span style={{fontSize:10,background:PUR+"18",color:PUR,border:`1px solid ${PUR}30`,borderRadius:12,padding:"3px 9px",display:"inline-flex",alignItems:"center",gap:4,marginBottom:6,cursor:"pointer"}}>
                   🏢 UK Homecare Ops
                 </span>
                 <div style={{marginBottom:10,marginTop:4}}>
-                  <span style={{fontSize:10,background:"#F4F7FA",color:"#999",border:"1px solid #e8e8e8",borderRadius:12,padding:"3px 9px",display:"inline-flex",alignItems:"center",gap:4,cursor:"pointer"}}>
+                  <span style={{fontSize:10,background:"#F4F7FA",color:"#768692",border:"1px solid #e8e8e8",borderRadius:12,padding:"3px 9px",display:"inline-flex",alignItems:"center",gap:4,cursor:"pointer"}}>
                     ✦ Improve sensitivity
                   </span>
                 </div>
-                <p style={{fontSize:11,color:"#999",lineHeight:1.6,marginBottom:14}}>
-                  NavECC monitors <strong style={{color:'#000000',fontWeight:500}}>every rare-disease delivery</strong> across NHS homecare pathways, detecting silent delays before they become patient disruptions. Covers PNH, HPP, and aHUS lines.
+                <p style={{fontSize:11,color:"#768692",lineHeight:1.6,marginBottom:14}}>
+                  NavECC monitors <strong style={{color:'#212B32',fontWeight:500}}>every rare-disease delivery</strong> across NHS homecare pathways, detecting silent delays before they become patient disruptions. Covers PNH, HPP, and aHUS lines.
                 </p>
 
                 <div style={{fontSize:9,color:"#ccc",textTransform:"uppercase",letterSpacing:"0.7px",fontWeight:700,marginBottom:7}}>Monitored drugs</div>
@@ -564,7 +561,7 @@ export default function DashboardPage() {
                       <Pill size={12} color="#ccc"/>{d.name}
                     </div>
                     <div style={{display:"flex",alignItems:"center",gap:4}}>
-                      <span style={{fontSize:8.5,fontWeight:700,background:"#fef2f2",color:'#000000',padding:"1px 5px",borderRadius:8}}>{d.open} open</span>
+                      <span style={{fontSize:8.5,fontWeight:700,background:"#fef2f2",color:'#212B32',padding:"1px 5px",borderRadius:8}}>{d.open} open</span>
                       <span style={{fontSize:11,color:"#ddd"}}>›</span>
                     </div>
                   </div>
@@ -579,7 +576,7 @@ export default function DashboardPage() {
                 <div style={{fontSize:9,color:"#ccc",textTransform:"uppercase",letterSpacing:"0.7px",fontWeight:700,marginBottom:7,marginTop:14}}>NHS regions</div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:4}}>
                   {REGIONS.map(r => (
-                    <div key={r.c} style={{display:"flex",alignItems:"center",gap:5,fontSize:10.5,color:"#999",padding:"2px 0"}}>
+                    <div key={r.c} style={{display:"flex",alignItems:"center",gap:5,fontSize:10.5,color:"#768692",padding:"2px 0"}}>
                       <div style={{width:15,height:15,borderRadius:3,background:PUR+"18",display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,color:PUR,fontWeight:700,flexShrink:0}}>{r.c}</div>
                       {r.n}
                     </div>
@@ -588,7 +585,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* MID — Analytics */}
+            {/* MID - Analytics */}
             <div style={{flex:1,background:"#fff",display:"flex",flexDirection:"column",overflow:"hidden",borderRight:"1px solid #F0F4F5"}}>
               <ColHeader title="Analytics"/>
               <div style={{flex:1,overflowY:"auto",padding:"14px 16px",display:"flex",flexDirection:"column",gap:14}}>
@@ -597,39 +594,34 @@ export default function DashboardPage() {
                 <div>
                   <div style={{fontSize:9,color:"#bbb",textTransform:"uppercase",letterSpacing:"0.6px",fontWeight:700,marginBottom:8}}>Delivery performance breakdown</div>
                   <div style={{background:"#fff",border:"1px solid #F0F4F5",borderRadius:8,padding:"12px 14px"}}>
-                    <div style={{marginBottom:9}}>
-                      <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-                        <span style={{fontSize:10.5,color:"#999"}}>Baseline — unattributed</span>
-                        <span style={{fontSize:10.5,fontWeight:600,color:'#000000'}}>98.7% on-time</span>
-                      </div>
-                      <div style={{height:12,background:"#F0F4F5",borderRadius:2,overflow:"hidden",display:"flex"}}>
-                        <div style={{width:"98.7%",background:PUR}}/>
-                        <div style={{width:"1.3%",background:"#ddd"}}/>
-                      </div>
+                    {/* Context line - on-time vs silent delay */}
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"baseline",marginBottom:8}}>
+                      <span style={{fontSize:10.5,color:"#768692"}}>Silent delays by root cause · {FILTER_LABEL[filter].toLowerCase()}</span>
+                      <span style={{fontSize:10.5,fontWeight:600,color:'#212B32'}}>1.3% of deliveries · 98.7% on-time</span>
                     </div>
-                    <div>
-                      <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-                        <span style={{fontSize:10.5,color:"#999"}}>Current period — {FILTER_LABEL[filter].toLowerCase()}</span>
-                        <span style={{fontSize:10.5,fontWeight:600,color:'#000000'}}>1.3% silent delay rate</span>
-                      </div>
-                      <div style={{height:12,background:"#F0F4F5",borderRadius:2,overflow:"hidden",display:"flex"}}>
-                        <div style={{width:onTimeWidth,background:PUR}}/>
-                        <div style={{width:courierWidth,background:"#dc2626"}}/>
-                        <div style={{width:"0.7%",background:"#3b82f6"}}/>
-                        <div style={{width:"0.6%",background:"#f59e0b"}}/>
-                        <div style={{width:"0.4%",background:"#000000"}}/>
-                      </div>
-                    </div>
-                    <div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:8}}>
+                    {/* Attributed bar - the 1.3% silent delays split by cause, scaled to fill */}
+                    <div style={{height:22,borderRadius:3,overflow:"hidden",display:"flex",gap:1}}>
                       {[
-                        {c:"#000000",l:"Courier / Traffic"},
-                        {c:"#3b82f6",l:"Cold chain"},
-                        {c:"#f59e0b",l:"Hospital receiving"},
-                        {c:"#8b5cf6",l:"Homecare scheduling"},
-                        {c:"#028090",l:"On-time (98.7%)"},
-                      ].map(({c,l}) => (
-                        <div key={l} style={{display:"flex",alignItems:"center",gap:4,fontSize:9.5,color:"#bbb"}}>
-                          <div style={{width:7,height:7,borderRadius:2,background:c,flexShrink:0}}/>{l}
+                        {l:"Courier / Traffic",   pct:"0.8%", share:61.5, c:"#005EB8"},
+                        {l:"Cold chain",          pct:"0.2%", share:15.4, c:"#41B6E6"},
+                        {l:"Hospital receiving",  pct:"0.2%", share:15.4, c:"#E8A838"},
+                        {l:"Homecare scheduling", pct:"0.1%", share:7.7,  c:"#768692"},
+                      ].map(seg => (
+                        <div key={seg.l} style={{flex:seg.share,background:seg.c,display:"flex",alignItems:"center",paddingLeft:7,minWidth:seg.share<10?6:undefined}}>
+                          {seg.share>=50 && <span style={{fontSize:9.5,fontWeight:600,color:"#fff",whiteSpace:"nowrap"}}>{seg.l} · {seg.pct}</span>}
+                        </div>
+                      ))}
+                    </div>
+                    {/* Legend with per-cause share of all deliveries */}
+                    <div style={{display:"flex",gap:12,flexWrap:"wrap",marginTop:8}}>
+                      {[
+                        {l:"Courier / Traffic",   pct:"0.8%", c:"#005EB8"},
+                        {l:"Cold chain",          pct:"0.2%", c:"#41B6E6"},
+                        {l:"Hospital receiving",  pct:"0.2%", c:"#E8A838"},
+                        {l:"Homecare scheduling", pct:"0.1%", c:"#768692"},
+                      ].map(({l,pct,c}) => (
+                        <div key={l} style={{display:"flex",alignItems:"center",gap:4,fontSize:9.5,color:"#768692"}}>
+                          <div style={{width:7,height:7,borderRadius:2,background:c,flexShrink:0}}/>{l} <span style={{fontWeight:600,color:"#212B32"}}>{pct}</span>
                         </div>
                       ))}
                     </div>
@@ -644,12 +636,12 @@ export default function DashboardPage() {
                   <div style={{border:"1px solid #F0F4F5",borderRadius:8,overflow:"hidden"}}>
                     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 12px",background:"#F4F7FA",borderBottom:"1px solid #F0F4F5"}}>
                       <span style={{fontSize:9,color:"#aaa",fontWeight:700,textTransform:"uppercase",letterSpacing:"0.5px"}}>Incidents</span>
-                      <span style={{fontSize:9.5,background:"#fef2f2",color:'#000000',padding:"1px 7px",borderRadius:10,fontWeight:600}}>{openCount} open</span>
+                      <span style={{fontSize:9.5,background:"#fef2f2",color:'#212B32',padding:"1px 7px",borderRadius:10,fontWeight:600}}>{openCount} open</span>
                     </div>
                     {filteredIncidents.map((inc, i) => (
-                      <div key={inc.id} style={{display:"flex",alignItems:"center",padding:"7px 12px",borderBottom:i<filteredIncidents.length-1?"1px solid #f5f5f5":"none",cursor:"pointer",background:"#fff"}}>
+                      <div key={inc.id} onClick={() => router.push(`/incidents/${inc.id}`)} style={{display:"flex",alignItems:"center",padding:"7px 12px",borderBottom:i<filteredIncidents.length-1?"1px solid #f5f5f5":"none",cursor:"pointer",background:"#fff"}}>
                         <div style={{width:80,flexShrink:0}}>
-                          <div style={{fontSize:10,color:"#028090",fontWeight:700,display:"flex",alignItems:"center",gap:4}}>
+                          <div style={{fontSize:10,color:"#425563",fontWeight:700,display:"flex",alignItems:"center",gap:4}}>
                             <span style={{width:5,height:5,borderRadius:"50%",background:dotColor(inc.severity),flexShrink:0,display:"inline-block"}}/>
                             {inc.id}
                           </div>
@@ -670,7 +662,7 @@ export default function DashboardPage() {
                           </div>
                         </div>
                         <div style={{width:68,textAlign:"right",flexShrink:0}}>
-                          <span style={{fontSize:11,fontWeight:500,color:'#000000'}}>{inc.status}</span>
+                          <span style={{fontSize:11,fontWeight:500,color:'#212B32'}}>{inc.status}</span>
                         </div>
                       </div>
                     ))}
@@ -679,7 +671,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* RIGHT — Actions awaiting approval */}
+            {/* RIGHT - Actions awaiting approval */}
             <div style={{width:250,flexShrink:0,background:"#F4F7FA",display:"flex",flexDirection:"column",overflow:"hidden"}}>
               <div style={{display:"flex",flexDirection:"column",padding:"10px 14px 6px",borderBottom:"1px solid #F0F4F5",backgroundColor:"#fff",flexShrink:0,gap:2}}>
                 <div style={{display:"flex",alignItems:"center",gap:6}}>
@@ -700,12 +692,12 @@ export default function DashboardPage() {
                         <span style={{fontSize:9,color:"#bbb",textTransform:"uppercase",letterSpacing:"0.3px"}}>{action.category}</span>
                       </div>
                       <div style={{fontSize:11,fontWeight:600,color:"#111",lineHeight:1.35,marginBottom:3}}>{action.title}</div>
-                      <div style={{fontSize:9.5,color:"#999",lineHeight:1.45,marginBottom:7}}>{action.detail}</div>
+                      <div style={{fontSize:9.5,color:"#768692",lineHeight:1.45,marginBottom:7}}>{action.detail}</div>
                       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                         <span style={{fontSize:9,color:"#bbb",background:"#F4F7FA",border:"0.5px solid #e8e8e8",padding:"2px 7px",borderRadius:8}}>⏱ {action.timeRemaining}</span>
                         <button
                           onClick={() => router.push(`/incidents/${action.incidentId}`)}
-                          style={{fontSize:10,fontWeight:600,color:"#028090",background:"transparent",border:"1px solid #028090",borderRadius:4,padding:"2px 9px",cursor:"pointer"}}
+                          style={{fontSize:10,fontWeight:600,color:"#085040",background:"transparent",border:"1px solid #085040",borderRadius:4,padding:"2px 9px",cursor:"pointer"}}
                         >Review</button>
                       </div>
                     </div>
@@ -734,7 +726,7 @@ export default function DashboardPage() {
       {/* FAB */}
       <button
         onClick={() => setChatOpen(c => !c)}
-        style={{position:"fixed",bottom:50,right:18,zIndex:100,background:PUR,color:"#fff",border:"none",borderRadius:24,padding:"8px 16px",fontSize:12,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:7}}
+        style={{position:"fixed",bottom:50,right:18,zIndex:100,background:"#005EB8",color:"#fff",border:"none",borderRadius:24,padding:"8px 16px",fontSize:12,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:7}}
       >
         <MessageCircle size={15}/>
         Talk to CPXO Agent
