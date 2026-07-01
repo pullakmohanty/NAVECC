@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ClientShell from "@/components/layout/ClientShell";
 import { AgentProfilesProvider } from "@/lib/AgentProfilesContext";
+import { GovernanceDecisionsProvider } from "@/lib/GovernanceDecisionsContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NavECC — Navedas Intelligence",
+  title: "NavECC - Navedas Intelligence",
   description:
     "Silent Delivery Delay Detection · Arvion Biosciences · UK Homecare Operations",
 };
@@ -27,7 +28,9 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
         <AgentProfilesProvider>
-          <ClientShell>{children}</ClientShell>
+          <GovernanceDecisionsProvider>
+            <ClientShell>{children}</ClientShell>
+          </GovernanceDecisionsProvider>
         </AgentProfilesProvider>
       </body>
     </html>
