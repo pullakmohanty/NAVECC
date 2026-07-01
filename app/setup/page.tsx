@@ -25,6 +25,7 @@ const CSS = `
   .s2-gray  { color: #768692 !important; }
   .s2-teal  { color: #085040 !important; }
   .s2-green { color: #15803D !important; }
+  .s2-blue  { color: #005EB8 !important; }
   .s2-amber-t { color: #92400E !important; }
   .s2-white { color: #FFFFFF !important; }
   .s2-disabled-text { color: #768692 !important; }
@@ -149,7 +150,7 @@ function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
           }
         </div>
         <span
-          className={done ? "s2-green" : active ? "s2-head" : "s2-gray"}
+          className={done ? "s2-blue" : active ? "s2-head" : "s2-gray"}
           style={{ fontSize: 13, fontWeight: active ? 600 : 400, whiteSpace: "nowrap" }}
         >
           {s.label}
@@ -157,7 +158,7 @@ function ProgressBar({ step }: { step: 1 | 2 | 3 }) {
       </div>
     );
     if (i < 2) items.push(
-      <div key={`l${i}`} style={{ flex: 1, height: 1, backgroundColor: done ? "#1d9e75" : "#E2E8F0", margin: "0 12px" }} />
+      <div key={`l${i}`} style={{ flex: 1, height: 1, backgroundColor: done ? "#005EB8" : "#E2E8F0", margin: "0 12px" }} />
     );
   });
   return <div style={{ display: "flex", alignItems: "center", marginBottom: 24 }}>{items}</div>;
